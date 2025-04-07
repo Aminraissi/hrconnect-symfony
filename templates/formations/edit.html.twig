@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'back_office.html.twig' %}
 
 {% block title %}Edit Formation
 {% endblock %}
@@ -6,9 +6,30 @@
 {% block body %}
 	<h1>Edit Formation</h1>
 
-	{{ include('formation_controller_v2/_form.html.twig', {'button_label': 'Update'}) }}
+	{{ include('formations/_form.html.twig', {'button_label': 'Update'}) }}
 
-	<a href="{{ path('app_formations_index') }}">back to list</a>
+{% endblock %}
 
-	{{ include('formation_controller_v2/_delete_form.html.twig') }}
+{% block cjs %}
+	<script>
+
+		$(document).ready(function () {
+
+$('#formation_is_online').bootstrapToggle();
+if ($('#formation_is_online').prop('checked')) {
+$('#f_place').hide();
+$('#f_lat_lng').hide();
+}
+$('#formation_is_online').change(function () {
+if ($(this).prop('checked')) {
+$('#f_place').hide();
+$('#f_lat_lng').hide();
+} else {
+$('#f_place').show();
+$('#f_lat_lng').show();
+}
+});
+
+});
+	</script>
 {% endblock %}
