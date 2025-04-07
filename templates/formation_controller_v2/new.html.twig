@@ -1,0 +1,12 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}New Formation
+{% endblock %}
+
+{% block body %}
+	<h1>Create new Formation</h1>
+
+	{{ include('formation_controller_v2/_form.html.twig') }}
+
+	<a href="{{ path('app_formation_controller_v2_index') }}">back to list</a>
+{% endblock %}
