@@ -1,18 +1,14 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\TicketReclamationRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TicketReclamationRepository::class)]
 #[ORM\Table(name: 'ticket_reclamation')]
 class TicketReclamation
 {
+    #[ORM\Id]
     #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $id = null;
 
@@ -77,7 +73,7 @@ class TicketReclamation
         return $this->date_of_response;
     }
 
-    public function setDate_of_response(\DateTimeInterface $date_of_response): self
+    public function setDate_of_response(\DateTimeInterface $date_of_response) : self
     {
         $this->date_of_response = $date_of_response;
         return $this;

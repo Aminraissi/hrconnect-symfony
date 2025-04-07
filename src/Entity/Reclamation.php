@@ -13,7 +13,9 @@ use App\Repository\ReclamationRepository;
 #[ORM\Table(name: 'reclamation')]
 class Reclamation
 {
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     public function getId(): ?int

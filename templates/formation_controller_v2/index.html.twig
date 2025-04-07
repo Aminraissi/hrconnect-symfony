@@ -1,0 +1,58 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Formation index
+{% endblock %}
+
+{% block body %}
+	<h1>Formation index</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Image</th>
+				<th>Description</th>
+				<th>Is_online</th>
+				<th>Place</th>
+				<th>Lat</th>
+				<th>Lng</th>
+				<th>Available_for_employee</th>
+				<th>Available_for_intern</th>
+				<th>Start_date</th>
+				<th>End_date</th>
+				<th>Price</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for formation in formations %}
+				<tr>
+					<td>{{ formation.id }}</td>
+					<td>{{ formation.title }}</td>
+					<td>{{ formation.image }}</td>
+					<td>{{ formation.description }}</td>
+					<td>{{ formation.isOnline ? 'Yes' : 'No' }}</td>
+					<td>{{ formation.place }}</td>
+					<td>{{ formation.lat }}</td>
+					<td>{{ formation.lng }}</td>
+					<td>{{ formation.availableForEmployee ? 'Yes' : 'No' }}</td>
+					<td>{{ formation.availableForIntern ? 'Yes' : 'No' }}</td>
+					<td>{{ formation.startDate ? formation.startDate|date('Y-m-d H:i:s') : '' }}</td>
+					<td>{{ formation.endDate ? formation.endDate|date('Y-m-d H:i:s') : '' }}</td>
+					<td>{{ formation.price }}</td>
+					<td>
+						<a href="{{ path('app_formation_controller_v2_show', {'id': formation.id}) }}">show</a>
+						<a href="{{ path('app_formation_controller_v2_edit', {'id': formation.id}) }}">edit</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="14">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<a href="{{ path('app_formation_controller_v2_new') }}">Create new</a>
+{% endblock %}

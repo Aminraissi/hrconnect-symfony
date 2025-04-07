@@ -1,18 +1,14 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\ResetPasswordRequestRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ResetPasswordRequestRepository::class)]
 #[ORM\Table(name: 'reset_password_request')]
 class ResetPasswordRequest
 {
+    #[ORM\Id]
     #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $id = null;
 
@@ -77,7 +73,7 @@ class ResetPasswordRequest
         return $this->requested_at;
     }
 
-    public function setRequested_at(\DateTimeInterface $requested_at): self
+    public function setRequested_at(\DateTimeInterface $requested_at) : self
     {
         $this->requested_at = $requested_at;
         return $this;
@@ -91,7 +87,7 @@ class ResetPasswordRequest
         return $this->expires_at;
     }
 
-    public function setExpires_at(\DateTimeInterface $expires_at): self
+    public function setExpires_at(\DateTimeInterface $expires_at) : self
     {
         $this->expires_at = $expires_at;
         return $this;
