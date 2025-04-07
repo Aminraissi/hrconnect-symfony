@@ -59,6 +59,7 @@ class Formation
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'The image is required.')]
     private ?string $image = null;
 
     public function getImage(): ?string
@@ -117,7 +118,7 @@ class Formation
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    #[Assert\NotNull(message: 'Latitude is required.')]
+    // #[Assert\NotNull(message: 'Latitude is required.')]
     #[Assert\Type(type: 'float', message: 'Latitude must be a decimal number.')]
     private ?float $lat = null;
 
@@ -133,7 +134,7 @@ class Formation
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    #[Assert\NotNull(message: 'Longitude is required.')]
+    // #[Assert\NotNull(message: 'Longitude is required.')]
     #[Assert\Type(type: 'float', message: 'Longitude must be a decimal number.')]
     private ?float $lng = null;
 
@@ -179,6 +180,7 @@ class Formation
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\NotNull(message: 'Start date is required.')]
     #[Assert\Type(\DateTimeInterface::class, message: 'Start date must be a valid datetime.')]
+    #[Assert\GreaterThanOrEqual(value: "now", message: "Start date must be greater than or equal to the current date and time.")]
     private ?\DateTimeInterface $start_date = null;
 
     public function getStart_date(): ?\DateTimeInterface
@@ -257,48 +259,48 @@ class Formation
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Employe::class, inversedBy: 'formations')]
-    #[ORM\JoinTable(
-        name: 'formation_participation',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'formation_id', referencedColumnName: 'id'),
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id'),
-        ]
-    )]
-    private Collection $employes;
+    // #[ORM\ManyToMany(targetEntity: Employe::class, inversedBy: 'formations')]
+    // #[ORM\JoinTable(
+    //     name: 'formation_participation',
+    //     joinColumns: [
+    //         new ORM\JoinColumn(name: 'formation_id', referencedColumnName: 'id'),
+    //     ],
+    //     inverseJoinColumns: [
+    //         new ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id'),
+    //     ]
+    // )]
+    // private Collection $employes;
 
     public function __construct()
     {
-        $this->quizs    = new ArrayCollection();
-        $this->employes = new ArrayCollection();
+        $this->quizs = new ArrayCollection();
+        // $this->employes = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, Employe>
-     */
-    public function getEmployes(): Collection
-    {
-        if (! $this->employes instanceof Collection) {
-            $this->employes = new ArrayCollection();
-        }
-        return $this->employes;
-    }
+    // /**
+    //  * @return Collection<int, Employe>
+    //  */
+    // public function getEmployes(): Collection
+    // {
+    //     if (! $this->employes instanceof Collection) {
+    //         $this->employes = new ArrayCollection();
+    //     }
+    //     return $this->employes;
+    // }
 
-    public function addEmploye(Employe $employe): self
-    {
-        if (! $this->getEmployes()->contains($employe)) {
-            $this->getEmployes()->add($employe);
-        }
-        return $this;
-    }
+    // public function addEmploye(Employe $employe): self
+    // {
+    //     if (! $this->getEmployes()->contains($employe)) {
+    //         $this->getEmployes()->add($employe);
+    //     }
+    //     return $this;
+    // }
 
-    public function removeEmploye(Employe $employe): self
-    {
-        $this->getEmployes()->removeElement($employe);
-        return $this;
-    }
+    // public function removeEmploye(Employe $employe): self
+    // {
+    //     $this->getEmployes()->removeElement($employe);
+    //     return $this;
+    // }
 
     public function isOnline(): ?bool
     {

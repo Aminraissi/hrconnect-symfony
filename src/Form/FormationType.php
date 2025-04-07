@@ -1,7 +1,6 @@
 <?php
 namespace App\Form;
 
-use App\Entity\Employe;
 use App\Entity\Formateur;
 use App\Entity\Formation;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -36,13 +35,15 @@ class FormationType extends AbstractType
             ->add('price', NumberType::class)
             ->add('formateur', EntityType::class, [
                 'class'        => Formateur::class,
-                'choice_label' => 'id',
+                'choice_label' => function (Formateur $formateur) {
+                    return $formateur->getFirstName() . ' ' . $formateur->getLastName();
+                },
             ])
-            ->add('employes', EntityType::class, [
-                'class'        => Employe::class,
-                'choice_label' => 'id',
-                'multiple'     => true,
-            ])
+            // ->add('employes', EntityType::class, [
+            //     'class'        => Employe::class,
+            //     'choice_label' => 'id',
+            //     'multiple'     => true,
+            // ])
         ;
     }
 
