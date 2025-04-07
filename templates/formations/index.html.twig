@@ -16,7 +16,7 @@
 						Training List
 					</li>
 				</ul>
-				<h3>Trainings</h3>
+				<h3>Questions</h3>
 			</div>
 		</div>
 		<div class="col-xl-12 col-sm-12 col-12 mb-4">
@@ -105,6 +105,10 @@
 											<a class="btn btn-success btn-sm" href="{{ path('app_formations_show', {'id': formation.id}) }}">
 												<i class="fas fa-eye"></i>
 												Show
+											</a>
+											<a class="btn btn-primary btn-sm" href="{{ path('app_quiz_index', {'fid': formation.id}) }}">
+												<i class="fas fa-eye"></i>
+												Quiz
 											</a>
 											<a class="btn btn-success btn-sm" href="{{ path('app_formations_edit', {'id': formation.id}) }}">
 												<i class="fas fa-edit"></i>
