@@ -1,19 +1,16 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\ReclamationRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 #[ORM\Table(name: 'reclamation')]
 class Reclamation
 {
+    #[ORM\Id]
     #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\GeneratedValue]
     private ?int $id = null;
 
     public function getId(): ?int
@@ -77,7 +74,7 @@ class Reclamation
         return $this->date_of_submission;
     }
 
-    public function setDate_of_submission(\DateTimeInterface $date_of_submission): self
+    public function setDate_of_submission(\DateTimeInterface $date_of_submission) : self
     {
         $this->date_of_submission = $date_of_submission;
         return $this;
