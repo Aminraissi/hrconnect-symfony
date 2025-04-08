@@ -4,9 +4,6 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\ReclamationRepository;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
@@ -17,6 +14,24 @@ class Reclamation
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $employee_name = null;
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $type = null;
+
+    #[ORM\Column(type: 'text', nullable: false)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private ?\DateTimeInterface $date_of_submission = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $status = null;
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $priority = null;
 
     public function getId(): ?int
     {
@@ -29,9 +44,6 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $employee_name = null;
-
     public function getEmployee_name(): ?string
     {
         return $this->employee_name;
@@ -42,9 +54,6 @@ class Reclamation
         $this->employee_name = $employee_name;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $type = null;
 
     public function getType(): ?string
     {
@@ -57,9 +66,6 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: false)]
-    private ?string $description = null;
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -70,9 +76,6 @@ class Reclamation
         $this->description = $description;
         return $this;
     }
-
-    #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $date_of_submission = null;
 
     public function getDate_of_submission(): ?\DateTimeInterface
     {
@@ -85,9 +88,6 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $status = null;
-
     public function getStatus(): ?string
     {
         return $this->status;
@@ -98,9 +98,6 @@ class Reclamation
         $this->status = $status;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $priority = null;
 
     public function getPriority(): ?string
     {
@@ -136,5 +133,4 @@ class Reclamation
 
         return $this;
     }
-
 }
