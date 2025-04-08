@@ -1,0 +1,28 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}New Reclamation{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_back_office') }}">Home</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_reclamation_index') }}">Liste des Réclamations</a>
+					</li>
+				</ul>
+				<h3>Ajouter une réclamation</h3>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12">
+			{{ include('reclamation/_form.html.twig') }}
+		</div>
+	</div>
+{% endblock %}
+
+{% block cjs %}
+	{# Optional JS for toggling fields or interactions, add later if needed #}
+{% endblock %}

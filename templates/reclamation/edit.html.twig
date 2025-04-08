@@ -1,0 +1,13 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Edit Reclamation{% endblock %}
+
+{% block body %}
+	<h1>Edit Reclamation</h1>
+
+	{{ include('reclamation/_form.html.twig', {'button_label': 'Update'}) }}
+{% endblock %}
+
+{% block cjs %}
+	{# Add any custom JS here if needed later #}
+{% endblock %}
