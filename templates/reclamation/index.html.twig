@@ -44,7 +44,7 @@
 						<thead>
 							<tr>
 								<th>ID</th>
-								<th>User</th>
+								<th>Employé</th>
 								<th>Type</th>
 								<th>Message</th>
 								<th>Status</th>
@@ -58,13 +58,19 @@
 									<td>{{ reclamation.id }}</td>
 									<td>{{ reclamation.employeeName }}</td>
 									<td>{{ reclamation.type }}</td>
-									<td>{{ reclamation.description|length > 30 ? reclamation.description[:30] ~ '...' : reclamation.description }}</td>
+									<td>
+										{{ reclamation.description|length > 30 
+											? reclamation.description|slice(0, 30) ~ '...' 
+											: reclamation.description }}
+									</td>
 									<td>
 										<span class="badge bg-{{ reclamation.status == 'resolved' ? 'success' : 'warning' }}">
-											{{ reclamation.status|capitalize }}
+											{{ reclamation.status ? reclamation.status|capitalize : 'Pending' }}
 										</span>
 									</td>
-									<td>{{ reclamation.dateOfSubmission ? reclamation.dateOfSubmission|date('Y-m-d H:i') : '' }}</td>
+									<td>
+										{{ reclamation.dateOfSubmission ? reclamation.dateOfSubmission|date('Y-m-d H:i') : '' }}
+									</td>
 									<td>
 										<form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
 											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
@@ -82,7 +88,7 @@
 								</tr>
 							{% else %}
 								<tr>
-									<td colspan="7">Pas de reclamations.</td>
+									<td colspan="7" class="text-center">Pas de réclamations.</td>
 								</tr>
 							{% endfor %}
 						</tbody>

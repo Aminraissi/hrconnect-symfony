@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class ReclamationType extends AbstractType
 {
@@ -43,6 +44,11 @@ class ReclamationType extends AbstractType
                     'Moyenne' => 'Medium',
                     'Élevée' => 'High',
                 ],
+                'attr' => ['class' => 'form-control']
+            ])
+            ->add('dateOfSubmission', DateType::class, [
+                'label' => 'Date de soumission',
+                'widget' => 'single_text',
                 'attr' => ['class' => 'form-control']
             ]);
     }

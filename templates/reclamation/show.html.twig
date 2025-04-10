@@ -12,8 +12,8 @@
 				<td>{{ reclamation.id }}</td>
 			</tr>
 			<tr>
-				<th>User</th>
-				<td>{{ reclamation.user ? reclamation.user.fullName : 'N/A' }}</td>
+				<th>Employé</th>
+				<td>{{ reclamation.employeeName }}</td>
 			</tr>
 			<tr>
 				<th>Type</th>
@@ -21,7 +21,7 @@
 			</tr>
 			<tr>
 				<th>Message</th>
-				<td>{{ reclamation.reclamation }}</td>
+				<td>{{ reclamation.description }}</td>
 			</tr>
 			<tr>
 				<th>Status</th>
@@ -29,7 +29,7 @@
 			</tr>
 			<tr>
 				<th>Date</th>
-				<td>{{ reclamation.date ? reclamation.date|date('Y-m-d H:i:s') : '' }}</td>
+				<td>{{ reclamation.dateOfSubmission ? reclamation.dateOfSubmission|date('Y-m-d H:i:s') : '' }}</td>
 			</tr>
 		</tbody>
 	</table>
