@@ -1,45 +1,46 @@
-{% extends 'base.html.twig' %}
+{% extends 'back_office.html.twig' %}
 
-{% block title %}User index{% endblock %}
+{% block title %}User index
+{% endblock %}
 
 {% block body %}
-    <h1>User index</h1>
+	<h1>User index</h1>
 
-    <table class="table col-xl-12 col-sm-12 col-12 mb-4">
-        <thead>
-            <tr>
-                <th>Cin</th>
-                <th>Tel</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Id</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.cin }}</td>
-                <td>{{ user.tel }}</td>
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles|join(', ') }}</td>
-                <td>{{ user.id }}</td>
-                <td>
-                    <a class="btn btn-info" href="{{ path('app_user_show', {'cin': user.cin}) }}">show</a>
-                    <a class="btn btn-warning" href="{{ path('app_user_edit', {'cin': user.cin}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<table class="table col-xl-12 col-sm-12 col-12 mb-4">
+		<thead>
+			<tr>
+				<th>Cin</th>
+				<th>Tel</th>
+				<th>Nom</th>
+				<th>Prenom</th>
+				<th>Email</th>
+				<th>Roles</th>
+				<th>Id</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+				<tr>
+					<td>{{ user.cin }}</td>
+					<td>{{ user.tel }}</td>
+					<td>{{ user.nom }}</td>
+					<td>{{ user.prenom }}</td>
+					<td>{{ user.email }}</td>
+					<td>{{ user.roles|join(', ') }}</td>
+					<td>{{ user.id }}</td>
+					<td>
+						<a class="btn btn-info" href="{{ path('app_user_show', {'cin': user.cin}) }}">show</a>
+						<a class="btn btn-warning" href="{{ path('app_user_edit', {'cin': user.cin}) }}">edit</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="9">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
-    <a href="{{ path('app_user_new') }}" class="btn-add">Create new</a>
+	<a href="{{ path('app_user_new') }}" class="btn-add">Create new</a>
 {% endblock %}
