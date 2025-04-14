@@ -1,0 +1,15 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}New DemandeConge{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Create new DemandeConge</h1>
+
+        {{ include('demande_conge/_form.html.twig') }}
+
+        <a class="btn btn-secondary mt-3" href="{{ path('app_demande_conge_index') }}">
+            <i class="fas fa-arrow-left me-2"></i>Back to list
+        </a>
+    </div>
+{% endblock %}

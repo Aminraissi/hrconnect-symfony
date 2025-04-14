@@ -1,0 +1,31 @@
+<div class="container mt-5">
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {# Display a general error alert if there are any errors in the form #}
+    {% if not form.vars.valid %}
+        <div class="alert alert-danger">
+            There were errors in the form. Please correct them before submitting.
+        </div>
+    {% endif %}
+
+    <div class="mb-4">
+        {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label fs-4'}}) }}
+        {{ form_widget(form.statut, {'attr': {'class': 'form-select form-control-lg'}}) }}
+        <div class="text-danger">{{ form_errors(form.statut) }}</div>
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.commentaire, null, {'label_attr': {'class': 'form-label fs-4'}}) }}
+        {{ form_widget(form.commentaire, {'attr': {'class': 'form-control form-control-lg'}}) }}
+        <div class="text-danger">{{ form_errors(form.commentaire) }}</div>
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.demandeConge, null, {'label_attr': {'class': 'form-label fs-4'}}) }}
+        {{ form_widget(form.demandeConge, {'attr': {'class': 'form-select form-control-lg'}}) }}
+        <div class="text-danger">{{ form_errors(form.demandeConge) }}</div>
+    </div>
+
+    <button type="submit" class="btn btn-warning btn-lg">{{ button_label|default('Save') }}</button>
+    {{ form_end(form) }}
+</div>

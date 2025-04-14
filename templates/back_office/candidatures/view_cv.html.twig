@@ -1,0 +1,196 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+    Visualisation du CV - {{ candidature.nom }} {{ candidature.prenom }}
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .cv-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+        
+        .cv-viewer {
+            flex: 1;
+            height: 800px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .cv-analysis {
+            flex: 1;
+            height: 800px;
+            overflow-y: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .analysis-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .analysis-section h3 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            background-color: #e9f5ff;
+            color: #007bff;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        .experience-item, .education-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .experience-item h4, .education-item h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .experience-dates, .education-dates {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .loading-indicator {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-indicator i {
+            font-size: 2em;
+            color: #007bff;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-12 col-sm-12 col-12">
+            <div class="breadcrumb-path mb-4">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('back.candidatures.index') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Candidatures</a>
+                    </li>
+                    <li class="breadcrumb-item active">CV de {{ candidature.nom }} {{ candidature.prenom }}</li>
+                </ul>
+                <h3>Visualisation du CV</h3>
+            </div>
+        </div>
+        
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">CV de {{ candidature.nom }} {{ candidature.prenom }} - {{ candidature.offre.titre }}</h3>
+                    <div class="card-tools">
+                        <a href="{{ path('back.candidatures.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                        {% if analysis is null %}
+                            <a href="{{ path('back.candidatures.analyze_cv', {'id': candidature.id}) }}" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Analyser le CV
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="cv-container">
+                        <div class="cv-viewer">
+                            <iframe src="{{ asset('uploads/cv/' ~ candidature.cv) }}" width="100%" height="100%" frameborder="0"></iframe>
+                        </div>
+                        
+                        <div class="cv-analysis">
+                            {% if analysis is null %}
+                                <div class="text-center p-5">
+                                    <i class="fas fa-file-search fa-4x mb-3 text-muted"></i>
+                                    <h3 class="text-muted">Analyse du CV</h3>
+                                    <p class="lead">Cliquez sur le bouton "Analyser le CV" pour obtenir une analyse détaillée du CV.</p>
+                                </div>
+                            {% else %}
+                                <div id="analysis-results">
+                                    <div class="analysis-section">
+                                        <h3><i class="fas fa-clipboard-list mr-2"></i> Résumé</h3>
+                                        <p>{{ analysis.summary|default('Aucun résumé disponible')|nl2br }}</p>
+                                    </div>
+                                    
+                                    <div class="analysis-section">
+                                        <h3><i class="fas fa-tools mr-2"></i> Compétences</h3>
+                                        {% if analysis.skills|length > 0 %}
+                                            <div>
+                                                {% for skill in analysis.skills %}
+                                                    <span class="skill-tag">{{ skill }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">Aucune compétence détectée</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="analysis-section">
+                                        <h3><i class="fas fa-briefcase mr-2"></i> Expérience professionnelle</h3>
+                                        {% if analysis.experience|length > 0 %}
+                                            {% for exp in analysis.experience %}
+                                                <div class="experience-item">
+                                                    <h4>{{ exp.jobTitle }} - {{ exp.organization }}</h4>
+                                                    <div class="experience-dates">{{ exp.dates }}</div>
+                                                    <p>{{ exp.description|nl2br }}</p>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="text-muted">Aucune expérience professionnelle détectée</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="analysis-section">
+                                        <h3><i class="fas fa-graduation-cap mr-2"></i> Formation</h3>
+                                        {% if analysis.education|length > 0 %}
+                                            {% for edu in analysis.education %}
+                                                <div class="education-item">
+                                                    <h4>{{ edu.degree }}</h4>
+                                                    <div class="education-dates">{{ edu.institution }} | {{ edu.dates }}</div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="text-muted">Aucune formation détectée</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation des icônes Feather
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
+{% endblock %}

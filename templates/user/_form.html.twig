@@ -1,0 +1,24 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+<table>
+    {% for field in form %}
+        <tr>
+            <td>{{ form_label(field) }}</td>
+            <td>{{ form_widget(field) }}</td>
+            <td>
+                {% if field.vars.errors|length > 0 %}
+                    <div class="alert alert-danger">
+                        {% for error in field.vars.errors %}
+                            <span>{{ error.message }}</span><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="3" style="text-align: right;">
+            <button class="btn-add">{{ button_label|default('Save') }}</button>
+        </td>
+    </tr>
+</table>
+{{ form_end(form) }}

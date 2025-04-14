@@ -36,58 +36,92 @@
 						</a>
 					</li>
 					<li>
-	                    <a href="{{ path('app_reclamation_index') }}"><img src="{{ asset('assets/img/report.svg') }}" alt="sidebar_img">
-		                     <span>Réclamations</span>
-	                       </a>
-                    </li>
+						<a href="{{ path('app_reclamation_index') }}"><img src="{{ asset('assets/img/report.svg') }}" alt="sidebar_img">
+							<span>Réclamations</span>
+						</a>
+					</li>
 
+
+					<li>
+						<a href="{{ url('app_user_index') }}"><img src="{{ asset('assets/img/profile.svg') }}" alt="sidebar_img">
+							<span>Utilisateurs</span>
+						</a>
+					</li>
+					<li>
+						<a href="{{ url('back.candidatures.index') }}"><img src="{{ asset('assets/img/employee.svg') }}" alt="sidebar_img">
+							<span>Candidatures</span>
+							<a href="{{ url('app_demande_conge_index') }}"><img src="{{ asset('assets/img/profile.svg') }}" alt="sidebar_img">
+								<span>Demande Congé</span>
+							</a>
+						</li>
+					</li>
+					<li>
+						<a href="{{ url('app_valider_conge_index') }}"><img src="{{ asset('assets/img/profile.svg') }}" alt="sidebar_img">
+							<span>Validé Congé</span>
+						</a>
+					</li>
+					<li>
+						<a href="{{ url('app_absence_index') }}"><img src="{{ asset('assets/img/profile.svg') }}" alt="sidebar_img">
+							<span>Absence</span>
+						</a>
+					</li>
+					<li>
+						<a href="{{ url('back.offres_emploi.index') }}"><img src="{{ asset('assets/img/employee.svg') }}" alt="sidebar_img">
+							<span>Offres d'emploi (Admin)</span>
+						</a>
+					</li>
+					<li>
+						<a href="{{ url('back.candidat.offres_emploi.index') }}"><img src="{{ asset('assets/img/employee.svg') }}" alt="sidebar_img">
+							<span>Offres d'emploi (Candidat)</span>
+						</a>
+					</li>
 					{# <li>
-																					<a href="#"><img src="{{ asset('assets/img/employee.svg') }}" alt="sidebar_img"><span>
-																							Employees</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/company.svg') }}" alt="sidebar_img">
-																						<span>
-																							Company</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/calendar.svg') }}" alt="sidebar_img">
-																						<span>Calendar</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/leave.svg') }}" alt="sidebar_img">
-																						<span>Leave</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/review.svg') }}" alt="sidebar_img"><span>Review</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/report.svg') }}" alt="sidebar_img"><span>Report</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/manage.svg') }}" alt="sidebar_img">
-																						<span>Manage</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/settings.svg') }}" alt="sidebar_img"><span>Settings</span>
-																					</a>
-																				</li>
-																				<li>
-																					<a href="#"><img src="{{ asset('assets/img/profile.svg') }}" alt="sidebar_img">
-																						<span>Profile</span>
-																					</a>
-																				</li> #}
+																																																																																																<a href="#"><img src="{{ asset('assets/img/employee.svg') }}" alt="sidebar_img"><span>
+																																																																																																		Employees</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/company.svg') }}" alt="sidebar_img">
+																																																																																																	<span>
+																																																																																																		Company</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/calendar.svg') }}" alt="sidebar_img">
+																																																																																																	<span>Calendar</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/leave.svg') }}" alt="sidebar_img">
+																																																																																																	<span>Leave</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/review.svg') }}" alt="sidebar_img"><span>Review</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/report.svg') }}" alt="sidebar_img"><span>Report</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/manage.svg') }}" alt="sidebar_img">
+																																																																																																	<span>Manage</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/settings.svg') }}" alt="sidebar_img"><span>Settings</span>
+																																																																																																</a>
+																																																																																															</li>
+																																																																																															<li>
+																																																																																																<a href="#"><img src="{{ asset('assets/img/profile.svg') }}" alt="sidebar_img">
+																																																																																																	<span>Profile</span>
+																																																																																																</a>
+																																																																																															</li> #}
 				</ul>
 				<ul class="logout">
 					<li>
-						<a href="#"><img src="{{ asset('assets/img/logout.svg') }}" alt="sidebar_img"><span>Log out</span>
+						<a href="/logout"><img src="{{ asset('assets/img/logout.svg') }}" alt="sidebar_img"><span>Log out</span>
 						</a>
 					</li>
 				</ul>

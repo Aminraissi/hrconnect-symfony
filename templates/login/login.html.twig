@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+<div class="container">
+
+    <div class="cover">
+        <div class="front">
+            <img src="{{ asset('images/frontImg.jpg') }}" alt="">
+            <div class="text">
+                <span class="text-1">HR Connect <br></span>
+                <span class="text-2">Learn a new thing everyday</span>
+            </div>
+        </div>
+        <div class="back">
+            <img class="backImg" src="{{ asset('images/backImg.jpg') }}" alt="">
+        </div>
+    </div>
+
+    <div class="forms">
+        <div class="form-content">
+
+            {# -------- LOGIN FORM -------- #}
+            <div class="login-form">
+                <div class="title">Login</div>
+                <form method="post" action="{{ path('login') }}">
+                    {% if error %}
+                        <div style="color: red;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    <div class="input-boxes">
+                        <div class="input-box">
+                            <i class="fas fa-envelope"></i>
+                            <input 
+                                type="text" 
+                                name="email" 
+                                placeholder="Enter your email" 
+                                value="{{ last_username }}"
+                                autocomplete="email"
+                            >
+                        </div>
+                        <div class="input-box">
+                            <i class="fas fa-lock"></i>
+                            <input 
+                                type="password" 
+                                name="password" 
+                                placeholder="Enter your password" 
+                                autocomplete="current-password"
+                            >
+                        </div>
+                        <div class="text sign-up-text" style="text-align: right; margin-top: 10px;">
+    <a href="{{ path('forgot_password') }}">Forgot Password?</a>
+</div>
+
+
+                        {# CSRF Token #}
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <div class="button input-box">
+                            <input type="submit" value="Login">
+                        </div>
+
+                        <div class="text sign-up-text">
+                            Don't have an account? <a href="{{ path('signup') }}">Signup now</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

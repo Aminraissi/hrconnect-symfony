@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\OffreEmploi;
@@ -16,28 +15,25 @@ class OffreEmploiRepository extends ServiceEntityRepository
         parent::__construct($registry, OffreEmploi::class);
     }
 
-    //    /**
-    //     * @return OffreEmploi[] Returns an array of OffreEmploi objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('o')
-    //            ->andWhere('o.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('o.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findAllActive(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.isActive = :active')
+            ->setParameter('active', true)
+            ->orderBy('o.datePublication', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?OffreEmploi
-    //    {
-    //        return $this->createQueryBuilder('o')
-    //            ->andWhere('o.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findByTypeContrat(string $typeContrat): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.typeContrat = :typeContrat')
+            ->andWhere('o.isActive = :active')
+            ->setParameter('typeContrat', $typeContrat)
+            ->setParameter('active', true)
+            ->orderBy('o.datePublication', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

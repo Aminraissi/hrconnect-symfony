@@ -45,6 +45,17 @@
 
 			<div class="page-wrapper">
 				<div class="content container-fluid">
+					{% for label, messages in app.flashes %}
+						{% for message in messages %}
+							<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+								{{ message|raw }}
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+						{% endfor %}
+					{% endfor %}
+
 					{% block body %}
 						body
 					{% endblock %}

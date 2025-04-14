@@ -1,10 +1,10 @@
 <div class="header">
 
 	<div class="header-left">
-		<a href="{{ asset('index.html') }}" class="logo">
+		<a href="{{ path('app_back_office') }}" class="logo">
 			<img src="{{ asset('assets/img/logo.png') }}" alt="Logo">
 		</a>
-		<a href="{{ asset('index.html') }}" class="logo logo-small">
+		<a href="{{ path('app_back_office') }}" class="logo logo-small">
 			<img src="{{ asset('assets/img/logo-small.png') }}" alt="Logo" width="30" height="30">
 		</a>
 		<a href="javascript:void(0);" id="toggle_btn">
@@ -45,7 +45,7 @@
 				<div class="noti-content">
 					<ul class="notification-list">
 						<li class="notification-message">
-							<a href="{{ asset('activities.html') }}">
+							<a href="{{ path('app_back_office') }}">
 								<div class="media">
 									<span class="avatar avatar-sm">
 										<img class="avatar-img rounded-circle" alt="" src="{{ asset('assets/img/profiles/avatar-02.jpg') }}">
@@ -64,7 +64,7 @@
 							</a>
 						</li>
 						<li class="notification-message">
-							<a href="{{ asset('activities.html') }}">
+							<a href="{{ path('app_back_office') }}">
 								<div class="media">
 									<span class="avatar avatar-sm">
 										<img class="avatar-img rounded-circle" alt="" src="{{ asset('assets/img/profiles/avatar-03.jpg') }}">
@@ -83,7 +83,7 @@
 							</a>
 						</li>
 						<li class="notification-message">
-							<a href="{{ asset('activities.html') }}">
+							<a href="{{ path('app_back_office') }}">
 								<div class="media">
 									<div class="avatar avatar-sm">
 										<span class="avatar-title rounded-circle bg-primary-light">
@@ -102,7 +102,7 @@
 							</a>
 						</li>
 						<li class="notification-message">
-							<a href="{{ asset('activities.html') }}">
+							<a href="{{ path('app_back_office') }}">
 								<div class="media">
 									<span class="avatar avatar-sm">
 										<img class="avatar-img rounded-circle" alt="" src="{{ asset('assets/img/profiles/avatar-04.jpg') }}">
@@ -121,7 +121,7 @@
 							</a>
 						</li>
 						<li class="notification-message">
-							<a href="{{ asset('activities.html') }}">
+							<a href="{{ path('app_back_office') }}">
 								<div class="media">
 									<div class="avatar avatar-sm">
 										<span class="avatar-title rounded-circle bg-info-light">
@@ -142,7 +142,7 @@
 					</ul>
 				</div>
 				<div class="topnav-dropdown-footer">
-					<a href="#">View all Notifications</a>
+					<a href="{{ path('app_back_office') }}">View all Notifications</a>
 				</div>
 			</div>
 		</li>
@@ -153,16 +153,21 @@
 					<img src="{{ asset('assets/img/profile.jpg') }}" alt="">
 					<span class="status online"></span>
 				</span>
-				<span>Haythem Dridi</span>
+				{% if app.user %}
+					<span>{{ app.user.nom }}
+						{{ app.user.prenom }}</span>
+				{% else %}
+					<span>Guest</span>
+				{% endif %}
 			</a>
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="{{ asset('profile.html') }}">
+				<a class="dropdown-item" href="{{ path('app_user_profile') }}">
 					<i data-feather="user" class="mr-1"></i>
 					Profile</a>
-				<a class="dropdown-item" href="{{ asset('settings.html') }}">
+				<a class="dropdown-item" href="{{ path('app_back_office') }}">
 					<i data-feather="settings" class="mr-1"></i>
 					Settings</a>
-				<a class="dropdown-item" href="{{ asset('login.html') }}">
+				<a class="dropdown-item" href="{{ path('app_back_office') }}">
 					<i data-feather="log-out" class="mr-1"></i>
 					Logout</a>
 			</div>
@@ -174,9 +179,7 @@
 			<i class="fa fa-ellipsis-v"></i>
 		</a>
 		<div class="dropdown-menu dropdown-menu-right ">
-			<a class="dropdown-item" href="{{ asset('profile.html') }}">My Profile</a>
-			<a class="dropdown-item" href="{{ asset('settings.html') }}">Settings</a>
-			<a class="dropdown-item" href="{{ asset('login.html') }}">Logout</a>
+			<<<<<<<HEAD<aclass="dropdown-item"href="{{path('app_user_profile')}}">MyProfile</a><aclass="dropdown-item"href="{{asset('settings.html')}}">Settings</a><aclass="dropdown-item"href="{{asset('login.html')}}">Logout</a>=======<aclass="dropdown-item"href="{{path('app_back_office')}}">MyProfile</a><aclass="dropdown-item"href="{{path('app_back_office')}}">Settings</a><aclass="dropdown-item"href="{{path('app_back_office')}}">Logout</a>>>>>>>> main
 		</div>
 	</div>
 
