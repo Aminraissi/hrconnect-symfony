@@ -35,6 +35,12 @@
 							<span>Formations</span>
 						</a>
 					</li>
+
+					<li>
+						<a href="{{ url('app_user_index') }}"><img src="{{ asset('assets/img/profile.svg') }}" alt="sidebar_img">
+							<span>Utilisateurs</span>
+						</a>
+					</li>
 					{# <li>
 																					<a href="#"><img src="{{ asset('assets/img/employee.svg') }}" alt="sidebar_img"><span>
 																							Employees</span>
@@ -81,7 +87,7 @@
 				</ul>
 				<ul class="logout">
 					<li>
-						<a href="#"><img src="{{ asset('assets/img/logout.svg') }}" alt="sidebar_img"><span>Log out</span>
+						<a href="/logout"><img src="{{ asset('assets/img/logout.svg') }}" alt="sidebar_img"><span>Log out</span>
 						</a>
 					</li>
 				</ul>

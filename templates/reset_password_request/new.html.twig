@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ResetPasswordRequest{% endblock %}
+
+{% block body %}
+    <h1>Create new ResetPasswordRequest</h1>
+
+    {{ include('reset_password_request/_form.html.twig') }}
+
+    <a href="{{ path('app_reset_password_request_index') }}">back to list</a>
+{% endblock %}

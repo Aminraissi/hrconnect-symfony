@@ -153,10 +153,13 @@
 					<img src="{{ asset('assets/img/profile.jpg') }}" alt="">
 					<span class="status online"></span>
 				</span>
-				<span>Haythem Dridi</span>
-			</a>
+{% if app.user %}
+        <span>{{ app.user.nom }} {{ app.user.prenom }}</span>
+    {% else %}
+        <span>Guest</span>
+    {% endif %}			</a>
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="{{ asset('profile.html') }}">
+				<a class="dropdown-item" href="{{ path('app_user_profile') }}">
 					<i data-feather="user" class="mr-1"></i>
 					Profile</a>
 				<a class="dropdown-item" href="{{ asset('settings.html') }}">
@@ -174,7 +177,7 @@
 			<i class="fa fa-ellipsis-v"></i>
 		</a>
 		<div class="dropdown-menu dropdown-menu-right ">
-			<a class="dropdown-item" href="{{ asset('profile.html') }}">My Profile</a>
+			<a class="dropdown-item" href="{{ path('app_user_profile') }}">My Profile</a>
 			<a class="dropdown-item" href="{{ asset('settings.html') }}">Settings</a>
 			<a class="dropdown-item" href="{{ asset('login.html') }}">Logout</a>
 		</div>
