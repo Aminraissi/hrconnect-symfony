@@ -41,6 +41,10 @@ class CandidatureSimpleNewType extends AbstractType
                         'max' => 100,
                         'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
                         'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères'
+                    ]),
+                    new Regex([
+                        'pattern' => '/^[a-zA-ZÀ-ÿ\s\-\']+$/',
+                        'message' => 'Le nom ne doit contenir que des lettres, espaces, tirets ou apostrophes'
                     ])
                 ]
             ])
@@ -55,6 +59,10 @@ class CandidatureSimpleNewType extends AbstractType
                         'max' => 100,
                         'minMessage' => 'Le prénom doit contenir au moins {{ limit }} caractères',
                         'maxMessage' => 'Le prénom ne peut pas dépasser {{ limit }} caractères'
+                    ]),
+                    new Regex([
+                        'pattern' => '/^[a-zA-ZÀ-ÿ\s\-\']+$/',
+                        'message' => 'Le prénom ne doit contenir que des lettres, espaces, tirets ou apostrophes'
                     ])
                 ]
             ])
@@ -74,8 +82,8 @@ class CandidatureSimpleNewType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Le téléphone est obligatoire']),
                     new Regex([
-                        'pattern' => '/^[0-9\s\+\-\.]{8,}$/',
-                        'message' => 'Le numéro de téléphone n\'est pas valide'
+                        'pattern' => '/^[0-9]{8,}$/',
+                        'message' => 'Le numéro de téléphone doit contenir uniquement des chiffres (minimum 8)'
                     ])
                 ]
             ])

@@ -38,9 +38,18 @@ class CandidatureController extends AbstractController
     public function index(CandidatureRepository $repository, OffreEmploiRepository $offreRepository, Request $request): Response
     {
         $offreId = $request->query->get('offre');
-        $candidatures = $offreId
-            ? $repository->findBy(['offreEmploi' => $offreId], ['id' => 'DESC'])
-            : $repository->findBy([], ['id' => 'DESC']);
+        $status = $request->query->get('statut'); // Garder 'statut' dans l'URL pour compatibilité
+
+        // Construire les critères de recherche
+        $criteria = [];
+        if ($offreId) {
+            $criteria['offreEmploi'] = $offreId;
+        }
+        if ($status) {
+            $criteria['status'] = $status; // Utiliser 'status' pour la recherche
+        }
+
+        $candidatures = $repository->findBy($criteria, ['id' => 'DESC']);
 
         return $this->render('back_office/candidatures/index.html.twig', [
             'candidatures' => $candidatures,
@@ -96,11 +105,27 @@ class CandidatureController extends AbstractController
     public function delete(Candidature $candidature): Response
     {
         try {
+            // Envoyer un email de refus avant de supprimer la candidature
+            $candidat = $candidature->getCandidat();
+            $offreEmploi = $candidature->getOffreEmploi();
+
+            if ($candidat && $offreEmploi) {
+                $this->logger->info('Tentative d\'envoi d\'email de refus à : ' . $candidat->getEmail());
+                $emailSent = $this->emailService->sendEmail($candidature, 'rejected');
+
+                if ($emailSent) {
+                    $this->logger->info('Email de refus envoyé avec succès à : ' . $candidat->getEmail());
+                } else {
+                    $this->logger->warning('Impossible d\'envoyer l\'email de refus à : ' . $candidat->getEmail());
+                }
+            }
+
+            // Supprimer la candidature
             $this->em->remove($candidature);
             $this->em->flush();
 
-            $this->logger->info('Candidature supprimée : ' . $candidature->getCandidat()->getFirstName() . ' ' . $candidature->getCandidat()->getLastName());
-            $this->addFlash('success', 'La candidature a été supprimée avec succès');
+            $this->logger->info('Candidature supprimée : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
+            $this->addFlash('success', 'La candidature a été supprimée avec succès et un email de notification a été envoyé au candidat.');
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de la suppression de la candidature : ' . $e->getMessage());
             $this->addFlash('error', 'Une erreur est survenue lors de la suppression de la candidature.');
@@ -353,7 +378,7 @@ class CandidatureController extends AbstractController
                 $entityManager->persist($candidature);
                 $entityManager->flush();
 
-                $this->logger->info('Candidature créée avec succès pour l\'offre : ' . $offre->getTitre());
+                $this->logger->info('Candidature créée avec succès pour l\'offre : ' . $offre->getTitle());
                 $this->addFlash('success', 'Votre candidature a été envoyée avec succès !');
 
                 // Redirection vers la page des offres d'emploi pour les candidats

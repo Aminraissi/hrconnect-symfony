@@ -4,6 +4,61 @@
 	Liste des offres d'emploi
 {% endblock %}
 
+{% block css %}
+	{{ parent() }}
+	<style>
+		.btn-success {
+			background-color: #28a745;
+			color: white;
+			border-radius: 5px;
+			padding: 5px 10px;
+			margin-right: 5px;
+			display: inline-block;
+		}
+		.btn-success:hover {
+			background-color: #218838;
+		}
+		.btn-info {
+			background-color: #17a2b8;
+			color: white;
+			border-radius: 5px;
+			padding: 5px 10px;
+			margin-right: 5px;
+			display: inline-block;
+		}
+		.btn-info:hover {
+			background-color: #138496;
+		}
+		.btn-warning {
+			background-color: #ffc107;
+			color: white;
+			border-radius: 5px;
+			padding: 5px 10px;
+			margin-right: 5px;
+			display: inline-block;
+		}
+		.btn-warning:hover {
+			background-color: #e0a800;
+		}
+		.btn-danger {
+			background-color: #dc3545;
+			color: white;
+			border-radius: 5px;
+			padding: 5px 10px;
+			margin-right: 5px;
+			display: inline-block;
+		}
+		.btn-danger:hover {
+			background-color: #c82333;
+		}
+		.action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
 	<div class="row">
 		<div class="col-xl-12 col-sm-12 col-12">
@@ -36,16 +91,6 @@
 				<div class="col-xl-10 col-sm-8 col-12 ">
 					<label class="employee_count">{{ offres|length }} Offres</label>
 				</div>
-				<div class="col-xl-1 col-sm-2 col-12 ">
-					<a href="#" class="btn-view ">
-						<i data-feather="grid"></i>
-					</a>
-				</div>
-				<div class="col-xl-1 col-sm-2 col-12 ">
-					<a href="#" class="btn-view active">
-						<i data-feather="list"></i>
-					</a>
-				</div>
 			</div>
 		</div>
 		<div class="col-xl-12 col-sm-12 col-12 mb-4">
@@ -59,6 +104,7 @@
 							<tr>
 								<th>Titre</th>
 								<th>Localisation</th>
+								<th>Statut</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
@@ -76,15 +122,38 @@
 										<label class="action_label2">{{ offre.location }}</label>
 									</td>
 									<td>
+										{% set hasActiveCandidatures = false %}
+										{% for candidature in offre.candidatures %}
+											{% if candidature.status == 'acceptee' %}
+												{% set hasActiveCandidatures = true %}
+											{% endif %}
+										{% endfor %}
+
+										{% if hasActiveCandidatures %}
+											<span class="badge badge-success">Pourvue</span>
+										{% else %}
+											<div class="dropdown">
+												<button class="btn btn-sm dropdown-toggle {% if offre.isActive %}btn-primary{% else %}btn-secondary{% endif %}" type="button" id="dropdownMenuButton{{ offre.id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													{% if offre.isActive %}Active{% else %}Inactive{% endif %}
+												</button>
+												<div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ offre.id }}">
+													<a class="dropdown-item" href="{{ path('back.offres_emploi.change_status', {'id': offre.id, 'newStatus': 'active'}) }}">Active</a>
+													<a class="dropdown-item" href="{{ path('back.offres_emploi.change_status', {'id': offre.id, 'newStatus': 'inactive'}) }}">Inactive</a>
+													<a class="dropdown-item" href="{{ path('back.offres_emploi.change_status', {'id': offre.id, 'newStatus': 'pourvue'}) }}">Pourvue</a>
+												</div>
+											</div>
+										{% endif %}
+									</td>
+									<td>
 										<div class="action">
-											<a href="{{ path('app_public_offre_emploi_show', {'id': offre.id}) }}" class="action-view" target="_blank">
-												<i data-feather="eye"></i>
+											<a href="{{ path('app_public_offre_emploi_show', {'id': offre.id}) }}" class="btn btn-info" title="Voir l'offre">
+												<i data-feather="eye"></i> Voir
 											</a>
-											<a href="{{ path('back.offres_emploi.edit', {'id': offre.id}) }}" class="action-edit">
-												<i data-feather="edit"></i>
+											<a href="{{ path('back.offres_emploi.edit', {'id': offre.id}) }}" class="btn btn-warning" title="Modifier l'offre">
+												<i data-feather="edit"></i> Modifier
 											</a>
-											<a href="{{ path('back.offres_emploi.delete', {'id': offre.id}) }}" class="action-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')">
-												<i data-feather="trash-2"></i>
+											<a href="{{ path('back.offres_emploi.delete', {'id': offre.id}) }}" class="btn btn-danger" title="Supprimer l'offre" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')">
+												<i data-feather="trash-2"></i> Supprimer
 											</a>
 										</div>
 									</td>
