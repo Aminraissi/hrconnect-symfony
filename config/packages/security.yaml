@@ -35,4 +35,5 @@ security:
         - { path: ^/send-otp, roles: PUBLIC_ACCESS }  # Send OTP is accessible to everyone
         - { path: ^/reset-password, roles: PUBLIC_ACCESS }  # reset password is accessible to everyone
         - { path: ^/verify-otp, roles: PUBLIC_ACCESS }  # Verify OTP is accessible to everyone
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/user/formation, roles: PUBLIC_ACCESS } 
+        - { path: ^/, roles: PUBLIC_ACCESS }

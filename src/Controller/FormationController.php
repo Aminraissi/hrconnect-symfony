@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/formations')]
+#[Route('/backoffice/formations')]
 final class FormationController extends AbstractController
 {
     #[Route(name: 'app_formations_index', methods: ['GET'])]
