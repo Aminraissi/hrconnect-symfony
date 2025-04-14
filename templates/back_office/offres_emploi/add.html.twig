@@ -1,0 +1,120 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+	Ajouter une offre d'emploi
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{ path('app_back_office') }}">
+							<img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>
+							Home
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ path('back.offres_emploi.index') }}">Offres d'emploi</a>
+					</li>
+					<li class="breadcrumb-item active">Ajouter une offre</li>
+				</ul>
+				<h3>Ajouter une offre d'emploi</h3>
+			</div>
+		</div>
+
+        {# Affichage des messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="col-xl-12 col-sm-12 col-12">
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }}">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+		<div class="col-xl-12 col-sm-12 col-12 mb-4">
+			<div class="card">
+				<div class="card-header">
+					<h2>Informations de l'offre</h2>
+				</div>
+				<div class="card-body">
+					<form method="post" action="{{ path('back.offres_emploi.add') }}">
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_titre">Titre de l'offre</label>
+									<input type="text" id="offre_emploi_titre" name="offre_emploi[titre]" class="form-control" placeholder="Ex: Développeur Symfony" required>
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_typeContrat">Type de contrat</label>
+									<select id="offre_emploi_typeContrat" name="offre_emploi[typeContrat]" class="form-control" required>
+										<option value="CDI">CDI</option>
+										<option value="CDD">CDD</option>
+										<option value="Stage">Stage</option>
+										<option value="Alternance">Alternance</option>
+										<option value="Freelance">Freelance</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_localisation">Localisation</label>
+									<input type="text" id="offre_emploi_localisation" name="offre_emploi[localisation]" class="form-control" placeholder="Ex: Paris" required>
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_salaire">Salaire</label>
+									<input type="text" id="offre_emploi_salaire" name="offre_emploi[salaire]" class="form-control" placeholder="Ex: 45-55K€" required>
+								</div>
+							</div>
+							<div class="col-xl-12 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_description">Description</label>
+									<textarea id="offre_emploi_description" name="offre_emploi[description]" class="form-control" rows="5" placeholder="Description détaillée de l'offre" required></textarea>
+								</div>
+							</div>
+							<div class="col-xl-12 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_profilRecherche">Profil recherché</label>
+									<textarea id="offre_emploi_profilRecherche" name="offre_emploi[profilRecherche]" class="form-control" rows="5" placeholder="Profil et compétences recherchés" required></textarea>
+								</div>
+							</div>
+							<div class="col-xl-12 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_avantages">Avantages</label>
+									<textarea id="offre_emploi_avantages" name="offre_emploi[avantages]" class="form-control" rows="3" placeholder="Avantages proposés"></textarea>
+								</div>
+							</div>
+							<div class="col-xl-12 col-sm-12 col-12">
+								<div class="form-group">
+									<label for="offre_emploi_isActive">Statut</label>
+									<select id="offre_emploi_isActive" name="offre_emploi[isActive]" class="form-control">
+										<option value="1">Active</option>
+										<option value="0">Inactive</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-xl-12 col-sm-12 col-12">
+								<div class="form-group text-right">
+									<button type="submit" class="btn btn-primary">Enregistrer</button>
+									<a href="{{ path('back.offres_emploi.index') }}" class="btn btn-secondary">Annuler</a>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('assets/js/simple-correction.js') }}"></script>
+{% endblock %}

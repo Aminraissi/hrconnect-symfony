@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\QuizRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
-use App\Repository\QuizRepository;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 #[ORM\Table(name: 'quiz')]
@@ -44,6 +43,8 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'The question is required.')]
+    #[Assert\Length(max: 255, maxMessage: 'The question must not exceed 255 characters.')]
     private ?string $question = null;
 
     public function getQuestion(): ?string
@@ -58,6 +59,7 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'The first answer is required.')]
     private ?string $reponse1 = null;
 
     public function getReponse1(): ?string
@@ -72,6 +74,7 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: 'The second answer is required.')]
     private ?string $reponse2 = null;
 
     public function getReponse2(): ?string
@@ -86,6 +89,7 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: 'The third answer is required.')]
     private ?string $reponse3 = null;
 
     public function getReponse3(): ?string
@@ -100,6 +104,9 @@ class Quiz
     }
 
     #[ORM\Column(type: 'integer', nullable: false)]
+    #[Assert\NotBlank(message: 'The correct answer number is required.')]
+    #[Assert\Range(min: 1, max: 3, notInRangeMessage: 'The correct answer number must be between {{ min }} and {{ max }}.')]
+
     private ?int $num_reponse_correct = null;
 
     public function getNum_reponse_correct(): ?int
@@ -117,10 +124,10 @@ class Quiz
     #[ORM\JoinTable(
         name: 'quiz_reponses',
         joinColumns: [
-            new ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id'),
         ],
         inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id'),
         ]
     )]
     private Collection $employes;
@@ -135,7 +142,7 @@ class Quiz
      */
     public function getEmployes(): Collection
     {
-        if (!$this->employes instanceof Collection) {
+        if (! $this->employes instanceof Collection) {
             $this->employes = new ArrayCollection();
         }
         return $this->employes;
@@ -143,7 +150,7 @@ class Quiz
 
     public function addEmploye(Employe $employe): self
     {
-        if (!$this->getEmployes()->contains($employe)) {
+        if (! $this->getEmployes()->contains($employe)) {
             $this->getEmployes()->add($employe);
         }
         return $this;

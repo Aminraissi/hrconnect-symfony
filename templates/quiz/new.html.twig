@@ -1,0 +1,32 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}New Quiz
+{% endblock %}
+
+{% block body %}
+
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_back_office') }}">Home</a>
+					</li>
+					<li class="breadcrumb-item active">
+						Training List
+					</li>
+					<li class="breadcrumb-item active">
+						Questions List
+					</li>
+					<li class="breadcrumb-item active">
+						Add New Question
+					</li>
+				</ul>
+				<h3>Add new question</h3>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12">
+			{{ include('quiz/_form.html.twig') }}
+		</div>
+	</div>
+{% endblock %}

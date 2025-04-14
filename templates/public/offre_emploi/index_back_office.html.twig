@@ -1,0 +1,74 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Offres d'emploi{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-12 col-sm-12 col-12">
+            <div class="breadcrumb-path mb-4">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_public_offres_emploi') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Offres d'emploi</li>
+                </ul>
+                <h3>Nos offres d'emploi</h3>
+            </div>
+        </div>
+        
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Découvrez nos opportunités de carrière et rejoignez notre équipe !</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for offre in offres %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">{{ offre.titre }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <span class="badge badge-primary">{{ offre.typeContrat }}</span>
+                                            <span class="badge badge-secondary">{{ offre.localisation }}</span>
+                                        </div>
+                                        <p><strong><i data-feather="dollar-sign" class="mr-1"></i> Salaire:</strong> {{ offre.salaire }}</p>
+                                        <p><strong><i data-feather="calendar" class="mr-1"></i> Publié le:</strong> {{ offre.datePublication|date('d/m/Y') }}</p>
+                                        <p class="text-muted">
+                                            {{ offre.description|striptags|slice(0, 100) }}{% if offre.description|length > 100 %}...{% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-top-0 text-right">
+                                        <a href="{{ path('app_public_offre_emploi_show', {'id': offre.id}) }}" class="btn btn-primary">
+                                            <i data-feather="eye" class="mr-1"></i> Voir l'offre
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i data-feather="info" class="mr-2"></i> Aucune offre d'emploi disponible pour le moment.
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation des icônes Feather
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
+{% endblock %}

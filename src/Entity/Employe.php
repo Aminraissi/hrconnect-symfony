@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
@@ -18,170 +17,32 @@ class Employe
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $cin = null;
-
-    public function getCin(): ?int
-    {
-        return $this->cin;
-    }
-
-    public function setCin(?int $cin): self
-    {
-        $this->cin = $cin;
-        return $this;
-    }
 
     #[ORM\Column(type: 'string', nullable: false)]
     private ?string $nom = null;
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-
     #[ORM\Column(type: 'string', nullable: false)]
     private ?string $prenom = null;
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(string $prenom): self
-    {
-        $this->prenom = $prenom;
-        return $this;
-    }
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-        return $this;
-    }
-
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $password = null;
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(?string $password): self
-    {
-        $this->password = $password;
-        return $this;
-    }
 
     #[ORM\Column(type: 'date', nullable: true)]
     private ?\DateTimeInterface $hiring_date = null;
 
-    public function getHiring_date(): ?\DateTimeInterface
-    {
-        return $this->hiring_date;
-    }
-
-    public function setHiring_date(?\DateTimeInterface $hiring_date): self
-    {
-        $this->hiring_date = $hiring_date;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'soldeConges', type: 'integer', nullable: true)] // Explicitly map the column name
     private ?int $soldeConges = null;
-
-    public function getSoldeConges(): ?int
-    {
-        return $this->soldeConges;
-    }
-
-    public function setSoldeConges(?int $soldeConges): self
-    {
-        $this->soldeConges = $soldeConges;
-        return $this;
-    }
 
     #[ORM\OneToMany(targetEntity: Absence::class, mappedBy: 'employe')]
     private Collection $absences;
 
-    /**
-     * @return Collection<int, Absence>
-     */
-    public function getAbsences(): Collection
-    {
-        if (!$this->absences instanceof Collection) {
-            $this->absences = new ArrayCollection();
-        }
-        return $this->absences;
-    }
-
-    public function addAbsence(Absence $absence): self
-    {
-        if (!$this->getAbsences()->contains($absence)) {
-            $this->getAbsences()->add($absence);
-        }
-        return $this;
-    }
-
-    public function removeAbsence(Absence $absence): self
-    {
-        $this->getAbsences()->removeElement($absence);
-        return $this;
-    }
-
     #[ORM\OneToMany(targetEntity: DemandeConge::class, mappedBy: 'employe')]
     private Collection $demandeConges;
-
-    /**
-     * @return Collection<int, DemandeConge>
-     */
-    public function getDemandeConges(): Collection
-    {
-        if (!$this->demandeConges instanceof Collection) {
-            $this->demandeConges = new ArrayCollection();
-        }
-        return $this->demandeConges;
-    }
-
-    public function addDemandeConge(DemandeConge $demandeConge): self
-    {
-        if (!$this->getDemandeConges()->contains($demandeConge)) {
-            $this->getDemandeConges()->add($demandeConge);
-        }
-        return $this;
-    }
-
-    public function removeDemandeConge(DemandeConge $demandeConge): self
-    {
-        $this->getDemandeConges()->removeElement($demandeConge);
-        return $this;
-    }
 
     #[ORM\ManyToMany(targetEntity: Formation::class, inversedBy: 'employes')]
     #[ORM\JoinTable(
@@ -194,31 +55,6 @@ class Employe
         ]
     )]
     private Collection $formations;
-
-    /**
-     * @return Collection<int, Formation>
-     */
-    public function getFormations(): Collection
-    {
-        if (!$this->formations instanceof Collection) {
-            $this->formations = new ArrayCollection();
-        }
-        return $this->formations;
-    }
-
-    public function addFormation(Formation $formation): self
-    {
-        if (!$this->getFormations()->contains($formation)) {
-            $this->getFormations()->add($formation);
-        }
-        return $this;
-    }
-
-    public function removeFormation(Formation $formation): self
-    {
-        $this->getFormations()->removeElement($formation);
-        return $this;
-    }
 
     #[ORM\ManyToMany(targetEntity: Quiz::class, inversedBy: 'employes')]
     #[ORM\JoinTable(
@@ -240,28 +76,63 @@ class Employe
         $this->quizs = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, Quiz>
-     */
-    public function getQuizs(): Collection
+    public function getId(): ?int
     {
-        if (!$this->quizs instanceof Collection) {
-            $this->quizs = new ArrayCollection();
-        }
-        return $this->quizs;
+        return $this->id;
     }
 
-    public function addQuiz(Quiz $quiz): self
+    public function getCin(): ?int
     {
-        if (!$this->getQuizs()->contains($quiz)) {
-            $this->getQuizs()->add($quiz);
-        }
+        return $this->cin;
+    }
+
+    public function setCin(?int $cin): self
+    {
+        $this->cin = $cin;
         return $this;
     }
 
-    public function removeQuiz(Quiz $quiz): self
+    public function getNom(): ?string
     {
-        $this->getQuizs()->removeElement($quiz);
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): self
+    {
+        $this->prenom = $prenom;
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
         return $this;
     }
 
@@ -270,11 +141,96 @@ class Employe
         return $this->hiring_date;
     }
 
-    public function setHiringDate(?\DateTimeInterface $hiring_date): static
+    public function setHiringDate(?\DateTimeInterface $hiring_date): self
     {
         $this->hiring_date = $hiring_date;
-
         return $this;
     }
 
+    public function getSoldeConges(): ?int
+    {
+        return $this->soldeConges;
+    }
+
+    public function setSoldeConges(?int $soldeConges): self
+    {
+        $this->soldeConges = $soldeConges;
+        return $this;
+    }
+
+    public function getAbsences(): Collection
+    {
+        return $this->absences;
+    }
+
+    public function addAbsence(Absence $absence): self
+    {
+        if (!$this->absences->contains($absence)) {
+            $this->absences->add($absence);
+        }
+        return $this;
+    }
+
+    public function removeAbsence(Absence $absence): self
+    {
+        $this->absences->removeElement($absence);
+        return $this;
+    }
+
+    public function getDemandeConges(): Collection
+    {
+        return $this->demandeConges;
+    }
+
+    public function addDemandeConge(DemandeConge $demandeConge): self
+    {
+        if (!$this->demandeConges->contains($demandeConge)) {
+            $this->demandeConges->add($demandeConge);
+        }
+        return $this;
+    }
+
+    public function removeDemandeConge(DemandeConge $demandeConge): self
+    {
+        $this->demandeConges->removeElement($demandeConge);
+        return $this;
+    }
+
+    public function getFormations(): Collection
+    {
+        return $this->formations;
+    }
+
+    public function addFormation(Formation $formation): self
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations->add($formation);
+        }
+        return $this;
+    }
+
+    public function removeFormation(Formation $formation): self
+    {
+        $this->formations->removeElement($formation);
+        return $this;
+    }
+
+    public function getQuizs(): Collection
+    {
+        return $this->quizs;
+    }
+
+    public function addQuiz(Quiz $quiz): self
+    {
+        if (!$this->quizs->contains($quiz)) {
+            $this->quizs->add($quiz);
+        }
+        return $this;
+    }
+
+    public function removeQuiz(Quiz $quiz): self
+    {
+        $this->quizs->removeElement($quiz);
+        return $this;
+    }
 }

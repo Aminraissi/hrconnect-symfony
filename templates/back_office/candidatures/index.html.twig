@@ -1,0 +1,186 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+	Liste des candidatures
+{% endblock %}
+
+{% block css %}
+	{{ parent() }}
+	<style>
+		.btn-success {
+			background-color: #28a745;
+			color: white;
+			border-radius: 5px;
+			padding: 5px 10px;
+			margin-right: 5px;
+		}
+		.btn-success:hover {
+			background-color: #218838;
+		}
+		.btn-info {
+			background-color: #17a2b8;
+			color: white;
+			border-radius: 5px;
+			padding: 5px 10px;
+			margin-right: 5px;
+		}
+		.btn-info:hover {
+			background-color: #138496;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container-fluid">
+		<div class="row mb-4">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Filtrer par offre</h3>
+					</div>
+					<div class="card-body">
+						<form method="get" class="form-inline">
+							<div class="form-group mr-2">
+								<select name="offre" class="form-control">
+									<option value="">Toutes les offres</option>
+									{% for offre in offres %}
+										<option value="{{ offre.id }}" {% if offreId == offre.id %}selected{% endif %}>
+											{{ offre.titre }}
+										</option>
+									{% endfor %}
+								</select>
+							</div>
+							<button type="submit" class="btn btn-primary">Filtrer</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xl-12 col-sm-12 col-12">
+				<div class="breadcrumb-path mb-4">
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item">
+							<a href="{{ path('app_back_office') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home</a>
+						</li>
+						<li class="breadcrumb-item active">
+							Liste des candidatures</li>
+					</ul>
+					<h3>Candidatures</h3>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 mb-4">
+				<div class="head-link-set">
+					<ul>
+						<li>
+							<a class="active" href="{{ path('back.candidatures.index') }}">Toutes les candidatures</a>
+						</li>
+						<li>
+							<a href="{{ path('back.candidatures.index', {'statut': 'en_attente'}) }}">En attente</a>
+						</li>
+						<li>
+							<a href="{{ path('back.candidatures.index', {'statut': 'en_cours'}) }}">En cours</a>
+						</li>
+						<li>
+							<a href="{{ path('back.candidatures.index', {'statut': 'acceptee'}) }}">Acceptées</a>
+						</li>
+						<li>
+							<a href="{{ path('back.candidatures.index', {'statut': 'refusee'}) }}">Refusées</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 mb-4">
+				<div class="row">
+					<div class="col-xl-10 col-sm-8 col-12">
+						<label class="employee_count">{{ candidatures|length }} Candidatures</label>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 mb-4">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Liste des candidatures</h3>
+						<div class="card-tools">
+							<a href="{{ path('back.offres_emploi.index') }}" class="btn btn-primary">
+								<i class="fas fa-plus"></i> Nouvelle candidature
+							</a>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table custom-table no-footer">
+							<thead>
+								<tr>
+									<th>Nom</th>
+									<th>Email</th>
+									<th>Téléphone</th>
+									<th>Offre</th>
+									<th>Date</th>
+									<th>CV</th>
+									<th>Statut</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for candidature in candidatures %}
+									<tr>
+										<td>
+											<div class="table-img">
+												<a href="#">
+													<label>{{ candidature.nom }} {{ candidature.prenom }}</label>
+												</a>
+											</div>
+										</td>
+										<td>
+											<label>{{ candidature.email }}</label>
+										</td>
+										<td>
+											<label>{{ candidature.telephone }}</label>
+										</td>
+										<td>
+											<label>{{ candidature.offre.titre }}</label>
+										</td>
+										<td>
+											<label>{{ candidature.dateCandidature|date('d/m/Y') }}</label>
+										</td>
+										<td>
+											{% if candidature.cv %}
+											<a href="{{ path('back.candidatures.view_cv', {'id': candidature.id}) }}" class="btn btn-sm btn-info" title="Voir le CV">
+												<i data-feather="file-text"></i> Voir CV
+											</a>
+											{% else %}
+											<span class="text-muted">Non fourni</span>
+											{% endif %}
+										</td>
+										<td>
+											<label class="badge {{ candidature.statut == 'en_attente' ? 'badge-warning' : (candidature.statut == 'en_cours' ? 'badge-info' : (candidature.statut == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
+												{{ candidature.statut|replace({'_': ' '})|title }}
+											</label>
+										</td>
+										<td>
+											<div class="action">
+												{% if candidature.statut != 'acceptee' and candidature.statut != 'refusee' %}
+												<a href="{{ path('back.candidatures.accept', {'id': candidature.id}) }}" class="btn-success" onclick="return confirm('Êtes-vous sûr de vouloir accepter cette candidature ? Cela clôturera l\'offre et refusera toutes les autres candidatures.')">
+													<i data-feather="check"></i>
+												</a>
+												{% endif %}
+												<a href="{{ path('back.candidatures.edit', {'id': candidature.id}) }}" class="btn-edit">
+													<i data-feather="edit"></i>
+												</a>
+												<a href="{{ path('back.candidatures.delete', {'id': candidature.id}) }}" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?')">
+													<i data-feather="trash"></i>
+												</a>
+
+											</div>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
