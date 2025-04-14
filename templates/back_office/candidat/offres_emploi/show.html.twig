@@ -1,0 +1,139 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}{{ offre.titre }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-12 col-sm-12 col-12">
+            <div class="breadcrumb-path mb-4">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('back.candidat.offres_emploi.index') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Offres d'emploi</a>
+                    </li>
+                    <li class="breadcrumb-item active">{{ offre.titre }}</li>
+                </ul>
+                <h3>Détail de l'offre</h3>
+            </div>
+        </div>
+
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{ offre.titre }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Type de contrat</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i data-feather="briefcase"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" value="{{ offre.typeContrat }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Localisation</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i data-feather="map-pin"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" value="{{ offre.localisation }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Salaire</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i data-feather="dollar-sign"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" value="{{ offre.salaire }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Date de publication</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i data-feather="calendar"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" value="{{ offre.datePublication|date('d/m/Y') }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-form-label">Description</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i data-feather="file-text"></i>
+                                        </span>
+                                    </div>
+                                    <textarea class="form-control" rows="4" readonly>{{ offre.description }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-form-label">Profil recherché</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i data-feather="user"></i>
+                                        </span>
+                                    </div>
+                                    <textarea class="form-control" rows="4" readonly>{{ offre.profilRecherche }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if offre.avantages %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-form-label">Avantages</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i data-feather="gift"></i>
+                                        </span>
+                                    </div>
+                                    <textarea class="form-control" rows="4" readonly>{{ offre.avantages }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <a href="{{ path('app_candidat_candidature_new', {'id': offre.id}) }}" class="btn btn-primary">
+                                <i data-feather="send"></i> Postuler à cette offre
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

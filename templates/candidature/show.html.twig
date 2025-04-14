@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidature de {{ candidature.nom }} {{ candidature.prenom }}{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Candidature de {{ candidature.nom }} {{ candidature.prenom }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nom</label>
+                                    <p>{{ candidature.nom }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Prénom</label>
+                                    <p>{{ candidature.prenom }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <p>{{ candidature.email }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Téléphone</label>
+                                    <p>{{ candidature.telephone }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <p>{{ candidature.message }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>CV</label>
+                                    <p>
+                                        <a href="{{ asset('uploads/cv/' ~ candidature.cv) }}" target="_blank" class="btn btn-primary">
+                                            <i class="fas fa-download"></i> Télécharger le CV
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Date de candidature</label>
+                                    <p>{{ candidature.dateCandidature|date('d/m/Y H:i') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <a href="{{ path('app_offre_emploi_show', {'id': candidature.offre.id}) }}" class="btn btn-secondary">
+                                Retour à l'offre
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
