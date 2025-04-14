@@ -1,0 +1,71 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Liste des validations de congé{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Liste des validations de congé</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Employé</th>
+                    <th>Type de congé</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Statut</th>
+                    <th>Commentaire</th>
+                    <th>Date de validation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for valider_conge in valider_conges %}
+                <tr>
+                    <td>
+                        {% if valider_conge.demandeConge and valider_conge.demandeConge.employe %}
+                            <strong>{{ valider_conge.demandeConge.employe.nom }} {{ valider_conge.demandeConge.employe.prenom }}</strong><br>
+                            Email: {{ valider_conge.demandeConge.employe.email }}
+                        {% else %}
+                            <em>Non défini</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if valider_conge.demandeConge %}
+                            {{ valider_conge.demandeConge.typeConge }}
+                        {% else %}
+                            <em>Non défini</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if valider_conge.demandeConge %}
+                            {{ valider_conge.demandeConge.dateDebut ? valider_conge.demandeConge.dateDebut|date('Y-m-d') : '' }}
+                        {% else %}
+                            <em>Non défini</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if valider_conge.demandeConge %}
+                            {{ valider_conge.demandeConge.dateFin ? valider_conge.demandeConge.dateFin|date('Y-m-d') : '' }}
+                        {% else %}
+                            <em>Non défini</em>
+                        {% endif %}
+                    </td>
+                    <td>{{ valider_conge.statut }}</td>
+                    <td>{{ valider_conge.commentaire }}</td>
+                    <td>{{ valider_conge.dateValidation ? valider_conge.dateValidation|date('Y-m-d') : '' }}</td>
+                    <td>
+                        <button class="btn btn-warning" onclick="window.location.href='{{ path('app_valider_conge_edit', {'id': valider_conge.id}) }}'">Modifier</button>
+                        <a href="{{ path('app_valider_conge_delete', {'id': valider_conge.id}) }}" class="btn btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8">Aucune validation trouvée</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
