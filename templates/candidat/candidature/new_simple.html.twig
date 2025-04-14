@@ -1,0 +1,115 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+    Postuler à une offre
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-12 col-sm-12 col-12">
+            <div class="breadcrumb-path mb-4">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('back.candidat.offres_emploi.index') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Offres d'emploi</a>
+                    </li>
+                    <li class="breadcrumb-item active">Postuler</li>
+                </ul>
+                <h3>Postuler à une offre</h3>
+            </div>
+        </div>
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Postuler à l'offre : {{ offre.title }}</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'form-horizontal', 'enctype': 'multipart/form-data'}}) }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form_label(form.candidat_nom, null, {'label_attr': {'class': 'col-form-label'}}) }}
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i data-feather="user"></i>
+                                            </span>
+                                        </div>
+                                        {{ form_widget(form.candidat_nom) }}
+                                    </div>
+                                    {{ form_errors(form.candidat_nom) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form_label(form.candidat_prenom, null, {'label_attr': {'class': 'col-form-label'}}) }}
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i data-feather="user"></i>
+                                            </span>
+                                        </div>
+                                        {{ form_widget(form.candidat_prenom) }}
+                                    </div>
+                                    {{ form_errors(form.candidat_prenom) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form_label(form.candidat_email, null, {'label_attr': {'class': 'col-form-label'}}) }}
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i data-feather="mail"></i>
+                                            </span>
+                                        </div>
+                                        {{ form_widget(form.candidat_email) }}
+                                    </div>
+                                    {{ form_errors(form.candidat_email) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form_label(form.candidat_telephone, null, {'label_attr': {'class': 'col-form-label'}}) }}
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i data-feather="phone"></i>
+                                            </span>
+                                        </div>
+                                        {{ form_widget(form.candidat_telephone) }}
+                                    </div>
+                                    {{ form_errors(form.candidat_telephone) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{ form_label(form.cv, null, {'label_attr': {'class': 'col-form-label'}}) }}
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i data-feather="file"></i>
+                                            </span>
+                                        </div>
+                                        {{ form_widget(form.cv) }}
+                                    </div>
+                                    {{ form_errors(form.cv) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i data-feather="send"></i> Envoyer ma candidature
+                                </button>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

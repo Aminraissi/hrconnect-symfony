@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Candidature;
 use App\Entity\OffreEmploi;
 use App\Form\CandidatureSimpleType;
+use App\Form\CandidatureSimpleNewType;
+use App\Entity\Candidat;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,14 +37,13 @@ class CandidatCandidatureController extends AbstractController
         $candidature = new Candidature();
 
         // Définir l'offre d'emploi avant la validation du formulaire
-        $candidature->setOffre($offre);
-        $candidature->setStatut('en_attente');
-        $candidature->setDateCandidature(new \DateTimeImmutable());
+        $candidature->setOffreEmploi($offre);
+        $candidature->setStatus('En cours');
 
-        $this->logger->info('Offre d\'emploi définie : ' . $offre->getId() . ' - ' . $offre->getTitre());
+        $this->logger->info('Offre d\'emploi définie : ' . $offre->getId() . ' - ' . $offre->getTitle());
 
-        // Utilisation du formulaire simplifié
-        $form = $this->createForm(CandidatureSimpleType::class, $candidature);
+        // Utilisation du nouveau formulaire simplifié
+        $form = $this->createForm(CandidatureSimpleNewType::class, $candidature);
         $form->handleRequest($request);
 
         $this->logger->info('Formulaire soumis: ' . ($form->isSubmitted() ? 'Oui' : 'Non'));
@@ -58,12 +59,38 @@ class CandidatCandidatureController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Création du candidat
+            $candidat = new Candidat();
+            $candidat->setLastName($form->get('candidat_nom')->getData());
+            $candidat->setFirstName($form->get('candidat_prenom')->getData());
+            $candidat->setEmail($form->get('candidat_email')->getData());
+            $candidat->setPhone($form->get('candidat_telephone')->getData());
+
+            // Vérifier si un candidat avec le même email ou téléphone existe déjà
+            $existingCandidat = $this->em->getRepository(Candidat::class)->findOneBy(['email' => $candidat->getEmail()]);
+            if (!$existingCandidat) {
+                $existingCandidat = $this->em->getRepository(Candidat::class)->findOneBy(['phone' => $candidat->getPhone()]);
+            }
+
+            if ($existingCandidat) {
+                // Utiliser le candidat existant
+                $candidat = $existingCandidat;
+                $this->logger->info('Utilisation d\'un candidat existant : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
+            } else {
+                // Persister le nouveau candidat
+                $this->em->persist($candidat);
+                $this->em->flush(); // Flush pour obtenir l'ID du candidat
+                $this->logger->info('Nouveau candidat créé : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
+            }
+
+            // Associer le candidat à la candidature
+            $candidature->setCandidat($candidat);
 
             // Traitement du CV
             $cvFile = $form->get('cv')->getData();
             if (!$cvFile) {
                 $this->addFlash('error', 'Le CV est obligatoire pour postuler à cette offre.');
-                return $this->render('candidat/candidature/new.html.twig', [
+                return $this->render('candidat/candidature/new_simple.html.twig', [
                     'form' => $form->createView(),
                     'offre' => $offre,
                 ]);
@@ -74,43 +101,24 @@ class CandidatCandidatureController extends AbstractController
                 $candidature->setCv($newFilename);
             } else {
                 $this->addFlash('error', 'Une erreur est survenue lors de l\'upload du CV.');
-                return $this->render('candidat/candidature/new.html.twig', [
+                return $this->render('candidat/candidature/new_simple.html.twig', [
                     'form' => $form->createView(),
                     'offre' => $offre,
                 ]);
             }
 
-            // Traitement de la lettre de motivation
-            $lettreMotivationFile = $form->get('lettreMotivation')->getData();
-            if (!$lettreMotivationFile) {
-                $this->addFlash('error', 'La lettre de motivation est obligatoire pour postuler à cette offre.');
-                return $this->render('candidat/candidature/new.html.twig', [
-                    'form' => $form->createView(),
-                    'offre' => $offre,
-                ]);
-            }
-
-            $newFilename = $this->uploadFile($lettreMotivationFile, 'lettre_motivation_directory', $slugger);
-            if ($newFilename) {
-                $candidature->setLettreMotivation($newFilename);
-            } else {
-                $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de la lettre de motivation.');
-                return $this->render('candidat/candidature/new.html.twig', [
-                    'form' => $form->createView(),
-                    'offre' => $offre,
-                ]);
-            }
+            // Note: La lettre de motivation n'est plus utilisée dans la nouvelle structure
 
             // Enregistrer la candidature
             $this->em->persist($candidature);
             $this->em->flush();
 
-            $this->logger->info('Candidature créée avec succès pour l\'offre : ' . $offre->getTitre());
-            $this->addFlash('success', '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitre() . '" a été envoyée avec succès. <br>Nous vous contacterons prochainement pour vous informer de la suite du processus.');
+            $this->logger->info('Candidature créée avec succès pour l\'offre : ' . $offre->getTitle());
+            $this->addFlash('success', '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès. <br>Nous vous contacterons prochainement pour vous informer de la suite du processus.');
             return $this->redirectToRoute('back.candidat.offres_emploi.index');
         }
 
-        return $this->render('candidat/candidature/new.html.twig', [
+        return $this->render('candidat/candidature/new_simple.html.twig', [
             'form' => $form->createView(),
             'offre' => $offre,
         ]);

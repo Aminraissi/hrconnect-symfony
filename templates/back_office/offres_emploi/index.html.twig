@@ -24,12 +24,6 @@
 					<li>
 						<a class="active" href="{{ path('back.offres_emploi.index') }}">Toutes les offres</a>
 					</li>
-					<li>
-						<a href="{{ path('back.offres_emploi.index', {'type': 'cdi'}) }}">Offres en CDI</a>
-					</li>
-					<li>
-						<a href="{{ path('back.offres_emploi.index', {'type': 'cdd'}) }}">Offres en CDD</a>
-					</li>
 				</ul>
 				<a class="btn-add" href="{{ path('back.offres_emploi.add') }}">
 					<i data-feather="plus"></i>
@@ -64,11 +58,7 @@
 						<thead>
 							<tr>
 								<th>Titre</th>
-								<th>Type de contrat</th>
 								<th>Localisation</th>
-								<th>Salaire</th>
-								<th>Date de publication</th>
-								<th>Statut</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
@@ -78,26 +68,12 @@
 									<td>
 										<div class="table-img">
 											<a href="#">
-												<label>{{ offre.titre }}</label>
+												<label>{{ offre.title }}</label>
 											</a>
 										</div>
 									</td>
 									<td>
-										<label class="action_label">{{ offre.typeContrat|upper }}</label>
-									</td>
-									<td>
-										<label class="action_label2">{{ offre.localisation }}</label>
-									</td>
-									<td>
-										<label>{{ offre.salaire }}</label>
-									</td>
-									<td>
-										<label>{{ offre.datePublication|date('d/m/Y') }}</label>
-									</td>
-									<td>
-										<label class="badge {{ offre.isActive ? 'badge-success' : 'badge-danger' }}">
-											{{ offre.isActive ? 'Active' : 'Inactive' }}
-										</label>
+										<label class="action_label2">{{ offre.location }}</label>
 									</td>
 									<td>
 										<div class="action">
@@ -120,4 +96,4 @@
 			</div>
 		</div>
 	</div>
-{% endblock %} 
+{% endblock %}

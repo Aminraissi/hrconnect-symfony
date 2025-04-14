@@ -17,79 +17,50 @@ class OffreEmploi
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 200)]
     #[Assert\NotBlank(message: 'Le titre est obligatoire')]
     #[Assert\Length(
         min: 5,
-        max: 255,
+        max: 200,
         minMessage: 'Le titre doit contenir au moins {{ limit }} caractères',
         maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères'
     )]
-    private ?string $titre = null;
-
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message: 'Le type de contrat est obligatoire')]
-    #[Assert\Choice(
-        choices: ['CDI', 'CDD', 'Stage', 'Alternance', 'Freelance'],
-        message: 'Choisissez un type de contrat valide'
-    )]
-    private ?string $typeContrat = null;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'La localisation est obligatoire')]
-    #[Assert\Length(
-        min: 2,
-        max: 255,
-        minMessage: 'La localisation doit contenir au moins {{ limit }} caractères',
-        maxMessage: 'La localisation ne peut pas dépasser {{ limit }} caractères'
-    )]
-    private ?string $localisation = null;
-
-    #[ORM\Column(length: 100)]
-    #[Assert\NotBlank(message: 'Le salaire est obligatoire')]
-    #[Assert\Length(
-        max: 100,
-        maxMessage: 'Le salaire ne peut pas dépasser {{ limit }} caractères'
-    )]
-    private ?string $salaire = null;
+    private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: 'La description est obligatoire')]
-    #[Assert\Length(
-        min: 50,
-        minMessage: 'La description doit contenir au moins {{ limit }} caractères'
-    )]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: 'Le profil recherché est obligatoire')]
+    #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'La localisation est obligatoire')]
     #[Assert\Length(
-        min: 50,
-        minMessage: 'Le profil recherché doit contenir au moins {{ limit }} caractères'
+        min: 2,
+        max: 100,
+        minMessage: 'La localisation doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'La localisation ne peut pas dépasser {{ limit }} caractères'
     )]
-    private ?string $profilRecherche = null;
+    private ?string $location = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Assert\Length(
-        min: 10,
-        minMessage: 'Les avantages doivent contenir au moins {{ limit }} caractères'
-    )]
-    private ?string $avantages = null;
-
-    #[ORM\Column]
+    // Champs ajoutés pour maintenir la compatibilité avec le code existant
     private ?bool $isActive = true;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Assert\NotNull(message: 'La date de publication est obligatoire')]
-    #[Assert\Type("\DateTimeInterface")]
     private ?\DateTimeInterface $datePublication = null;
 
-    #[ORM\OneToMany(mappedBy: 'offre', targetEntity: Candidature::class)]
+    private ?string $typeContrat = null;
+
+    private ?string $salaire = null;
+
+    private ?string $profilRecherche = null;
+
+    private ?string $avantages = null;
+
+    #[ORM\OneToMany(mappedBy: 'offreEmploi', targetEntity: Candidature::class)]
     private Collection $candidatures;
 
     public function __construct()
     {
         $this->candidatures = new ArrayCollection();
+        $this->datePublication = new \DateTime();
     }
 
     public function getId(): ?int
@@ -97,47 +68,14 @@ class OffreEmploi
         return $this->id;
     }
 
-    public function getTitre(): ?string
+    public function getTitle(): ?string
     {
-        return $this->titre;
+        return $this->title;
     }
 
-    public function setTitre(string $titre): static
+    public function setTitle(string $title): static
     {
-        $this->titre = $titre;
-        return $this;
-    }
-
-    public function getTypeContrat(): ?string
-    {
-        return $this->typeContrat;
-    }
-
-    public function setTypeContrat(string $typeContrat): static
-    {
-        $this->typeContrat = $typeContrat;
-        return $this;
-    }
-
-    public function getLocalisation(): ?string
-    {
-        return $this->localisation;
-    }
-
-    public function setLocalisation(string $localisation): static
-    {
-        $this->localisation = $localisation;
-        return $this;
-    }
-
-    public function getSalaire(): ?string
-    {
-        return $this->salaire;
-    }
-
-    public function setSalaire(string $salaire): static
-    {
-        $this->salaire = $salaire;
+        $this->title = $title;
         return $this;
     }
 
@@ -152,25 +90,64 @@ class OffreEmploi
         return $this;
     }
 
-    public function getProfilRecherche(): ?string
+    public function getLocation(): ?string
     {
-        return $this->profilRecherche;
+        return $this->location;
     }
 
-    public function setProfilRecherche(string $profilRecherche): static
+    public function setLocation(string $location): static
     {
-        $this->profilRecherche = $profilRecherche;
+        $this->location = $location;
         return $this;
     }
 
-    public function getAvantages(): ?string
+    /**
+     * @return Collection<int, Candidature>
+     */
+    public function getCandidatures(): Collection
     {
-        return $this->avantages;
+        return $this->candidatures;
     }
 
-    public function setAvantages(?string $avantages): static
+    public function addCandidature(Candidature $candidature): static
     {
-        $this->avantages = $avantages;
+        if (!$this->candidatures->contains($candidature)) {
+            $this->candidatures->add($candidature);
+            $candidature->setOffreEmploi($this);
+        }
+        return $this;
+    }
+
+    public function removeCandidature(Candidature $candidature): static
+    {
+        if ($this->candidatures->removeElement($candidature)) {
+            if ($candidature->getOffreEmploi() === $this) {
+                $candidature->setOffreEmploi(null);
+            }
+        }
+        return $this;
+    }
+
+    // Méthodes de compatibilité pour l'ancien code
+    public function getTitre(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitre(string $titre): static
+    {
+        $this->title = $titre;
+        return $this;
+    }
+
+    public function getLocalisation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocalisation(string $localisation): static
+    {
+        $this->location = $localisation;
         return $this;
     }
 
@@ -196,30 +173,52 @@ class OffreEmploi
         return $this;
     }
 
-    /**
-     * @return Collection<int, Candidature>
-     */
-    public function getCandidatures(): Collection
+    public function getTypeContrat(): ?string
     {
-        return $this->candidatures;
+        return $this->typeContrat;
     }
 
-    public function addCandidature(Candidature $candidature): static
+    public function setTypeContrat(string $typeContrat): static
     {
-        if (!$this->candidatures->contains($candidature)) {
-            $this->candidatures->add($candidature);
-            $candidature->setOffre($this);
-        }
+        $this->typeContrat = $typeContrat;
         return $this;
     }
 
-    public function removeCandidature(Candidature $candidature): static
+    public function getSalaire(): ?string
     {
-        if ($this->candidatures->removeElement($candidature)) {
-            if ($candidature->getOffre() === $this) {
-                $candidature->setOffre(null);
-            }
-        }
+        return $this->salaire;
+    }
+
+    public function setSalaire(string $salaire): static
+    {
+        $this->salaire = $salaire;
         return $this;
     }
-} 
+
+    public function getProfilRecherche(): ?string
+    {
+        return $this->profilRecherche;
+    }
+
+    public function setProfilRecherche(string $profilRecherche): static
+    {
+        $this->profilRecherche = $profilRecherche;
+        return $this;
+    }
+
+    public function getAvantages(): ?string
+    {
+        return $this->avantages;
+    }
+
+    public function setAvantages(?string $avantages): static
+    {
+        $this->avantages = $avantages;
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->title ?? '';
+    }
+}
