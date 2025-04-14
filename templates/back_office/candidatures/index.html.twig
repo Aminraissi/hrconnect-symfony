@@ -45,7 +45,7 @@
 									<option value="">Toutes les offres</option>
 									{% for offre in offres %}
 										<option value="{{ offre.id }}" {% if offreId == offre.id %}selected{% endif %}>
-											{{ offre.titre }}
+											{{ offre.title }}
 										</option>
 									{% endfor %}
 								</select>
@@ -112,11 +112,8 @@
 						<table class="table custom-table no-footer">
 							<thead>
 								<tr>
-									<th>Nom</th>
-									<th>Email</th>
-									<th>Téléphone</th>
+									<th>Candidat</th>
 									<th>Offre</th>
-									<th>Date</th>
 									<th>CV</th>
 									<th>Statut</th>
 									<th>Actions</th>
@@ -128,21 +125,12 @@
 										<td>
 											<div class="table-img">
 												<a href="#">
-													<label>{{ candidature.nom }} {{ candidature.prenom }}</label>
+													<label>{{ candidature.candidat.firstName }} {{ candidature.candidat.lastName }}</label>
 												</a>
 											</div>
 										</td>
 										<td>
-											<label>{{ candidature.email }}</label>
-										</td>
-										<td>
-											<label>{{ candidature.telephone }}</label>
-										</td>
-										<td>
-											<label>{{ candidature.offre.titre }}</label>
-										</td>
-										<td>
-											<label>{{ candidature.dateCandidature|date('d/m/Y') }}</label>
+											<label>{{ candidature.offreEmploi.title }}</label>
 										</td>
 										<td>
 											{% if candidature.cv %}
@@ -154,13 +142,13 @@
 											{% endif %}
 										</td>
 										<td>
-											<label class="badge {{ candidature.statut == 'en_attente' ? 'badge-warning' : (candidature.statut == 'en_cours' ? 'badge-info' : (candidature.statut == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
-												{{ candidature.statut|replace({'_': ' '})|title }}
+											<label class="badge {{ candidature.status == 'en_attente' ? 'badge-warning' : (candidature.status == 'en_cours' ? 'badge-info' : (candidature.status == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
+												{{ candidature.status|replace({'_': ' '})|title }}
 											</label>
 										</td>
 										<td>
 											<div class="action">
-												{% if candidature.statut != 'acceptee' and candidature.statut != 'refusee' %}
+												{% if candidature.status != 'acceptee' and candidature.status != 'refusee' %}
 												<a href="{{ path('back.candidatures.accept', {'id': candidature.id}) }}" class="btn-success" onclick="return confirm('Êtes-vous sûr de vouloir accepter cette candidature ? Cela clôturera l\'offre et refusera toutes les autres candidatures.')">
 													<i data-feather="check"></i>
 												</a>

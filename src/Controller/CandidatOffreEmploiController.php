@@ -16,14 +16,12 @@ class CandidatOffreEmploiController extends AbstractController
     public function index(Request $request, OffreEmploiRepository $repository): Response
     {
         $type = $request->query->get('type');
-        
-        $criteria = ['isActive' => true];
-        if ($type) {
-            $criteria['typeContrat'] = $type;
-        }
-        
-        $offres = $repository->findBy($criteria, ['datePublication' => 'DESC']);
-        
+
+        // Utiliser les champs disponibles dans la nouvelle structure
+        // Note: isActive et typeContrat ne sont plus disponibles dans la nouvelle structure
+        // Nous récupérons donc toutes les offres sans filtrage
+        $offres = $repository->findAll();
+
         return $this->render('back_office/candidat/offres_emploi/index.html.twig', [
             'offres' => $offres,
             'type' => $type,
@@ -33,11 +31,9 @@ class CandidatOffreEmploiController extends AbstractController
     #[Route('/{id}', name: 'back.candidat.offres_emploi.show')]
     public function show(OffreEmploi $offre): Response
     {
-        // Vérifier si l'offre est active
-        if (!$offre->isIsActive()) {
-            throw $this->createNotFoundException('Cette offre d\'emploi n\'est pas disponible.');
-        }
-        
+        // Note: isActive n'est plus disponible dans la nouvelle structure
+        // Nous ne vérifions donc plus si l'offre est active
+
         return $this->render('back_office/candidat/offres_emploi/show.html.twig', [
             'offre' => $offre,
         ]);

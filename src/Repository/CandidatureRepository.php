@@ -36,9 +36,9 @@ class CandidatureRepository extends ServiceEntityRepository
     public function findByOffre($offreId)
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.offre = :offreId')
+            ->andWhere('c.offreEmploi = :offreId')
             ->setParameter('offreId', $offreId)
-            ->orderBy('c.dateCandidature', 'DESC')
+            ->orderBy('c.id', 'DESC')
             ->getQuery()
             ->getResult();
     }

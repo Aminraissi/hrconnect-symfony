@@ -24,7 +24,8 @@ class OffreEmploiController extends AbstractController
     public function index(OffreEmploiRepository $repository): Response
     {
         try {
-            $offres = $repository->findBy([], ['datePublication' => 'DESC']);
+            // Utiliser l'ID au lieu de datePublication pour le tri
+            $offres = $repository->findBy([], ['id' => 'DESC']);
             $this->logger->info('Nombre d\'offres récupérées : ' . count($offres));
 
             return $this->render('back_office/offres_emploi/index.html.twig', [
