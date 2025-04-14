@@ -153,10 +153,15 @@
 					<img src="{{ asset('assets/img/profile.jpg') }}" alt="">
 					<span class="status online"></span>
 				</span>
-				<span>Haythem Dridi</span>
+				{% if app.user %}
+					<span>{{ app.user.nom }}
+						{{ app.user.prenom }}</span>
+				{% else %}
+					<span>Guest</span>
+				{% endif %}
 			</a>
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="{{ path('app_back_office') }}">
+				<a class="dropdown-item" href="{{ path('app_user_profile') }}">
 					<i data-feather="user" class="mr-1"></i>
 					Profile</a>
 				<a class="dropdown-item" href="{{ path('app_back_office') }}">
@@ -174,9 +179,7 @@
 			<i class="fa fa-ellipsis-v"></i>
 		</a>
 		<div class="dropdown-menu dropdown-menu-right ">
-			<a class="dropdown-item" href="{{ path('app_back_office') }}">My Profile</a>
-			<a class="dropdown-item" href="{{ path('app_back_office') }}">Settings</a>
-			<a class="dropdown-item" href="{{ path('app_back_office') }}">Logout</a>
+			<<<<<<<HEAD<aclass="dropdown-item"href="{{path('app_user_profile')}}">MyProfile</a><aclass="dropdown-item"href="{{asset('settings.html')}}">Settings</a><aclass="dropdown-item"href="{{asset('login.html')}}">Logout</a>=======<aclass="dropdown-item"href="{{path('app_back_office')}}">MyProfile</a><aclass="dropdown-item"href="{{path('app_back_office')}}">Settings</a><aclass="dropdown-item"href="{{path('app_back_office')}}">Logout</a>>>>>>>> main
 		</div>
 	</div>
 

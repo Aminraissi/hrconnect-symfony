@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+</head>
+<body>
+<div class="container">
+
+    <div class="cover">
+        <div class="front">
+            <img src="{{ asset('images/frontImg.jpg') }}" alt="">
+            <div class="text">
+                <span class="text-1">HR Connect <br></span>
+                <span class="text-2">Learn a new thing everyday</span>
+            </div>
+        </div>
+        <div class="back">
+            <img class="backImg" src="{{ asset('images/backImg.jpg') }}" alt="">
+        </div>
+    </div>
+
+    <div class="forms">
+        <div class="form-content">
+
+            {# -------- SIGNUP FORM -------- #}
+            <div class="login-form">
+                <div class="title">Signup</div>
+
+                {# Flash Messages #}
+                {% for flash_error in app.flashes('error') %}
+                    <div style="color: red;">{{ flash_error }}</div>
+                {% endfor %}
+                {% for flash_success in app.flashes('success') %}
+                    <div style="color: green;">{{ flash_success }}</div>
+                {% endfor %}
+
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                <div class="input-boxes">
+
+                    <div class="input-box">
+                        <i class="fas fa-user"></i>
+                        {{ form_widget(form.nom, {'attr': {'placeholder': 'Enter your name'}}) }}
+                        {{ form_errors(form.nom) }}
+                    </div>
+
+                    <div class="input-box">
+                        <i class="fas fa-user"></i>
+                        {{ form_widget(form.prenom, {'attr': {'placeholder': 'Enter your surname'}}) }}
+                        {{ form_errors(form.prenom) }}
+                    </div>
+
+                    <div class="input-box">
+                        <i class="fas fa-id-card"></i>
+                        {{ form_widget(form.cin, {'attr': {'placeholder': 'Enter your CIN'}}) }}
+                        {{ form_errors(form.cin) }}
+                    </div>
+
+                    <div class="input-box">
+                        <i class="fas fa-phone"></i>
+                        {{ form_widget(form.tel, {'attr': {'placeholder': 'Enter your phone number'}}) }}
+                        {{ form_errors(form.tel) }}
+                    </div>
+
+                    <div class="input-box">
+                        <i class="fas fa-envelope"></i>
+                        {{ form_widget(form.email, {'attr': {'placeholder': 'Enter your email'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+
+                    <div class="input-box">
+                        <i class="fas fa-lock"></i>
+                        {{ form_widget(form.password, {'attr': {'placeholder': 'Enter your password'}}) }}
+                        {{ form_errors(form.password) }}
+                    </div>
+                    <br>
+                    <div class="input-box">
+    <i class="fas fa-user-shield"></i>
+    <div style="position: relative; width: 100%;">
+        {{ form_widget(form.roles, {
+            'attr': {
+                'style': 'width: 100%; padding: 10px; border: none; border-bottom: 2px solid #ccc; background: none; font-size: 16px; color: #333; appearance: none; -webkit-appearance: none; -moz-appearance: none;'
+            }
+        }) }}
+        {{ form_errors(form.roles) }}
+    </div>
+</div>
+
+
+
+                    <div class="button input-box">
+                        <input type="submit" value="Signup">
+                    </div>
+
+                    <div class="text sign-up-text">
+                        Already have an account? <a href="{{ path('login') }}">Login now</a>
+                    </div>
+
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

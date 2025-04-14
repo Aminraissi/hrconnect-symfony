@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{{ asset('style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter OTP</title>
+</head>
+<body>
+<div class="container">
+  <div class="cover">
+    <div class="front">
+      <img src="{{ asset('images/frontImg.jpg') }}" alt="">
+      <div class="text">
+        <span class="text-1">HR Connect <br></span>
+        <span class="text-2">Learn a new thing everyday</span>
+      </div>
+    </div>
+    <div class="back">
+      <img class="backImg" src="{{ asset('images/backImg.jpg') }}" alt="">
+    </div>
+  </div>
+
+  <div class="forms">
+    <div class="form-content">
+      <div class="login-form">
+        <div class="title">Enter OTP</div>
+
+        {% for message in app.flashes('error') %}
+          <div style="color: red;">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+          <div style="color: green;">{{ message }}</div>
+        {% endfor %}
+
+        <form method="post" action="{{ path('verify_otp') }}">
+          <input type="hidden" name="email" value="{{ email }}">
+
+          <div class="input-boxes">
+            <div class="input-box">
+              <i class="fas fa-key"></i>
+              <input type="text" name="otp" placeholder="Enter the OTP code" autocomplete="one-time-code">
+            </div>
+
+            <div class="button input-box">
+              <input type="submit" value="Verify OTP">
+            </div>
+          </div>
+        </form>
+
+        <div class="text sign-up-text">
+          <a href="{{ path('forgot_password') }}">Resend OTP</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
