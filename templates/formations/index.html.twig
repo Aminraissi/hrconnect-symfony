@@ -1,0 +1,132 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+	Training List
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="index.html"><img src="{{ asset('assets/img/')}}" class="mr-2" alt="breadcrumb"/>Home</a>
+					</li>
+					<li class="breadcrumb-item active">
+						Training List
+					</li>
+				</ul>
+				<h3>Questions</h3>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12 mb-4">
+			<div class="head-link-set">
+				<ul>
+					<li>
+						<a class="active" href="#">Toutes les formations</a>
+					</li>
+					<li>
+						<a href="employee-team.html">Formations Grauites</a>
+					</li>
+					<li>
+						<a href="employee-office.html">Formations Payantes</a>
+					</li>
+				</ul>
+				<a class="btn-add" href="{{ url('app_formations_new') }}">
+					<i data-feather="plus"></i>
+					Add new training course
+				</a>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12 mb-4">
+			<div class="card">
+				<div class="table-heading">
+					<h2>Training List</h2>
+				</div>
+				<div class="table-responsive">
+					<table class="table  custom-table no-footer">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>Title</th>
+								<th>Place</th>
+								<th>Price</th>
+								<th>For</th>
+								<th>Start_date</th>
+								<th>End_date</th>
+								<th>actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for formation in formations %}
+								<tr>
+									<td>{{ formation.id }}</td>
+									<td>
+										<img src="{{ asset(formation.image) }}" alt="profile" class="img-table" width="50px" height="50px"/>
+										<label>{{ formation.title }}</label>
+									</td>
+									<td>
+										{% if formation.place is empty %}
+											<label class="action_label">
+												<i class="fas fa-globe"></i>
+												ONLINE
+											</label>
+										{% else %}
+											{{ formation.place }}
+										{% endif %}
+									</td>
+									<td>
+										{% if formation.price == 0 %}
+											<label class="action_label">
+												FREE
+											</label>
+										{% else %}
+											{{ formation.price }}
+											TND
+										{% endif %}
+									</td>
+									<td>
+										{% if formation.availableForEmployee %}
+											<label class="action_label">
+												Employées
+											</label>
+										{% endif %}
+										{% if formation.availableForIntern %}
+											<label class="action_label2">
+												Interns
+											</label>
+										{% endif %}
+									</td>
+									<td>{{ formation.startDate ? formation.startDate|date('Y-m-d H:i:s') : '' }}</td>
+									<td>{{ formation.endDate ? formation.endDate|date('Y-m-d H:i:s') : '' }}</td>
+									<td>
+										<form method="post" action="{{ path('app_formations_delete', {'id': formation.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.id) }}">
+											<a class="btn btn-success btn-sm" href="{{ path('app_formations_show', {'id': formation.id}) }}">
+												<i class="fas fa-eye"></i>
+												Show
+											</a>
+											<a class="btn btn-primary btn-sm" href="{{ path('app_quiz_index', {'fid': formation.id}) }}">
+												<i class="fas fa-eye"></i>
+												Quiz
+											</a>
+											<a class="btn btn-success btn-sm" href="{{ path('app_formations_edit', {'id': formation.id}) }}">
+												<i class="fas fa-edit"></i>
+												Edit
+											</a>
+											<button class="btn btn-danger btn-sm">
+												<i class="fas fa-trash"></i>
+												Delete
+											</button>
+										</form>
+
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

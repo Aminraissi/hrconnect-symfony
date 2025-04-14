@@ -1,0 +1,13 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Edit DemandeConge
+{% endblock %}
+
+{% block body %}
+	<h1>Edit DemandeConge</h1>
+
+	{{ include('demande_conge/_form.html.twig', {'button_label': 'Update'}) }}
+
+	<a href="{{ path('app_demande_conge_index') }}">back to list</a>
+
+{% endblock %}

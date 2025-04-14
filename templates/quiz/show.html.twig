@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quiz{% endblock %}
+
+{% block body %}
+    <h1>Quiz</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ quiz.id }}</td>
+            </tr>
+            <tr>
+                <th>Question</th>
+                <td>{{ quiz.question }}</td>
+            </tr>
+            <tr>
+                <th>Reponse1</th>
+                <td>{{ quiz.reponse1 }}</td>
+            </tr>
+            <tr>
+                <th>Reponse2</th>
+                <td>{{ quiz.reponse2 }}</td>
+            </tr>
+            <tr>
+                <th>Reponse3</th>
+                <td>{{ quiz.reponse3 }}</td>
+            </tr>
+            <tr>
+                <th>Num_reponse_correct</th>
+                <td>{{ quiz.numReponseCorrect }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_quiz_index') }}">back to list</a>
+
+    <a href="{{ path('app_quiz_edit', {'id': quiz.id}) }}">edit</a>
+
+    {{ include('quiz/_delete_form.html.twig') }}
+{% endblock %}

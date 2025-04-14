@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\OffreEmploiRepository;
@@ -54,12 +53,12 @@ class OffreEmploi
 
     private ?string $avantages = null;
 
-    #[ORM\OneToMany(mappedBy: 'offreEmploi', targetEntity: Candidature::class)]
+    #[ORM\OneToMany(mappedBy : 'offreEmploi', targetEntity: Candidature::class)]
     private Collection $candidatures;
 
     public function __construct()
     {
-        $this->candidatures = new ArrayCollection();
+        $this->candidatures    = new ArrayCollection();
         $this->datePublication = new \DateTime();
     }
 
@@ -111,7 +110,7 @@ class OffreEmploi
 
     public function addCandidature(Candidature $candidature): static
     {
-        if (!$this->candidatures->contains($candidature)) {
+        if (! $this->candidatures->contains($candidature)) {
             $this->candidatures->add($candidature);
             $candidature->setOffreEmploi($this);
         }

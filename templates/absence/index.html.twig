@@ -1,0 +1,42 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Absence index
+{% endblock %}
+
+{% block body %}
+	<h1>Absence index</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Motif</th>
+				<th>Justificatif</th>
+				<th>Remarque</th>
+				<th>Date_enregistrement</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for absence in absences %}
+				<tr>
+					<td>{{ absence.id }}</td>
+					<td>{{ absence.motif }}</td>
+					<td>{{ absence.justificatif }}</td>
+					<td>{{ absence.remarque }}</td>
+					<td>{{ absence.dateEnregistrement ? absence.dateEnregistrement|date('Y-m-d H:i:s') : '' }}</td>
+					<td>
+						<a href="{{ path('app_absence_show', {'id': absence.id}) }}">show</a>
+						<a href="{{ path('app_absence_edit', {'id': absence.id}) }}">edit</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="6">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<a href="{{ path('app_absence_new') }}">Create new</a>
+{% endblock %}

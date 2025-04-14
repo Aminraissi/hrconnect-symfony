@@ -1,0 +1,41 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}My Profile
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<div class="card shadow p-4 rounded-lg" style="max-width: 800px; margin: auto;">
+			<h2 class="text-center mb-4" style="font-weight: bold;">👤 My Profile</h2>
+
+			<div class="row mb-4">
+				<div class="col text-center">
+					<img src="{{ asset('images/profile.png') }}" alt="Profile Image" width="120" class="rounded-circle mb-3" style="border: 2px solid #ccc; padding: 5px;">
+					<h4>{{ app.user.nom }}
+						{{ app.user.prenom }}</h4>
+					<p class="text-muted">{{ app.user.email }}</p>
+				</div>
+			</div>
+
+			<hr>
+
+			<div class="row">
+				<div
+					class="col">
+					{# Display any flash messages #}
+					{% for message in app.flashes('success') %}
+						<div class="alert alert-success">{{ message }}</div>
+					{% endfor %}
+					{% for message in app.flashes('error') %}
+						<div class="alert alert-danger">{{ message }}</div>
+					{% endfor %}
+
+					{# Include the edit form #}
+					{{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+{% endblock %}

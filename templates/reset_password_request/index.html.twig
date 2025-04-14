@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ResetPasswordRequest index{% endblock %}
+
+{% block body %}
+    <h1>ResetPasswordRequest index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>User_id</th>
+                <th>Selector</th>
+                <th>Hashed_token</th>
+                <th>Requested_at</th>
+                <th>Expires_at</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reset_password_request in reset_password_requests %}
+            <tr>
+                <td>{{ reset_password_request.id }}</td>
+                <td>{{ reset_password_request.userId }}</td>
+                <td>{{ reset_password_request.selector }}</td>
+                <td>{{ reset_password_request.hashedToken }}</td>
+                <td>{{ reset_password_request.requestedAt ? reset_password_request.requestedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reset_password_request.expiresAt ? reset_password_request.expiresAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_reset_password_request_show', {'id': reset_password_request.id}) }}">show</a>
+                    <a href="{{ path('app_reset_password_request_edit', {'id': reset_password_request.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reset_password_request_new') }}">Create new</a>
+{% endblock %}

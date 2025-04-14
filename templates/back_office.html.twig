@@ -17,8 +17,22 @@
 			<link rel="stylesheet" href="{{ asset('assets/plugins/fontawesome/css/all.min.css') }}">
 
 			<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+
+			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+			<style>
+				.error-text ul li {
+					margin-left: -37px !important;
+					margin-top: 10px;
+				}
+			</style>
+
 		{% endblock %}
 	</head>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<body>
 
 		<div class="main-wrapper">
@@ -62,7 +76,22 @@
 				<script src="{{ asset('assets/plugins/apexchart/chart-data.js') }}"></script>
 
 				<script src="{{ asset('assets/js/script.js') }}"></script>
+
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+
+				<script>
+
+
+					{% for label, messages in app.flashes %}
+{% for message in messages %}
+Swal.fire({title: "{{ label }}", text: "{{ message }}", icon: "{{ label }}"});{% endfor %}{% endfor %}
+				</script>
+
 			{% endblock %}
+
+			{% block cjs %}{% endblock %}
+
 		</body>
 	</body>
 </html>

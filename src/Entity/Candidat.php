@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\CandidatRepository;
@@ -120,7 +119,7 @@ class Candidat
 
     public function addCandidature(Candidature $candidature): static
     {
-        if (!$this->candidatures->contains($candidature)) {
+        if (! $this->candidatures->contains($candidature)) {
             $this->candidatures->add($candidature);
             $candidature->setCandidat($this);
         }

@@ -1,0 +1,14 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Edit ValiderConge
+{% endblock %}
+
+{% block body %}
+	<h1>Edit ValiderConge</h1>
+
+	{{ include('valider_conge/_form.html.twig', {'button_label': 'Update'}) }}
+
+	<a href="{{ path('app_valider_conge_index') }}">back to list</a>
+
+	{{ include('valider_conge/_delete_form.html.twig') }}
+{% endblock %}
