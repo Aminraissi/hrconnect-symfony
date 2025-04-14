@@ -6,8 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use App\Repository\ValiderCongeRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ValiderCongeRepository::class)]
 #[ORM\Table(name: 'valider_conge')]
@@ -17,6 +17,23 @@ class ValiderConge
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: DemandeConge::class, inversedBy: 'validerConges')]
+    #[ORM\JoinColumn(name: 'demande_id', referencedColumnName: 'id', nullable: false)]
+    #[Assert\NotNull(message: 'La demande de congé est obligatoire.')]
+    private ?DemandeConge $demandeConge = null;
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
+    #[Assert\Choice(choices: ['EN_ATTENTE', 'ACCEPTEE', 'REFUSEE'], message: 'Le statut doit être l’un des choix valides.')]
+    private ?string $statut = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $commentaire = null;
+
+    #[ORM\Column(name: 'dateValidation', type: 'date', nullable: false)]
+    #[Assert\NotNull(message: 'La date de validation est obligatoire.')]
+    private ?\DateTimeInterface $dateValidation = null;
 
     public function getId(): ?int
     {
@@ -29,10 +46,6 @@ class ValiderConge
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: DemandeConge::class, inversedBy: 'validerConges')]
-    #[ORM\JoinColumn(name: 'demande_id', referencedColumnName: 'id')]
-    private ?DemandeConge $demandeConge = null;
-
     public function getDemandeConge(): ?DemandeConge
     {
         return $this->demandeConge;
@@ -43,9 +56,6 @@ class ValiderConge
         $this->demandeConge = $demandeConge;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $statut = null;
 
     public function getStatut(): ?string
     {
@@ -58,9 +68,6 @@ class ValiderConge
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $commentaire = null;
-
     public function getCommentaire(): ?string
     {
         return $this->commentaire;
@@ -72,9 +79,6 @@ class ValiderConge
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
-    private ?\DateTimeInterface $dateValidation = null;
-
     public function getDateValidation(): ?\DateTimeInterface
     {
         return $this->dateValidation;
@@ -85,5 +89,4 @@ class ValiderConge
         $this->dateValidation = $dateValidation;
         return $this;
     }
-
 }

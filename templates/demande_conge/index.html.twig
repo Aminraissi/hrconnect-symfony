@@ -1,0 +1,57 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Liste des demandes de congé{% endblock %}
+
+{% block body %}
+    <h1>Liste des demandes de congé</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employé</th>
+                <th>Type de congé</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Statut</th>
+                <th>Solde de congés</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for demande_conge in demande_conges %}
+            <tr>
+             <td>
+                    {% if demande_conge.employe %}
+                        <strong>{{ demande_conge.employe.nom }} {{ demande_conge.employe.prenom }}</strong><br>
+                        Email : {{ demande_conge.employe.email }}
+                    {% else %}
+                        <em>Non défini</em>
+                    {% endif %}
+                </td>
+                <td>{{ demande_conge.typeConge }}</td>
+                <td>{{ demande_conge.dateDebut ? demande_conge.dateDebut|date('Y-m-d') : '' }}</td>
+                <td>{{ demande_conge.dateFin ? demande_conge.dateFin|date('Y-m-d') : '' }}</td>
+                <td>{{ demande_conge.statut }}</td>
+               
+                <td>
+                    {% if demande_conge.employe %}
+                        {{ demande_conge.employe.soldeConges }} jours
+                    {% else %}
+                        <em>N/A</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-warning" onclick="window.location.href='{{ path('app_demande_conge_edit', {'id': demande_conge.id}) }}'">Modifier</button>
+                    <a href="{{ path('app_demande_conge_delete', {'id': demande_conge.id}) }}" class="btn btn-danger">Supprimer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">Aucune demande trouvée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_demande_conge_new') }}" class="btn btn-success">Créer nouvelle demande</a>
+{% endblock %}
