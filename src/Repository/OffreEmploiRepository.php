@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\OffreEmploi;
@@ -37,4 +36,4 @@ class OffreEmploiRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-} 
+}

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\CandidatureRepository;
@@ -64,7 +63,7 @@ class Candidature
     #[ORM\Column]
     private ?\DateTimeImmutable $dateCandidature = null;
 
-    #[ORM\ManyToOne(inversedBy: 'candidatures')]
+    #[ORM\ManyToOne(inversedBy : 'candidatures')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: 'L\'offre d\'emploi est obligatoire')]
     private ?OffreEmploi $offre = null;
@@ -75,7 +74,7 @@ class Candidature
     public function __construct()
     {
         $this->dateCandidature = new \DateTimeImmutable();
-        $this->statut = 'en_attente';
+        $this->statut          = 'en_attente';
     }
 
     public function getId(): ?int
@@ -192,4 +191,4 @@ class Candidature
         $this->statut = $statut;
         return $this;
     }
-} 
+}

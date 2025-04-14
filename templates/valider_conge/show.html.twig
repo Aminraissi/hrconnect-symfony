@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ValiderConge{% endblock %}
+
+{% block body %}
+    <h1>ValiderConge</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ valider_conge.id }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ valider_conge.statut }}</td>
+            </tr>
+            <tr>
+                <th>Commentaire</th>
+                <td>{{ valider_conge.commentaire }}</td>
+            </tr>
+            <tr>
+                <th>DateValidation</th>
+                <td>{{ valider_conge.dateValidation ? valider_conge.dateValidation|date('Y-m-d') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_valider_conge_index') }}">back to list</a>
+
+    <a href="{{ path('app_valider_conge_edit', {'id': valider_conge.id}) }}">edit</a>
+
+    {{ include('valider_conge/_delete_form.html.twig') }}
+{% endblock %}

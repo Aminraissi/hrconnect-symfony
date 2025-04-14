@@ -1,0 +1,47 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}New Formation
+{% endblock %}
+
+{% block body %}
+
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_back_office') }}">Home</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_formations_index') }}">Liste des Formations</a>
+					</li>
+				</ul>
+				<h3>Ajouter une formation</h3>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12">
+			{{ include('formations/_form.html.twig') }}
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block cjs %}
+	<script>
+
+		$(document).ready(function () {
+
+$('#formation_is_online').bootstrapToggle();
+$('#formation_is_online').change(function () {
+if ($(this).prop('checked')) {
+$('#f_place').hide();
+$('#f_lat_lng').hide();
+} else {
+$('#f_place').show();
+$('#f_lat_lng').show();
+}
+});
+
+});
+	</script>
+{% endblock %}

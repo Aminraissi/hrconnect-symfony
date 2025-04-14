@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\OffreEmploiRepository;
@@ -84,7 +83,7 @@ class OffreEmploi
     #[Assert\Type("\DateTimeInterface")]
     private ?\DateTimeInterface $datePublication = null;
 
-    #[ORM\OneToMany(mappedBy: 'offre', targetEntity: Candidature::class)]
+    #[ORM\OneToMany(mappedBy : 'offre', targetEntity: Candidature::class)]
     private Collection $candidatures;
 
     public function __construct()
@@ -206,7 +205,7 @@ class OffreEmploi
 
     public function addCandidature(Candidature $candidature): static
     {
-        if (!$this->candidatures->contains($candidature)) {
+        if (! $this->candidatures->contains($candidature)) {
             $this->candidatures->add($candidature);
             $candidature->setOffre($this);
         }
@@ -222,4 +221,4 @@ class OffreEmploi
         }
         return $this;
     }
-} 
+}

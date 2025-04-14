@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\Candidature;
@@ -43,4 +42,4 @@ class CandidatureRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-} 
+}
