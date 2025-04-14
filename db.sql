@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
+<<<<<<< HEAD
+-- Généré le : lun. 14 avr. 2025 à 20:52
+=======
 -- Généré le : lun. 07 avr. 2025 à 11:53
+>>>>>>> main
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -213,8 +217,12 @@ INSERT INTO `formations` (`id`, `formateur_id`, `title`, `image`, `description`,
 (41, 2, 'Test formation payante', 'https://i.ibb.co/Zzqw2Dk3/59d345242af9.png', 'Test formation payante', 0, 'Esprit bloc I,J,K, Cebalat, Tunisia', 36.9010594, 10.190243, 1, 1, '2025-03-05 07:53:48', '2025-03-06 06:53:48', 9.99),
 (47, 2, 'formation php', 'https://i.ibb.co/wFCSSvrh/d150e2216999.png', 'php', 0, 'Esprit School of Business, Cebalat, Tunisia', 36.89923520000001, 10.189445, 1, 1, '2025-03-06 09:02:49', '2025-03-06 09:02:49', 12),
 (48, 2, 'tesssst', 'https://i.ibb.co/wFCSSvrh/d150e2216999.png', 'jdj', 0, 'Esprit School of Business, Cebalat, Tunisia', 36.89923520000001, 10.189445, 1, 1, '2025-03-06 09:17:19', NULL, 10),
+<<<<<<< HEAD
+(49, 2, 'eyyey&yz', 'https://i.ibb.co/DfZDzwss/9ad51a8f934a.png', 'zyzyzy', 0, 'Bardo, Tunisia', 36.80840260000001, 10.1283163, 1, 1, '2025-03-06 09:21:19', NULL, 0);
+=======
 (49, 2, 'eyyey&yz', 'https://i.ibb.co/DfZDzwss/9ad51a8f934a.png', 'zyzyzy', 0, 'Bardo, Tunisia', 36.80840260000001, 10.1283163, 1, 1, '2025-03-06 09:21:19', NULL, 0),
 (51, 2, 'aa', 'aa', 'aaa', 1, '1', 1, 1, 0, 0, '2025-04-07 00:00:00', '2025-04-07 00:00:00', 5);
+>>>>>>> main
 
 -- --------------------------------------------------------
 
@@ -232,8 +240,12 @@ CREATE TABLE `formation_participation` (
 --
 
 INSERT INTO `formation_participation` (`formation_id`, `employe_id`) VALUES
+<<<<<<< HEAD
+(31, 18);
+=======
 (31, 18),
 (51, 3);
+>>>>>>> main
 
 -- --------------------------------------------------------
 
@@ -315,11 +327,20 @@ CREATE TABLE `quiz` (
 --
 
 INSERT INTO `quiz` (`id`, `formation_id`, `question`, `reponse1`, `reponse2`, `reponse3`, `num_reponse_correct`) VALUES
+<<<<<<< HEAD
+(16, 31, 'Quelle classe est utilisée pour créer une fenêtre en JavaFX !?', 'JFrame', 'Stage', 'Window', 2),
+(17, 31, 'Quel est le langage utilisé pour styliser une interface JavaFX ?', 'CSS', 'XML', 'JavaScript', 1),
+(18, 31, 'Quelle méthode est utilisée pour lancer une application JavaFX ?', 'launch', 'start', 'run', 1),
+(23, 31, 'aabc', '1', '2', '3', 1),
+(24, 31, 'hello', '5', '5', '5', 1),
+(25, 31, 'question', 'rep', 'rep2', 'rep3', 3);
+=======
 (16, 31, 'Quelle classe est utilisée pour créer une fenêtre en JavaFX ?', 'JFrame', 'Stage', 'Window', 2),
 (17, 31, 'Quel est le langage utilisé pour styliser une interface JavaFX ?', 'CSS', 'XML', 'JavaScript', 1),
 (18, 31, 'Quelle méthode est utilisée pour lancer une application JavaFX ?', 'launch', 'start', 'run', 1),
 (19, 31, 'Quel conteneur est utilisé pour organiser les éléments en colonne dans JavaFX ?', 'VBox ', 'HBox', 'GridPane', 1),
 (20, 31, 'Quel événement est utilisé pour détecter un clic sur un bouton JavaFX ?', 'setOnAction', 'setOnClick', 'setOnPress', 1);
+>>>>>>> main
 
 -- --------------------------------------------------------
 
@@ -340,9 +361,13 @@ CREATE TABLE `quiz_reponses` (
 INSERT INTO `quiz_reponses` (`employe_id`, `quiz_id`, `num_reponse`) VALUES
 (18, 16, 2),
 (18, 17, 1),
+<<<<<<< HEAD
+(18, 18, 2);
+=======
 (18, 18, 2),
 (18, 19, 2),
 (18, 20, 1);
+>>>>>>> main
 
 -- --------------------------------------------------------
 
@@ -607,7 +632,11 @@ ALTER TABLE `candidature`
 -- AUTO_INCREMENT pour la table `demande_conge`
 --
 ALTER TABLE `demande_conge`
+<<<<<<< HEAD
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+=======
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+>>>>>>> main
 
 --
 -- AUTO_INCREMENT pour la table `employe`
@@ -625,7 +654,11 @@ ALTER TABLE `formateurs`
 -- AUTO_INCREMENT pour la table `formations`
 --
 ALTER TABLE `formations`
+<<<<<<< HEAD
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+=======
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+>>>>>>> main
 
 --
 -- AUTO_INCREMENT pour la table `hr`
@@ -643,7 +676,11 @@ ALTER TABLE `offre_emploi`
 -- AUTO_INCREMENT pour la table `quiz`
 --
 ALTER TABLE `quiz`
+<<<<<<< HEAD
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+=======
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+>>>>>>> main
 
 --
 -- AUTO_INCREMENT pour la table `stagaires`

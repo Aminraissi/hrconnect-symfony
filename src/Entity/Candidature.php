@@ -1,103 +1,194 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\CandidatureRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CandidatureRepository::class)]
-#[ORM\Table(name: 'candidature')]
 class Candidature
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire')]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Le nom doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères'
+    )]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire')]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Le prénom doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le prénom ne peut pas dépasser {{ limit }} caractères'
+    )]
+    private ?string $prenom = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire')]
+    #[Assert\Email(message: 'L\'email {{ value }} n\'est pas un email valide')]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[0-9\s\+\-\.]{8,}$/',
+        message: 'Le numéro de téléphone n\'est pas valide'
+    )]
+    private ?string $telephone = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: 'Le message est obligatoire')]
+    #[Assert\Length(
+        min: 10,
+        minMessage: 'Votre message doit contenir au moins {{ limit }} caractères'
+    )]
+    private ?string $message = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cv = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $lettreMotivation = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $dateCandidature = null;
+
+    #[ORM\ManyToOne(inversedBy : 'candidatures')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'L\'offre d\'emploi est obligatoire')]
+    private ?OffreEmploi $offre = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $statut = null;
+
+    public function __construct()
+    {
+        $this->dateCandidature = new \DateTimeImmutable();
+        $this->statut          = 'en_attente';
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function getNom(): ?string
     {
-        $this->id = $id;
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: Candidat::class, inversedBy: 'candidatures')]
-    #[ORM\JoinColumn(name: 'candidat_id', referencedColumnName: 'id')]
-    private ?Candidat $candidat = null;
-
-    public function getCandidat(): ?Candidat
+    public function getPrenom(): ?string
     {
-        return $this->candidat;
+        return $this->prenom;
     }
 
-    public function setCandidat(?Candidat $candidat): self
+    public function setPrenom(string $prenom): static
     {
-        $this->candidat = $candidat;
+        $this->prenom = $prenom;
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: OffreEmploi::class, inversedBy: 'candidatures')]
-    #[ORM\JoinColumn(name: 'offre_emploi_id', referencedColumnName: 'id')]
-    private ?OffreEmploi $offreEmploi = null;
-
-    public function getOffreEmploi(): ?OffreEmploi
+    public function getEmail(): ?string
     {
-        return $this->offreEmploi;
+        return $this->email;
     }
 
-    public function setOffreEmploi(?OffreEmploi $offreEmploi): self
+    public function setEmail(string $email): static
     {
-        $this->offreEmploi = $offreEmploi;
+        $this->email = $email;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $cv = null;
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): static
+    {
+        $this->telephone = $telephone;
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(string $message): static
+    {
+        $this->message = $message;
+        return $this;
+    }
 
     public function getCv(): ?string
     {
         return $this->cv;
     }
 
-    public function setCv(string $cv): self
+    public function setCv(?string $cv): static
     {
         $this->cv = $cv;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $reference = null;
-
-    public function getReference(): ?string
+    public function getLettreMotivation(): ?string
     {
-        return $this->reference;
+        return $this->lettreMotivation;
     }
 
-    public function setReference(?string $reference): self
+    public function setLettreMotivation(?string $lettreMotivation): static
     {
-        $this->reference = $reference;
+        $this->lettreMotivation = $lettreMotivation;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $status = null;
-
-    public function getStatus(): ?string
+    public function getDateCandidature(): ?\DateTimeImmutable
     {
-        return $this->status;
+        return $this->dateCandidature;
     }
 
-    public function setStatus(?string $status): self
+    public function setDateCandidature(\DateTimeImmutable $dateCandidature): static
     {
-        $this->status = $status;
+        $this->dateCandidature = $dateCandidature;
         return $this;
     }
 
+    public function getOffre(): ?OffreEmploi
+    {
+        return $this->offre;
+    }
+
+    public function setOffre(?OffreEmploi $offre): static
+    {
+        $this->offre = $offre;
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): static
+    {
+        $this->statut = $statut;
+        return $this;
+    }
 }

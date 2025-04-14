@@ -1,0 +1,105 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+	Modifier une offre d'emploi
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="index.html"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ path('back.offres_emploi.index') }}">Offres d'emploi</a>
+					</li>
+					<li class="breadcrumb-item active">
+						Modifier une offre</li>
+				</ul>
+				<h3>Modifier une offre d'emploi</h3>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12 mb-4">
+			<div class="card">
+				<div class="card-header">
+					<h2>Informations de l'offre</h2>
+				</div>
+				<div class="card-body">
+					{{ form_start(form) }}
+					<div class="row">
+						<div class="col-xl-6 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.titre) }}
+								{{ form_widget(form.titre) }}
+								{{ form_errors(form.titre) }}
+							</div>
+						</div>
+						<div class="col-xl-6 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.typeContrat) }}
+								{{ form_widget(form.typeContrat) }}
+								{{ form_errors(form.typeContrat) }}
+							</div>
+						</div>
+						<div class="col-xl-6 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.localisation) }}
+								{{ form_widget(form.localisation) }}
+								{{ form_errors(form.localisation) }}
+							</div>
+						</div>
+						<div class="col-xl-6 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.salaire) }}
+								{{ form_widget(form.salaire) }}
+								{{ form_errors(form.salaire) }}
+							</div>
+						</div>
+						<div class="col-xl-12 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.description) }}
+								{{ form_widget(form.description) }}
+								{{ form_errors(form.description) }}
+							</div>
+						</div>
+						<div class="col-xl-12 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.profilRecherche) }}
+								{{ form_widget(form.profilRecherche) }}
+								{{ form_errors(form.profilRecherche) }}
+							</div>
+						</div>
+						<div class="col-xl-12 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.avantages) }}
+								{{ form_widget(form.avantages) }}
+								{{ form_errors(form.avantages) }}
+							</div>
+						</div>
+						<div class="col-xl-12 col-sm-12 col-12">
+							<div class="form-group">
+								{{ form_label(form.isActive) }}
+								{{ form_widget(form.isActive) }}
+								{{ form_errors(form.isActive) }}
+							</div>
+						</div>
+						<div class="col-xl-12 col-sm-12 col-12">
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary">Enregistrer</button>
+								<a href="{{ path('back.offres_emploi.index') }}" class="btn btn-secondary">Annuler</a>
+							</div>
+						</div>
+					</div>
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('assets/js/simple-correction.js') }}"></script>
+{% endblock %}
