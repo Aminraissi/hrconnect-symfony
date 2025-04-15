@@ -21,11 +21,13 @@ final class AbsenceController extends AbstractController
             'absences' => $absenceRepository->findAll(),
         ]);
     }
-
     #[Route('/new', name: 'app_absence_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $absence = new Absence();
+        // Automatically set the current date and time
+        $absence->setDateEnregistrement(new \DateTime());
+
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
@@ -41,7 +43,6 @@ final class AbsenceController extends AbstractController
             'form' => $form,
         ]);
     }
-
     #[Route('/{id}', name: 'app_absence_show', methods: ['GET'])]
     public function show(Absence $absence): Response
     {
