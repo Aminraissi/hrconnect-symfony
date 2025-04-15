@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert; // Import Assert for validation constraints
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use App\Repository\AbsenceRepository;
+use Doctrine\Common\Collections\Collection; // Import Assert for validation constraints
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AbsenceRepository::class)]
 #[ORM\Table(name: 'absence')]
@@ -61,7 +58,7 @@ class Absence
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Assert\NotBlank(message: 'Le justificatif est obligatoire.')] // Validation constraint
+    //#[Assert\NotBlank(message: 'Le justificatif est obligatoire.')] // Validation constraint
     private ?string $justificatif = null;
 
     public function getJustificatif(): ?string
@@ -99,7 +96,7 @@ class Absence
         return $this->date_enregistrement;
     }
 
-    public function setDate_enregistrement(\DateTimeInterface $date_enregistrement): self
+    public function setDate_enregistrement(\DateTimeInterface $date_enregistrement) : self
     {
         $this->date_enregistrement = $date_enregistrement;
         return $this;
