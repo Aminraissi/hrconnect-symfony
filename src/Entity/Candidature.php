@@ -26,8 +26,14 @@ class Candidature
     #[ORM\Column(length: 8, nullable: true)]
     private ?string $reference = null;
 
+    // Constantes pour les statuts
+    public const STATUS_EN_ATTENTE = 'en_attente';
+    public const STATUS_EN_COURS = 'En cours';
+    public const STATUS_ACCEPTEE = 'acceptee';
+    public const STATUS_REFUSEE = 'refusee';
+
     #[ORM\Column(length: 50)]
-    private ?string $status = 'En cours';
+    private ?string $status = self::STATUS_EN_COURS;
 
     public function __construct()
     {

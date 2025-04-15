@@ -13,6 +13,7 @@
 			border-radius: 5px;
 			padding: 5px 10px;
 			margin-right: 5px;
+			display: inline-block;
 		}
 		.btn-success:hover {
 			background-color: #218838;
@@ -23,9 +24,28 @@
 			border-radius: 5px;
 			padding: 5px 10px;
 			margin-right: 5px;
+			display: inline-block;
 		}
 		.btn-info:hover {
 			background-color: #138496;
+		}
+		.btn-edit, .btn-delete {
+			display: inline-block;
+			padding: 5px 10px;
+			margin-right: 5px;
+			border-radius: 5px;
+			color: white;
+		}
+		.btn-edit {
+			background-color: #ffc107;
+		}
+		.btn-delete {
+			background-color: #dc3545;
+		}
+		.action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 	</style>
 {% endblock %}
@@ -142,24 +162,23 @@
 											{% endif %}
 										</td>
 										<td>
-											<label class="badge {{ candidature.status == 'en_attente' ? 'badge-warning' : (candidature.status == 'en_cours' ? 'badge-info' : (candidature.status == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
-												{{ candidature.status|replace({'_': ' '})|title }}
+											<label class="badge {{ candidature.status|lower == 'en attente' ? 'badge-warning' : (candidature.status|lower == 'en cours' ? 'badge-info' : (candidature.status|lower == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
+												{{ candidature.status }}
 											</label>
 										</td>
 										<td>
 											<div class="action">
 												{% if candidature.status != 'acceptee' and candidature.status != 'refusee' %}
-												<a href="{{ path('back.candidatures.accept', {'id': candidature.id}) }}" class="btn-success" onclick="return confirm('Êtes-vous sûr de vouloir accepter cette candidature ? Cela clôturera l\'offre et refusera toutes les autres candidatures.')">
-													<i data-feather="check"></i>
+												<a href="{{ path('back.candidatures.accept', {'id': candidature.id}) }}" class="btn btn-success" title="Accepter">
+													<i data-feather="check"></i> Accepter
 												</a>
 												{% endif %}
-												<a href="{{ path('back.candidatures.edit', {'id': candidature.id}) }}" class="btn-edit">
-													<i data-feather="edit"></i>
+												<a href="{{ path('back.candidatures.edit', {'id': candidature.id}) }}" class="btn btn-warning" title="Modifier">
+													<i data-feather="edit"></i> Modifier
 												</a>
-												<a href="{{ path('back.candidatures.delete', {'id': candidature.id}) }}" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?')">
-													<i data-feather="trash"></i>
+												<a href="{{ path('back.candidatures.delete', {'id': candidature.id}) }}" class="btn btn-danger" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?')">
+													<i data-feather="trash"></i> Supprimer
 												</a>
-
 											</div>
 										</td>
 									</tr>

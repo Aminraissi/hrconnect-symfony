@@ -161,6 +161,8 @@ class OffreEmploi
         return $this;
     }
 
+
+
     public function getDatePublication(): ?\DateTimeInterface
     {
         return $this->datePublication;

@@ -1,7 +1,7 @@
 {% extends 'back_office.html.twig' %}
 
 {% block title %}
-    Visualisation du CV - {{ candidature.nom }} {{ candidature.prenom }}
+    Visualisation du CV - {{ candidature.candidat.firstName }} {{ candidature.candidat.lastName }}
 {% endblock %}
 
 {% block css %}
@@ -12,7 +12,7 @@
             flex-direction: row;
             gap: 20px;
         }
-        
+
         .cv-viewer {
             flex: 1;
             height: 800px;
@@ -20,7 +20,7 @@
             border-radius: 5px;
             overflow: hidden;
         }
-        
+
         .cv-analysis {
             flex: 1;
             height: 800px;
@@ -30,18 +30,18 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
-        
+
         .analysis-section {
             margin-bottom: 20px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
-        
+
         .analysis-section h3 {
             color: #007bff;
             margin-bottom: 15px;
         }
-        
+
         .skill-tag {
             display: inline-block;
             background-color: #e9f5ff;
@@ -51,7 +51,7 @@
             border-radius: 15px;
             font-size: 0.9em;
         }
-        
+
         .experience-item, .education-item {
             margin-bottom: 15px;
             padding: 10px;
@@ -59,23 +59,23 @@
             border-radius: 5px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
+
         .experience-item h4, .education-item h4 {
             margin-bottom: 5px;
             color: #333;
         }
-        
+
         .experience-dates, .education-dates {
             color: #666;
             font-size: 0.9em;
             margin-bottom: 5px;
         }
-        
+
         .loading-indicator {
             text-align: center;
             padding: 20px;
         }
-        
+
         .loading-indicator i {
             font-size: 2em;
             color: #007bff;
@@ -91,16 +91,16 @@
                     <li class="breadcrumb-item">
                         <a href="{{ path('back.candidatures.index') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Candidatures</a>
                     </li>
-                    <li class="breadcrumb-item active">CV de {{ candidature.nom }} {{ candidature.prenom }}</li>
+                    <li class="breadcrumb-item active">CV de {{ candidature.candidat.firstName }} {{ candidature.candidat.lastName }}</li>
                 </ul>
                 <h3>Visualisation du CV</h3>
             </div>
         </div>
-        
+
         <div class="col-xl-12 col-sm-12 col-12 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">CV de {{ candidature.nom }} {{ candidature.prenom }} - {{ candidature.offre.titre }}</h3>
+                    <h3 class="card-title">CV de {{ candidature.candidat.firstName }} {{ candidature.candidat.lastName }} - {{ candidature.offreEmploi.title }}</h3>
                     <div class="card-tools">
                         <a href="{{ path('back.candidatures.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Retour
@@ -117,7 +117,7 @@
                         <div class="cv-viewer">
                             <iframe src="{{ asset('uploads/cv/' ~ candidature.cv) }}" width="100%" height="100%" frameborder="0"></iframe>
                         </div>
-                        
+
                         <div class="cv-analysis">
                             {% if analysis is null %}
                                 <div class="text-center p-5">
@@ -131,7 +131,7 @@
                                         <h3><i class="fas fa-clipboard-list mr-2"></i> Résumé</h3>
                                         <p>{{ analysis.summary|default('Aucun résumé disponible')|nl2br }}</p>
                                     </div>
-                                    
+
                                     <div class="analysis-section">
                                         <h3><i class="fas fa-tools mr-2"></i> Compétences</h3>
                                         {% if analysis.skills|length > 0 %}
@@ -144,7 +144,7 @@
                                             <p class="text-muted">Aucune compétence détectée</p>
                                         {% endif %}
                                     </div>
-                                    
+
                                     <div class="analysis-section">
                                         <h3><i class="fas fa-briefcase mr-2"></i> Expérience professionnelle</h3>
                                         {% if analysis.experience|length > 0 %}
@@ -159,7 +159,7 @@
                                             <p class="text-muted">Aucune expérience professionnelle détectée</p>
                                         {% endif %}
                                     </div>
-                                    
+
                                     <div class="analysis-section">
                                         <h3><i class="fas fa-graduation-cap mr-2"></i> Formation</h3>
                                         {% if analysis.education|length > 0 %}
