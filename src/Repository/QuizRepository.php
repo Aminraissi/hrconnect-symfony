@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\Quiz;
@@ -14,6 +13,17 @@ class QuizRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Quiz::class);
+    }
+
+    public function searchQuestion(int $formationId, string $searchQuery): array
+    {
+        return $this->createQueryBuilder('q')
+            ->where('q.formation = :fid')
+            ->andWhere('q.question LIKE :search')
+            ->setParameter('fid', $formationId)
+            ->setParameter('search', '%' . $searchQuery . '%')
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**
