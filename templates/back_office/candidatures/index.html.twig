@@ -136,6 +136,7 @@
 									<th>Offre</th>
 									<th>CV</th>
 									<th>Statut</th>
+									<th>Score</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -165,6 +166,13 @@
 											<label class="badge {{ candidature.status|lower == 'en attente' ? 'badge-warning' : (candidature.status|lower == 'en cours' ? 'badge-info' : (candidature.status|lower == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
 												{{ candidature.status }}
 											</label>
+										</td>
+										<td>
+											{% if candidature.status|lower == 'refusee' %}
+												<span class="badge badge-danger">< 50%</span>
+											{% else %}
+												<span class="badge badge-success">≥ 50%</span>
+											{% endif %}
 										</td>
 										<td>
 											<div class="action">

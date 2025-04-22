@@ -47,6 +47,36 @@
             align-items: center;
             justify-content: center;
         }
+        /* Styles pour la recherche */
+        .search-box {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-results {
+            transition: all 0.3s ease;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .table-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        .table-heading h2 {
+            margin: 0;
+        }
+        #search-loader {
+            width: 25px;
+            height: 25px;
+        }
     </style>
 {% endblock %}
 
@@ -64,11 +94,37 @@
                 <h3>Offres d'emploi</h3>
             </div>
         </div>
+
+        <!-- Début du formulaire de recherche -->
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card search-box">
+                <div class="card-body">
+                    <form action="{{ path('back.candidat.offres_emploi.index') }}" method="get">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i data-feather="search"></i></span>
+                                    </div>
+                                    <input type="text" name="q" class="form-control" placeholder="Rechercher une offre par titre..." value="{{ searchTerm|default('') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i data-feather="search"></i> Rechercher
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Fin du formulaire de recherche -->
         <div class="col-xl-12 col-sm-12 col-12 mb-4">
             <div class="head-link-set">
                 <ul>
                     <li>
-                        <a class="{{ type is null ? 'active' : '' }}" href="{{ path('back.candidat.offres_emploi.index') }}">Toutes les offres</a>
+                        <a class="active" href="{{ path('back.candidat.offres_emploi.index') }}">Toutes les offres</a>
                     </li>
                 </ul>
                 {# Pas de bouton "Ajouter une offre" pour les candidats #}
@@ -77,7 +133,11 @@
         <div class="col-xl-12 col-sm-12 col-12 mb-4">
             <div class="row">
                 <div class="col-xl-10 col-sm-8 col-12 ">
-                    <label class="employee_count">{{ offres|length }} Offres</label>
+                    {% if searchTerm is defined and searchTerm %}
+                        <label class="employee_count">{{ offres|length }} offre(s) trouvée(s) pour "{{ searchTerm }}"</label>
+                    {% else %}
+                        <label class="employee_count">{{ offres|length }} Offres</label>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -86,7 +146,12 @@
                 <div class="table-heading">
                     <h2>Liste des offres</h2>
                 </div>
-                <div class="table-responsive">
+                {% if searchTerm is defined and searchTerm and offres is empty %}
+                    <div class="alert alert-info">
+                        Aucune offre ne correspond à votre recherche "{{ searchTerm }}".
+                    </div>
+                {% endif %}
+                <div class="table-responsive search-results" id="search-results">
                     <table class="table custom-table no-footer">
                         <thead>
                             <tr>
@@ -95,13 +160,19 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="results-body">
                             {% for offre in offres %}
                                 <tr>
                                     <td>
                                         <div class="table-img">
                                             <a href="#">
-                                                <label>{{ offre.title }}</label>
+                                                <label>
+                                                    {% if searchTerm is defined and searchTerm %}
+                                                        {{ offre.title|replace({(searchTerm): '<span class="highlight">' ~ searchTerm ~ '</span>'})|raw }}
+                                                    {% else %}
+                                                        {{ offre.title }}
+                                                    {% endif %}
+                                                </label>
                                             </a>
                                         </div>
                                     </td>
@@ -126,4 +197,8 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
 {% endblock %}

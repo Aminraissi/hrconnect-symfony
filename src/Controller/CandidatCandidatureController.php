@@ -7,6 +7,8 @@ use App\Entity\OffreEmploi;
 use App\Form\CandidatureSimpleType;
 use App\Form\CandidatureSimpleNewType;
 use App\Entity\Candidat;
+use App\Service\GeminiCvEvaluatorService;
+use App\Repository\CandidatureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +34,8 @@ class CandidatCandidatureController extends AbstractController
     public function new(
         Request $request,
         OffreEmploi $offre,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        GeminiCvEvaluatorService $geminiCvEvaluator
     ): Response {
         $candidature = new Candidature();
 
@@ -99,6 +102,33 @@ class CandidatCandidatureController extends AbstractController
             $newFilename = $this->uploadFile($cvFile, 'cv_directory', $slugger);
             if ($newFilename) {
                 $candidature->setCv($newFilename);
+
+                // Analyse du CV avec Gemini
+                $this->logger->info('Analyse du CV avec Gemini');
+                $cvPath = $this->getParameter('cv_directory') . '/' . $newFilename;
+
+                // Générer un ID temporaire pour la candidature
+                $tempCandidatureId = uniqid('candidature_');
+                $analysisResult = $geminiCvEvaluator->evaluateCv($cvPath, $tempCandidatureId);
+
+                if (!$analysisResult['success']) {
+                    $this->logger->error('Erreur lors de l\'analyse du CV: ' . ($analysisResult['message'] ?? 'Erreur inconnue'));
+                    // En cas d'erreur d'analyse, rejeter automatiquement la candidature
+                    $this->logger->info('Erreur d\'analyse, candidature rejetée automatiquement par sécurité');
+                    $candidature->setStatus(Candidature::STATUS_REFUSEE);
+                    $this->addFlash('warning', 'Votre candidature a été soumise, mais une erreur est survenue lors de l\'analyse de votre CV. Veuillez réessayer ultérieurement.');
+                } else {
+                    $score = $analysisResult['score'];
+                    $passed = $analysisResult['passed'];
+                    $this->logger->info('Score du CV: ' . $score . '% - Passé: ' . ($passed ? 'Oui' : 'Non'));
+
+                    // Si le CV ne répond pas aux critères minimums, rejeter automatiquement la candidature
+                    if (!$passed) {
+                        $this->logger->info('CV non conforme aux critères minimums, candidature rejetée automatiquement');
+                        $candidature->setStatus(Candidature::STATUS_REFUSEE);
+                        $this->addFlash('warning', 'Votre candidature a été soumise, mais votre CV ne répond pas à certains critères importants. Nous vous invitons à consulter nos conseils pour améliorer votre CV.');
+                    }
+                }
             } else {
                 $this->addFlash('error', 'Une erreur est survenue lors de l\'upload du CV.');
                 return $this->render('candidat/candidature/new_simple.html.twig', [
@@ -114,6 +144,15 @@ class CandidatCandidatureController extends AbstractController
             $this->em->flush();
 
             $this->logger->info('Candidature créée avec succès pour l\'offre : ' . $offre->getTitle());
+
+            // Si une analyse de CV a été effectuée, rediriger vers la page d'analyse
+            if (isset($tempCandidatureId) && isset($analysisResult) && $analysisResult['success']) {
+                $this->addFlash('success', '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès.');
+                return $this->redirectToRoute('app_candidat_candidature_cv_analysis', [
+                    'id' => $tempCandidatureId
+                ]);
+            }
+
             $this->addFlash('success', '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès. <br>Nous vous contacterons prochainement pour vous informer de la suite du processus.');
             return $this->redirectToRoute('back.candidat.offres_emploi.index');
         }
@@ -121,6 +160,25 @@ class CandidatCandidatureController extends AbstractController
         return $this->render('candidat/candidature/new_simple.html.twig', [
             'form' => $form->createView(),
             'offre' => $offre,
+        ]);
+    }
+
+    /**
+     * Affiche les résultats de l'analyse du CV
+     */
+    #[Route('/cv-analysis/{id}', name: 'app_candidat_candidature_cv_analysis')]
+    public function showCvAnalysis(string $id, GeminiCvEvaluatorService $geminiCvEvaluator): Response
+    {
+        // Récupérer les résultats d'analyse depuis la session
+        $analysisResults = $geminiCvEvaluator->getAnalysisResults($id);
+
+        if (!$analysisResults) {
+            $this->addFlash('error', 'Les résultats d\'analyse du CV ne sont pas disponibles.');
+            return $this->redirectToRoute('back.candidat.offres_emploi.index');
+        }
+
+        return $this->render('candidat/candidature/cv_analysis.html.twig', [
+            'analysis' => $analysisResults
         ]);
     }
 
