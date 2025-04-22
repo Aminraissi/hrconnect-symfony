@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\AbsenceRepository;
+use Doctrine\Common\Collections\Collection; // Import Assert for validation constraints
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AbsenceRepository::class)]
 #[ORM\Table(name: 'absence')]
@@ -31,6 +28,7 @@ class Absence
 
     #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'absences')]
     #[ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id')]
+    #[Assert\NotNull(message: 'L\'employé est obligatoire.')] // Validation constraint
     private ?Employe $employe = null;
 
     public function getEmploye(): ?Employe
@@ -45,6 +43,7 @@ class Absence
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Le motif est obligatoire.')] // Validation constraint
     private ?string $motif = null;
 
     public function getMotif(): ?string
@@ -59,6 +58,7 @@ class Absence
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    //#[Assert\NotBlank(message: 'Le justificatif est obligatoire.')] // Validation constraint
     private ?string $justificatif = null;
 
     public function getJustificatif(): ?string
@@ -73,6 +73,7 @@ class Absence
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'La remarque est obligatoire.')] // Validation constraint
     private ?string $remarque = null;
 
     public function getRemarque(): ?string
@@ -87,6 +88,7 @@ class Absence
     }
 
     #[ORM\Column(type: 'datetime', nullable: false)]
+
     private ?\DateTimeInterface $date_enregistrement = null;
 
     public function getDate_enregistrement(): ?\DateTimeInterface
@@ -94,7 +96,7 @@ class Absence
         return $this->date_enregistrement;
     }
 
-    public function setDate_enregistrement(\DateTimeInterface $date_enregistrement): self
+    public function setDate_enregistrement(\DateTimeInterface $date_enregistrement) : self
     {
         $this->date_enregistrement = $date_enregistrement;
         return $this;
@@ -111,5 +113,4 @@ class Absence
 
         return $this;
     }
-
 }

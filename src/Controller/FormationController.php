@@ -14,10 +14,21 @@ use Symfony\Component\Routing\Attribute\Route;
 final class FormationController extends AbstractController
 {
     #[Route(name: 'app_formations_index', methods: ['GET'])]
-    public function index(FormationRepository $formationRepository): Response
+    public function index(Request $request, FormationRepository $formationRepository): Response
     {
+        $type = $request->query->get('type');
+
+        if ($type == 'free') {
+            $formations = $formationRepository->findBy(['price' => 0]);
+        } else if ($type == 'paid') {
+            $formations = $formationRepository->findPaidFormations();
+        } else {
+            $formations = $formationRepository->findAll();
+        }
+
         return $this->render('formations/index.html.twig', [
-            'formations' => $formationRepository->findAll(),
+            'formations' => $formations,
+            'type'       => $type,
         ]);
     }
 

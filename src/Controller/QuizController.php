@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class QuizController extends AbstractController
 {
     #[Route(name: 'app_quiz_index', methods: ['GET'])]
-    public function index(int $fid, FormationRepository $formationRepository, QuizRepository $quizRepository): Response
+    public function index(int $fid, Request $request, FormationRepository $formationRepository, QuizRepository $quizRepository): Response
     {
         $formation = $formationRepository->find($fid);
 
@@ -23,7 +23,12 @@ final class QuizController extends AbstractController
             throw $this->createNotFoundException('Formation not found');
         }
 
-        $quizzes = $quizRepository->findBy(['formation' => $fid]);
+        $searchQuery = $request->query->get('q');
+        if ($searchQuery) {
+            $quizzes = $quizRepository->searchQuestion($fid, $searchQuery);
+        } else {
+            $quizzes = $quizRepository->findBy(['formation' => $fid]);
+        }
 
         return $this->render('quiz/index.html.twig', [
             'formation' => $formation,
