@@ -8,6 +8,7 @@ use App\Form\CandidatureSimpleType;
 use App\Form\CandidatureSimpleNewType;
 use App\Entity\Candidat;
 use App\Service\GeminiCvEvaluatorService;
+use App\Service\CandidatureEmailService;
 use App\Repository\CandidatureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -35,7 +36,8 @@ class CandidatCandidatureController extends AbstractController
         Request $request,
         OffreEmploi $offre,
         SluggerInterface $slugger,
-        GeminiCvEvaluatorService $geminiCvEvaluator
+        GeminiCvEvaluatorService $geminiCvEvaluator,
+        CandidatureEmailService $candidatureEmailService
     ): Response {
         $candidature = new Candidature();
 
@@ -113,10 +115,10 @@ class CandidatCandidatureController extends AbstractController
 
                 if (!$analysisResult['success']) {
                     $this->logger->error('Erreur lors de l\'analyse du CV: ' . ($analysisResult['message'] ?? 'Erreur inconnue'));
-                    // En cas d'erreur d'analyse, rejeter automatiquement la candidature
-                    $this->logger->info('Erreur d\'analyse, candidature rejetée automatiquement par sécurité');
-                    $candidature->setStatus(Candidature::STATUS_REFUSEE);
-                    $this->addFlash('warning', 'Votre candidature a été soumise, mais une erreur est survenue lors de l\'analyse de votre CV. Veuillez réessayer ultérieurement.');
+                    // En cas d'erreur d'analyse, mettre la candidature en cours (pour examen manuel)
+                    $this->logger->info('Erreur d\'analyse, candidature mise en cours pour examen manuel');
+                    $candidature->setStatus(Candidature::STATUS_EN_COURS);
+                    $this->addFlash('warning', 'Votre candidature a été soumise, mais une erreur est survenue lors de l\'analyse de votre CV. Votre candidature sera examinée manuellement par notre équipe.');
                 } else {
                     $score = $analysisResult['score'];
                     $passed = $analysisResult['passed'];
@@ -145,15 +147,38 @@ class CandidatCandidatureController extends AbstractController
 
             $this->logger->info('Candidature créée avec succès pour l\'offre : ' . $offre->getTitle());
 
-            // Si une analyse de CV a été effectuée, rediriger vers la page d'analyse
+            // Déterminer si la candidature est acceptée (score CV >= 50%)
+            $isAccepted = null; // Par défaut, on considère qu'il y a une erreur d'analyse
+
+            if (isset($analysisResult)) {
+                if ($analysisResult['success']) {
+                    // Analyse réussie, on détermine si le CV est accepté ou non
+                    $isAccepted = $analysisResult['passed'];
+                }
+                // Sinon, on laisse isAccepted à null pour indiquer une erreur d'analyse
+            }
+
+            // Envoyer l'email avec la référence de candidature
+            $emailSent = $candidatureEmailService->sendConfirmationEmail($candidature, $isAccepted);
+            if ($emailSent) {
+                $this->logger->info('Email de confirmation envoyé avec succès à : ' . $candidature->getCandidat()->getEmail());
+            } else {
+                $this->logger->warning('Impossible d\'envoyer l\'email de confirmation à : ' . $candidature->getCandidat()->getEmail());
+            }
+
+            // Préparer le message de confirmation
+            $successMessage = '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès. <br>Un email contenant votre référence de candidature vous a été envoyé.';
+
+            // Si une analyse de CV a été effectuée avec succès, rediriger vers la page d'analyse
             if (isset($tempCandidatureId) && isset($analysisResult) && $analysisResult['success']) {
-                $this->addFlash('success', '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès.');
+                $this->addFlash('success', $successMessage);
                 return $this->redirectToRoute('app_candidat_candidature_cv_analysis', [
                     'id' => $tempCandidatureId
                 ]);
             }
 
-            $this->addFlash('success', '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès. <br>Nous vous contacterons prochainement pour vous informer de la suite du processus.');
+            // Sinon, rediriger vers la liste des offres d'emploi
+            $this->addFlash('success', $successMessage);
             return $this->redirectToRoute('back.candidat.offres_emploi.index');
         }
 

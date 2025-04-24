@@ -37,3 +37,9 @@ services:
         arguments:
             $httpClient: '@http_client'
             $logger: '@logger'
+
+    # Service d'email pour les candidatures
+    App\Service\CandidatureEmailService:
+        arguments:
+            $logger: '@logger'
+            $mailer: '@mailer'
