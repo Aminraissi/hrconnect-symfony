@@ -58,9 +58,11 @@
 							<div class="text-danger error-text">{{ form_errors(form.is_online) }}</div>
 						</div>
 					</div>
-					<div class="col-xl-6 col-sm-12 col-12">
+					<div class="col-xl-12 col-sm-12 col-12">
 						<div class="form-group" id="f_place">
 							{{ form_widget(form.place, {'attr': {'class': 'form-control', 'placeholder': 'Place'}}) }}
+							<div id="map"></div>
+
 							<div class="text-danger error-text">{{ form_errors(form.place) }}</div>
 						</div>
 					</div>

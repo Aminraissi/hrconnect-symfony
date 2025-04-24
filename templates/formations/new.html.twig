@@ -3,7 +3,20 @@
 {% block title %}New Formation
 {% endblock %}
 
+{% block css %}
+	{{ parent() }}
+
+	<style>
+		#map {
+			height: 500px;
+			width: 100%;
+			margin-top: 10px;
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
+
 
 	<div class="row">
 		<div class="col-xl-12 col-sm-12 col-12">
@@ -43,5 +56,56 @@ $('#f_lat_lng').show();
 });
 
 });
+	</script>
+
+	<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
+
+
+	<script>
+		let map,
+marker,
+autocomplete;
+
+function initMap() { // Initial map center
+const initialPosition = {
+lat: 36.8065,
+lng: 10.1815
+}; // Tunis, for example
+
+map = new google.maps.Map(document.getElementById("map"), {
+center: initialPosition,
+zoom: 13
+});
+
+marker = new google.maps.Marker({map: map, draggable: false});
+
+const input = document.getElementById("formation_place");
+autocomplete = new google.maps.places.Autocomplete(input);
+autocomplete.bindTo("bounds", map);
+
+autocomplete.addListener("place_changed", () => {
+const place = autocomplete.getPlace();
+if (! place.geometry) {
+alert("No details available for the selected place.");
+return;
+}
+
+map.setCenter(place.geometry.location);
+map.setZoom(15);
+
+marker.setPosition(place.geometry.location);
+marker.setVisible(true);
+
+const lat = place.geometry.location.lat();
+const lng = place.geometry.location.lng();
+console.log("Selected coordinates:", lat, lng);
+
+document.getElementById("formation_lat").value = lat;
+document.getElementById("formation_lng").value = lng;
+
+});
+}
+
+window.onload = initMap;
 	</script>
 {% endblock %}
