@@ -25,6 +25,7 @@ class CandidatOffreEmploiController extends AbstractController
         $this->logger = $logger;
         $this->connection = $connection;
     }
+    
     #[Route('/', name: 'back.candidat.offres_emploi.index')]
     public function index(Request $request, OffreEmploiRepository $repository): Response
     {
@@ -69,7 +70,71 @@ class CandidatOffreEmploiController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'back.candidat.offres_emploi.show')]
+    #[Route('/recherche-avancee', name: 'back.candidat.offres_emploi.advanced_search', methods: ['GET', 'POST'])]
+    public function advancedSearch(Request $request, OffreEmploiRepository $repository): Response
+    {
+        $this->logger->info('=== DÉBUT DE LA RECHERCHE AVANCÉE ===');
+        $this->logger->info('Méthode de la requête: ' . $request->getMethod());
+        $this->logger->info('Paramètres POST: ' . json_encode($request->request->all()));
+        $this->logger->info('Paramètres GET: ' . json_encode($request->query->all()));
+
+        // Récupérer le paramètre de recherche (d'abord dans GET, puis dans POST si nécessaire)
+        $title = $request->query->get('title') ?: $request->request->get('title');
+        $this->logger->info('Paramètre title: ' . ($title ?: 'non spécifié'));
+
+        try {
+            // Créer une requête personnalisée avec QueryBuilder
+            $queryBuilder = $repository->createQueryBuilder('o');
+
+            // Ajouter la condition de recherche par titre
+            if ($title && !empty(trim($title))) {
+                $queryBuilder->andWhere('LOWER(o.title) LIKE LOWER(:title)')
+                    ->setParameter('title', '%' . trim($title) . '%');
+                $this->logger->info('Condition de recherche ajoutée: title LIKE %' . trim($title) . '%');
+            } else {
+                $this->logger->info('Aucune condition de recherche ajoutée (titre vide ou non spécifié)');
+            }
+
+            // Exécuter la requête
+            $offres = $queryBuilder->getQuery()->getResult();
+            $this->logger->info('Résultats de la recherche: ' . count($offres) . ' offres trouvées');
+
+            // Vérifier si c'est une requête Ajax ou un appel direct
+            $isAjax = $request->isXmlHttpRequest() || $request->headers->get('Accept') === 'text/plain';
+            $this->logger->info('Type de requête: ' . ($isAjax ? 'Ajax' : 'Direct'));
+
+            if ($isAjax) {
+                // Rendre uniquement le contenu du tableau des résultats pour Ajax
+                $html = $this->renderView('back_office/candidat/offres_emploi/_search_results.html.twig', [
+                    'offres' => $offres,
+                    'searchTerm' => $title
+                ]);
+                
+                $this->logger->info('Template partiel rendu avec succès');
+                $this->logger->info('Taille du HTML généré: ' . strlen($html) . ' caractères');
+                $this->logger->info('=== FIN DE LA RECHERCHE AVANCÉE (AJAX) ===');
+                
+                return new Response($html);
+            } else {
+                // Rendre la page complète pour un appel direct
+                $this->logger->info('Rendu de la page complète');
+                $this->logger->info('=== FIN DE LA RECHERCHE AVANCÉE (PAGE COMPLÈTE) ===');
+                
+                return $this->render('back_office/candidat/offres_emploi/index.html.twig', [
+                    'offres' => $offres,
+                    'searchTerm' => $title
+                ]);
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('ERREUR lors de la recherche: ' . $e->getMessage());
+            $this->logger->error('Trace: ' . $e->getTraceAsString());
+            $this->logger->info('=== FIN DE LA RECHERCHE AVANCÉE (AVEC ERREUR) ===');
+            
+            return new Response('Erreur lors de la recherche: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/{id}', name: 'back.candidat.offres_emploi.show', requirements: ['id' => '\d+'])]
     public function show(OffreEmploi $offre): Response
     {
         // Note: isActive n'est plus disponible dans la nouvelle structure
@@ -77,31 +142,6 @@ class CandidatOffreEmploiController extends AbstractController
 
         return $this->render('back_office/candidat/offres_emploi/show.html.twig', [
             'offre' => $offre,
-        ]);
-    }
-    #[Route('/advanced-search', name: 'back.candidat.offres_emploi.advanced_search', methods: ['POST'])]
-    public function advancedSearch(Request $request, OffreEmploiRepository $repository): Response
-    {
-        $title = $request->request->get('title');
-
-        $this->logger->info('Recherche avancée d\'offres avec le titre: ' . $title);
-
-        // Créer une requête personnalisée pour la recherche par titre
-        $queryBuilder = $repository->createQueryBuilder('o');
-
-        if ($title) {
-            $queryBuilder->andWhere('o.title LIKE :title')
-                ->setParameter('title', '%' . $title . '%');
-        }
-
-        // Exécuter la requête
-        $offres = $queryBuilder->getQuery()->getResult();
-
-        $this->logger->info('Résultats de la recherche avancée: ' . count($offres) . ' offres trouvées');
-
-        // Rendre uniquement le contenu du tableau des résultats
-        return $this->render('back_office/candidat/offres_emploi/_search_results.html.twig', [
-            'offres' => $offres,
         ]);
     }
 }
