@@ -34,7 +34,7 @@ class PaypalService
         return $data['access_token'];
     }
 
-    public function createOrder(string $successUrl, string $cancelUrl): string
+    public function createOrder($price, string $successUrl, string $cancelUrl): string
     {
         $accessToken = $this->getAccessToken();
 
@@ -48,7 +48,7 @@ class PaypalService
                 'purchase_units'      => [[
                     'amount' => [
                         'currency_code' => 'USD',
-                        'value'         => '10.00',
+                        'value'         => $price,
                     ],
                 ]],
                 'application_context' => [
