@@ -56,4 +56,19 @@ final class FormationFrontOfficeController extends AbstractController
         ]);
     }
 
+    #[Route('/frontoffice/formations/{id}/meet', name: 'app_user_formation_meet')]
+    public function meet(FormationRepository $formationRepository, $id): Response
+    {
+
+        $formation = $formationRepository->find($id);
+
+        if (! $formation) {
+            throw $this->createNotFoundException('Formation not found');
+        }
+
+        return $this->render('formations/formation_meet.html.twig', [
+            'formation' => $formation,
+        ]);
+    }
+
 }

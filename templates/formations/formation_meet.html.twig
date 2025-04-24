@@ -1,0 +1,69 @@
+{% extends 'front_office.html.twig' %}
+
+{% block title %}
+	Training List
+{% endblock %}
+
+{% block body %}
+	<main>
+
+
+		<section class="pt-5">
+			<div class="container">
+
+				<div
+					class="row g-4 g-sm-5">
+					<!-- Main content START -->
+					<div
+						class="col-xl-12 mb-4 mb-sm-0">
+
+
+						<!-- Personal info START -->
+						<div
+							class="card card-body shadow p-4">
+							<!-- Title -->
+							{% if app.session.flashBag.has('error') %}
+								<div class="alert alert-danger" role="alert">
+									{{ app.session.flashBag.get('error')|first }}
+								</div>
+							{% endif %}
+							<h5 class="mb-1">{{ formation.title }}</h5>
+
+							<div id="meet"></div>
+
+						</div>
+						<!-- Personal info END -->
+					</div>
+					<!-- Main content END -->
+
+
+				</div>
+				<!-- Right sidebar END -->
+
+			</div>
+			<!-- Row END -->
+		</div>
+	</section>
+	<!-- =======================
+																																																					Page content END -->
+
+</main>{% endblock %}{% block js %}
+{{ parent() }}
+<script src='https://meet.jit.si/external_api.js'></script>
+<script>
+	const domain = 'meet.jit.si/hrconnect';
+const options = {
+roomName: '{{ formation.title }}',
+width: '100%',
+height: 700,
+parentNode: document.querySelector('#meet'),
+userInfo: {
+email: 'haithemdridiweb@gmail.com',
+'displayName': "Haythem Dridi"
+},
+configOverwrite: {
+defaultLanguage: 'fr'
+}
+};
+const api = new JitsiMeetExternalAPI(domain, options);
+</script></script>{% endblock %}
