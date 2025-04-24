@@ -36,6 +36,11 @@ services:
             $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
             $apiUrl: '%env(PAYPAL_API_URL)%'
 
+    App\Service\NotificationService:
+        arguments:
+            $appId: '%env(ONESIGNAL_APP_ID)%'
+            $appKey: '%env(ONESIGNAL_API_KEY)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

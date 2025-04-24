@@ -1,0 +1,40 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+	Notifications
+{% endblock %}
+
+
+{% block body %}
+
+
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_back_office') }}">Home</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_formations_index') }}">Liste des Formations</a>
+					</li>
+				</ul>
+				<h3>Ajouter une formation</h3>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12">
+
+			<form method="post" class="form-group">
+				<div class="mb-3">
+					<label for="title" class="form-label">Title</label>
+					<input type="text" class="form-control" id="title" name="title" placeholder="Enter title">
+				</div>
+				<div class="mb-3">
+					<label for="description" class="form-label">Description</label>
+					<textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter description"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+{% endblock %}

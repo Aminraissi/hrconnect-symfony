@@ -45,7 +45,16 @@
 
 		{% include 'front_office/_footer.html.twig' %}
 
-		{% block js %}{% endblock %}
+		{% block js %}
+
+			<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+			<script>
+				window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(async function (OneSignal) {
+await OneSignal.init({appId: "410afd00-19fd-40f7-9130-fd59b80ed108"});
+});
+			</script>
+		{% endblock %}
 
 
 	</body>
