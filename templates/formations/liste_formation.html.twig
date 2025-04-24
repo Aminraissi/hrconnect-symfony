@@ -393,7 +393,7 @@
 										</div>
 										<!-- Title -->
 										<h5 class="card-title fw-normal">
-											<a href="#">{{ formation.title }}</a>
+											<a href="{{ path('app_user_formation_details', { id: formation.id }) }}">{{ formation.title }}</a>
 										</h5>
 										<p class="mb-2 text-truncate-2">
 											{{ formation.description }}

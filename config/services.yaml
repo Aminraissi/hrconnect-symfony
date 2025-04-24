@@ -6,6 +6,10 @@
 parameters:
     cv_directory: '%kernel.project_dir%/public/uploads/cv'
     lettre_motivation_directory: '%kernel.project_dir%/public/uploads/lettre_motivation'
+    google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
+    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+
 
 services:
     # default configuration for services in *this* file
@@ -21,6 +25,20 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    
+    App\Service\StripeService:
+        arguments:
+            $secretKey: '%stripe.secret_key%'
+
+    App\Service\PaypalService:
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
+            $apiUrl: '%env(PAYPAL_API_URL)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+twig:
+    globals:
+        google_maps_api_key: '%google_maps_api_key%'
