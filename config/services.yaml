@@ -30,6 +30,12 @@ services:
         arguments:
             $secretKey: '%stripe.secret_key%'
 
+    App\Service\PaypalService:
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
+            $apiUrl: '%env(PAYPAL_API_URL)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

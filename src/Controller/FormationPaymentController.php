@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Service\PaypalService;
 use App\Service\StripeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,7 +11,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class FormationPaymentController extends AbstractController
 {
-    #[Route('/formation/payment', name: 'app_formation_payment')]
+    #[Route('/formation/payment/stripe', name: 'app_formation_payment_stripe')]
     public function index(StripeService $stripe): RedirectResponse
     {
 
@@ -33,6 +34,17 @@ final class FormationPaymentController extends AbstractController
         );
 
         return new RedirectResponse($session->url);
+    }
+
+    #[Route('/formation/payment/paypal', name: 'app_formation_payment_paypal')]
+    public function checkout(PaypalService $paypal): RedirectResponse
+    {
+        $successUrl = $this->generateUrl('app_formation_payment_success', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL);
+        $cancelUrl  = $this->generateUrl('app_formation_payment_cancel', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $redirectUrl = $paypal->createOrder($successUrl, $cancelUrl);
+
+        return new RedirectResponse($redirectUrl);
     }
 
     #[Route('/formation/payment/success', name: 'app_formation_payment_success')]
