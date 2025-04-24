@@ -1,0 +1,51 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Suivi de candidature{% endblock %}
+
+{% block body %}
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Suivi de candidature</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('back.candidat.offres_emploi.index') }}">Offres d'emploi</a></li>
+                            <li class="breadcrumb-item active">Suivi de candidature</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Suivre ma candidature</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <p><i class="fa fa-info-circle mr-2"></i> Entrez la référence de candidature qui vous a été communiquée par email pour suivre l'état de votre candidature.</p>
+                            </div>
+
+                            {{ form_start(form, {'action': path('app_candidature_suivi_recherche'), 'method': 'POST'}) }}
+                            <div class="form-group">
+                                {{ form_label(form.reference) }}
+                                {{ form_widget(form.reference) }}
+                                {{ form_errors(form.reference) }}
+                                <small class="form-text text-muted">La référence se trouve dans l'email de confirmation que vous avez reçu.</small>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search mr-2"></i> Rechercher ma candidature
+                                </button>
+                            </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

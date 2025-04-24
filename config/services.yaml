@@ -39,6 +39,24 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    # Service d'analyse de CV avec Gemini
+    App\Service\GeminiCvEvaluatorService:
+        arguments:
+            $logger: '@logger'
+            $requestStack: '@request_stack'
+            $cvAnalyzerService: '@App\Service\CvAnalyzerService'
+
+    # Service d'analyse de CV
+    App\Service\CvAnalyzerService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'
+
+    # Service d'email pour les candidatures
+    App\Service\CandidatureEmailService:
+        arguments:
+            $logger: '@logger'
+            $mailer: '@mailer'
 twig:
     globals:
         google_maps_api_key: '%google_maps_api_key%'

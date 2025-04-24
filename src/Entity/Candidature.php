@@ -33,7 +33,7 @@ class Candidature
     public const STATUS_REFUSEE = 'refusee';
 
     #[ORM\Column(length: 50)]
-    private ?string $status = self::STATUS_EN_COURS;
+    private ?string $status = self::STATUS_EN_ATTENTE;
 
     public function __construct()
     {
