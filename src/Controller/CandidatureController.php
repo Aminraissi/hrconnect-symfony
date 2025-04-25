@@ -408,9 +408,17 @@ class CandidatureController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_candidature_show', methods: ['GET'])]
-    public function show(Candidature $candidature): Response
+    #[Route('/{id}', name: 'app_candidature_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function show(Request $request, CandidatureRepository $candidatureRepository, int $id): Response
     {
+        $candidature = $candidatureRepository->find($id);
+
+        if (!$candidature) {
+            $this->logger->error('Candidature non trouvée avec l\'ID: ' . $id);
+            $this->addFlash('error', 'La candidature demandée n\'existe pas.');
+            return $this->redirectToRoute('back.candidatures.index');
+        }
+
         return $this->render('candidature/show.html.twig', [
             'candidature' => $candidature,
         ]);

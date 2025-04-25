@@ -113,8 +113,13 @@
 			</div>
 			<div class="col-xl-12 col-sm-12 col-12 mb-4">
 				<div class="row">
-					<div class="col-xl-10 col-sm-8 col-12">
+					<div class="col-xl-8 col-sm-6 col-12">
 						<label class="employee_count">{{ candidatures|length }} Candidatures</label>
+					</div>
+					<div class="col-xl-4 col-sm-6 col-12 text-right">
+						<a href="{{ path('back.candidatures.statistics') }}" class="btn btn-primary">
+							<i data-feather="bar-chart-2"></i> Statistiques
+						</a>
 					</div>
 				</div>
 			</div>

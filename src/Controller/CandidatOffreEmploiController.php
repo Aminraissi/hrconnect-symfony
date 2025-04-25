@@ -54,9 +54,13 @@ class CandidatOffreEmploiController extends AbstractController
     {
         $this->logger->info('=== DÉBUT DE LA RECHERCHE AVANCÉE ===');
 
-        // Récupérer le paramètre de recherche
+        // Récupérer les paramètres de recherche et de tri
         $title = $request->query->get('title');
+        $sortBy = $request->query->get('sort', 'title'); // Par défaut, tri par titre
+        $sortOrder = $request->query->get('order', 'asc'); // Par défaut, ordre ascendant
+
         $this->logger->info('Terme de recherche: "' . ($title ?: '') . '"');
+        $this->logger->info('Tri par: ' . $sortBy . ' ' . $sortOrder);
 
         try {
             // Créer une requête personnalisée avec QueryBuilder
@@ -66,6 +70,16 @@ class CandidatOffreEmploiController extends AbstractController
             if ($title && !empty(trim($title))) {
                 $queryBuilder->andWhere('LOWER(o.title) LIKE LOWER(:title)')
                     ->setParameter('title', '%' . trim($title) . '%');
+            }
+
+            // Ajouter le tri
+            // Vérifier que le champ de tri est valide pour éviter les injections SQL
+            $validSortFields = ['title', 'location', 'id'];
+            if (in_array($sortBy, $validSortFields)) {
+                $queryBuilder->orderBy('o.' . $sortBy, $sortOrder === 'desc' ? 'DESC' : 'ASC');
+            } else {
+                // Champ de tri non valide, utiliser le tri par défaut
+                $queryBuilder->orderBy('o.title', 'ASC');
             }
 
             // Exécuter la requête
