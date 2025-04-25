@@ -113,8 +113,9 @@ class CandidatureController extends AbstractController
                 $this->logger->info('Tentative d\'envoi d\'email de refus à : ' . $candidat->getEmail());
                 $this->logger->info('Status de la candidature avant envoi: "' . $candidature->getStatus() . '"');
 
-                // Forcer le statut à 'rejected' pour l'envoi de l'email
-                $emailSent = $this->emailService->sendEmail($candidature, 'rejected');
+                // Mettre à jour le statut de la candidature à 'refusee' avant de l'envoyer
+                $candidature->setStatus('refusee');
+                $emailSent = $this->emailService->sendEmail($candidature, $candidature->getStatus());
 
                 if ($emailSent) {
                     $this->logger->info('Email de refus envoyé avec succès à : ' . $candidat->getEmail());
@@ -166,8 +167,8 @@ class CandidatureController extends AbstractController
             $this->logger->info('Tentative d\'envoi d\'email d\'acceptation à : ' . $candidature->getCandidat()->getEmail());
             $this->logger->info('Status de la candidature avant envoi: "' . $candidature->getStatus() . '"');
 
-            // Forcer le statut à 'accepted' pour l'envoi de l'email
-            $emailSent = $this->emailService->sendEmail($candidature, 'accepted');
+            // Utiliser le statut de la candidature pour l'envoi de l'email
+            $emailSent = $this->emailService->sendEmail($candidature, $candidature->getStatus());
 
             if ($emailSent) {
                 $this->logger->info('Email d\'acceptation envoyé avec succès à : ' . $candidature->getCandidat()->getEmail());
@@ -181,8 +182,8 @@ class CandidatureController extends AbstractController
                     $this->logger->info('Tentative d\'envoi d\'email de refus à : ' . $autreCandidature->getCandidat()->getEmail());
                     $this->logger->info('Status de la candidature avant envoi: "' . $autreCandidature->getStatus() . '"');
 
-                    // Forcer le statut à 'rejected' pour l'envoi de l'email
-                    $emailSent = $this->emailService->sendEmail($autreCandidature, 'rejected');
+                    // Utiliser le statut de la candidature pour l'envoi de l'email
+                    $emailSent = $this->emailService->sendEmail($autreCandidature, $autreCandidature->getStatus());
 
                     if ($emailSent) {
                         $this->logger->info('Email de refus envoyé avec succès à : ' . $autreCandidature->getCandidat()->getEmail());

@@ -178,11 +178,15 @@
                 <div class="card-body">
                     <div id="cv-score-chart" class="chart-container"></div>
                     <div class="mt-3">
-                        <p><strong>Score moyen des CV :</strong> {{ cvScoreStats.avgScore }}%</p>
-                        <p><strong>Pourcentage de CV avec score > 50% :</strong> {{ cvScoreStats.highScorePercentage|round(1) }}%</p>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar bg-success" style="width: {{ cvScoreStats.highScorePercentage }}%"></div>
-                        </div>
+                        {% if cvScoreStats.totalWithScore > 0 %}
+                            <p><strong>Score moyen des CV :</strong> {{ cvScoreStats.avgScore }}%</p>
+                            <p><strong>Pourcentage de CV avec score > 50% :</strong> {{ cvScoreStats.highScorePercentage|round(1) }}%</p>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar bg-success" style="width: {{ cvScoreStats.highScorePercentage }}%"></div>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Aucune candidature avec un score CV n'a été trouvée.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -202,7 +206,11 @@
                             <thead>
                                 <tr>
                                     <th>Offre d'emploi</th>
-                                    <th>Nombre de candidatures</th>
+                                    <th>Total</th>
+                                    <th>Acceptées</th>
+                                    <th>Refusées</th>
+                                    <th>En attente</th>
+                                    <th>En cours</th>
                                     <th>Pourcentage</th>
                                 </tr>
                             </thead>
@@ -211,6 +219,18 @@
                                     <tr>
                                         <td>{{ offre.title }}</td>
                                         <td>{{ offre.count }}</td>
+                                        <td>
+                                            <span class="badge badge-success">{{ offre.acceptedCount }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-danger">{{ offre.rejectedCount }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-warning">{{ offre.pendingCount }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-info">{{ offre.inProgressCount }}</span>
+                                        </td>
                                         <td>
                                             {% set percentage = (offre.count / totalCandidatures * 100)|round(1) %}
                                             <div class="progress-bar-container">
@@ -221,7 +241,7 @@
                                     </tr>
                                 {% else %}
                                     <tr>
-                                        <td colspan="3" class="text-center">Aucune donnée disponible</td>
+                                        <td colspan="7" class="text-center">Aucune donnée disponible</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -275,31 +295,36 @@
             statusChart.render();
 
             // Graphique des scores CV
-            var cvScoreOptions = {
-                chart: {
-                    type: 'pie',
-                    height: 300
-                },
-                series: [{{ cvScoreStats.highScore }}, {{ cvScoreStats.lowScore }}],
-                labels: ['Score > 50%', 'Score < 50%'],
-                colors: ['#28a745', '#dc3545'],
-                legend: {
-                    position: 'bottom'
-                },
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        chart: {
-                            width: 200
-                        },
-                        legend: {
-                            position: 'bottom'
+            {% if cvScoreStats.totalWithScore > 0 %}
+                var cvScoreOptions = {
+                    chart: {
+                        type: 'pie',
+                        height: 300
+                    },
+                    series: [{{ cvScoreStats.highScore }}, {{ cvScoreStats.lowScore }}],
+                    labels: ['Score > 50%', 'Score < 50%'],
+                    colors: ['#28a745', '#dc3545'],
+                    legend: {
+                        position: 'bottom'
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
                         }
-                    }
-                }]
-            };
-            var cvScoreChart = new ApexCharts(document.querySelector("#cv-score-chart"), cvScoreOptions);
-            cvScoreChart.render();
+                    }]
+                };
+                var cvScoreChart = new ApexCharts(document.querySelector("#cv-score-chart"), cvScoreOptions);
+                cvScoreChart.render();
+            {% else %}
+                // Afficher un message si aucune donnée n'est disponible
+                document.querySelector("#cv-score-chart").innerHTML = '<div class="text-center p-5"><p class="text-muted">Aucune donnée disponible</p></div>';
+            {% endif %}
 
             // Code du graphique des candidatures mensuelles supprimé
         });
