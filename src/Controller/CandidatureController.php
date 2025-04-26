@@ -105,7 +105,7 @@ class CandidatureController extends AbstractController
     public function delete(Candidature $candidature): Response
     {
         try {
-            // Envoyer un email de refus avant de supprimer la candidature
+            // Marquer la candidature comme refusée au lieu de la supprimer
             $candidat = $candidature->getCandidat();
             $offreEmploi = $candidature->getOffreEmploi();
 
@@ -113,8 +113,13 @@ class CandidatureController extends AbstractController
                 $this->logger->info('Tentative d\'envoi d\'email de refus à : ' . $candidat->getEmail());
                 $this->logger->info('Status de la candidature avant envoi: "' . $candidature->getStatus() . '"');
 
-                // Mettre à jour le statut de la candidature à 'refusee' avant de l'envoyer
+                // Mettre à jour le statut de la candidature à 'refusee'
                 $candidature->setStatus('refusee');
+
+                // Enregistrer la modification
+                $this->em->flush();
+
+                // Envoyer l'email de refus
                 $emailSent = $this->emailService->sendEmail($candidature, $candidature->getStatus());
 
                 if ($emailSent) {
@@ -122,17 +127,16 @@ class CandidatureController extends AbstractController
                 } else {
                     $this->logger->warning('Impossible d\'envoyer l\'email de refus à : ' . $candidat->getEmail());
                 }
+
+                $this->logger->info('Candidature marquée comme refusée : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
+                $this->addFlash('success', 'La candidature a été marquée comme refusée avec succès et un email de notification a été envoyé au candidat.');
+            } else {
+                $this->logger->error('Candidat ou offre d\'emploi manquant pour la candidature ID: ' . $candidature->getId());
+                $this->addFlash('error', 'Impossible de traiter cette candidature : informations manquantes.');
             }
-
-            // Supprimer la candidature
-            $this->em->remove($candidature);
-            $this->em->flush();
-
-            $this->logger->info('Candidature supprimée : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
-            $this->addFlash('success', 'La candidature a été supprimée avec succès et un email de notification a été envoyé au candidat.');
         } catch (\Exception $e) {
-            $this->logger->error('Erreur lors de la suppression de la candidature : ' . $e->getMessage());
-            $this->addFlash('error', 'Une erreur est survenue lors de la suppression de la candidature.');
+            $this->logger->error('Erreur lors du traitement de la candidature : ' . $e->getMessage());
+            $this->addFlash('error', 'Une erreur est survenue lors du traitement de la candidature.');
         }
 
         return $this->redirectToRoute('back.candidatures.index');
