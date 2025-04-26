@@ -37,8 +37,12 @@ class CandidatureController extends AbstractController
     #[Route('/', name: 'back.candidatures.index')]
     public function index(CandidatureRepository $repository, OffreEmploiRepository $offreRepository, Request $request): Response
     {
+        $this->logger->info('Début de la méthode index des candidatures');
+
         $offreId = $request->query->get('offre');
         $status = $request->query->get('statut'); // Garder 'statut' dans l'URL pour compatibilité
+
+        $this->logger->info('Paramètres de filtrage : offreId = ' . ($offreId ?: 'null') . ', status = ' . ($status ?: 'null'));
 
         // Construire les critères de recherche
         $criteria = [];
@@ -49,7 +53,19 @@ class CandidatureController extends AbstractController
             $criteria['status'] = $status; // Utiliser 'status' pour la recherche
         }
 
+        $this->logger->info('Critères de recherche : ' . json_encode($criteria));
+
+        // Récupérer toutes les candidatures sans filtrage pour déboguer
+        $allCandidatures = $repository->findAll();
+        $this->logger->info('Nombre total de candidatures dans la base : ' . count($allCandidatures));
+
+        // Récupérer les candidatures filtrées
         $candidatures = $repository->findBy($criteria, ['id' => 'DESC']);
+        $this->logger->info('Nombre de candidatures après filtrage : ' . count($candidatures));
+
+        // Afficher les IDs des candidatures pour déboguer
+        $candidatureIds = array_map(function($c) { return $c->getId(); }, $candidatures);
+        $this->logger->info('IDs des candidatures récupérées : ' . implode(', ', $candidatureIds ?: ['aucun']));
 
         return $this->render('back_office/candidatures/index.html.twig', [
             'candidatures' => $candidatures,
@@ -101,37 +117,50 @@ class CandidatureController extends AbstractController
         }
     }
 
-    #[Route('/{id}/delete', name: 'back.candidatures.delete', methods: ['GET', 'POST'])]
-    public function delete(Candidature $candidature): Response
+    #[Route('/{id}/reject', name: 'back.candidatures.reject', methods: ['GET', 'POST'])]
+    public function reject(Candidature $candidature): Response
     {
         try {
-            // Envoyer un email de refus avant de supprimer la candidature
+            $this->logger->info('Début de la méthode reject pour la candidature ID: ' . $candidature->getId());
+
+            // Envoyer un email de refus pour la candidature
             $candidat = $candidature->getCandidat();
             $offreEmploi = $candidature->getOffreEmploi();
+
+            $this->logger->info('Candidat: ' . ($candidat ? $candidat->getFirstName() . ' ' . $candidat->getLastName() : 'null'));
+            $this->logger->info('Offre: ' . ($offreEmploi ? $offreEmploi->getTitle() : 'null'));
+            $this->logger->info('Statut actuel: ' . $candidature->getStatus());
 
             if ($candidat && $offreEmploi) {
                 $this->logger->info('Tentative d\'envoi d\'email de refus à : ' . $candidat->getEmail());
                 $this->logger->info('Status de la candidature avant envoi: "' . $candidature->getStatus() . '"');
 
-                // Forcer le statut à 'rejected' pour l'envoi de l'email
-                $emailSent = $this->emailService->sendEmail($candidature, 'rejected');
+                // Mettre à jour le statut de la candidature à 'refusee' avant de l'envoyer
+                $candidature->setStatus('refusee');
+                $this->logger->info('Statut mis à jour à: ' . $candidature->getStatus());
+
+                // Enregistrer la modification dans la base de données
+                $this->em->persist($candidature);
+                $this->em->flush();
+                $this->logger->info('Candidature enregistrée avec succès');
+
+                $emailSent = $this->emailService->sendEmail($candidature, $candidature->getStatus());
 
                 if ($emailSent) {
                     $this->logger->info('Email de refus envoyé avec succès à : ' . $candidat->getEmail());
                 } else {
                     $this->logger->warning('Impossible d\'envoyer l\'email de refus à : ' . $candidat->getEmail());
                 }
+
+                $this->logger->info('Candidature marquée comme refusée : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
+                $this->addFlash('success', 'La candidature a été refusée avec succès et un email de notification a été envoyé au candidat.');
+            } else {
+                $this->logger->error('Candidat ou offre manquant pour la candidature ID: ' . $candidature->getId());
+                $this->addFlash('error', 'Impossible de traiter cette candidature : informations manquantes.');
             }
-
-            // Supprimer la candidature
-            $this->em->remove($candidature);
-            $this->em->flush();
-
-            $this->logger->info('Candidature supprimée : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
-            $this->addFlash('success', 'La candidature a été supprimée avec succès et un email de notification a été envoyé au candidat.');
         } catch (\Exception $e) {
-            $this->logger->error('Erreur lors de la suppression de la candidature : ' . $e->getMessage());
-            $this->addFlash('error', 'Une erreur est survenue lors de la suppression de la candidature.');
+            $this->logger->error('Erreur lors du refus de la candidature : ' . $e->getMessage());
+            $this->addFlash('error', 'Une erreur est survenue lors du refus de la candidature: ' . $e->getMessage());
         }
 
         return $this->redirectToRoute('back.candidatures.index');
@@ -166,8 +195,8 @@ class CandidatureController extends AbstractController
             $this->logger->info('Tentative d\'envoi d\'email d\'acceptation à : ' . $candidature->getCandidat()->getEmail());
             $this->logger->info('Status de la candidature avant envoi: "' . $candidature->getStatus() . '"');
 
-            // Forcer le statut à 'accepted' pour l'envoi de l'email
-            $emailSent = $this->emailService->sendEmail($candidature, 'accepted');
+            // Utiliser le statut de la candidature pour l'envoi de l'email
+            $emailSent = $this->emailService->sendEmail($candidature, $candidature->getStatus());
 
             if ($emailSent) {
                 $this->logger->info('Email d\'acceptation envoyé avec succès à : ' . $candidature->getCandidat()->getEmail());
@@ -181,8 +210,8 @@ class CandidatureController extends AbstractController
                     $this->logger->info('Tentative d\'envoi d\'email de refus à : ' . $autreCandidature->getCandidat()->getEmail());
                     $this->logger->info('Status de la candidature avant envoi: "' . $autreCandidature->getStatus() . '"');
 
-                    // Forcer le statut à 'rejected' pour l'envoi de l'email
-                    $emailSent = $this->emailService->sendEmail($autreCandidature, 'rejected');
+                    // Utiliser le statut de la candidature pour l'envoi de l'email
+                    $emailSent = $this->emailService->sendEmail($autreCandidature, $autreCandidature->getStatus());
 
                     if ($emailSent) {
                         $this->logger->info('Email de refus envoyé avec succès à : ' . $autreCandidature->getCandidat()->getEmail());
@@ -408,9 +437,17 @@ class CandidatureController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_candidature_show', methods: ['GET'])]
-    public function show(Candidature $candidature): Response
+    #[Route('/{id}', name: 'app_candidature_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function show(Request $request, CandidatureRepository $candidatureRepository, int $id): Response
     {
+        $candidature = $candidatureRepository->find($id);
+
+        if (!$candidature) {
+            $this->logger->error('Candidature non trouvée avec l\'ID: ' . $id);
+            $this->addFlash('error', 'La candidature demandée n\'existe pas.');
+            return $this->redirectToRoute('back.candidatures.index');
+        }
+
         return $this->render('candidature/show.html.twig', [
             'candidature' => $candidature,
         ]);
