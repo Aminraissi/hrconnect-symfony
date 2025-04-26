@@ -10,8 +10,9 @@ use Symfony\Component\Mime\Address;
 
 class EmailService
 {
-    private string $mailjetTemplateIdAccepted;
-    private string $mailjetTemplateIdRejected;
+    private const MAILJET_TEMPLATE_ID_ACCEPTED = '6766487';
+    private const MAILJET_TEMPLATE_ID_REJECTED = '6766480';
+
     private LoggerInterface $logger;
     private MailerInterface $mailer;
 
@@ -19,8 +20,6 @@ class EmailService
     {
         $this->logger = $logger;
         $this->mailer = $mailer;
-        $this->mailjetTemplateIdAccepted = $_ENV['MAILJET_TEMPLATE_ID_ACCEPTED'] ?? '6766487';
-        $this->mailjetTemplateIdRejected = $_ENV['MAILJET_TEMPLATE_ID_REJECTED'] ?? '6766480';
     }
 
     public function sendEmail(Candidature $candidature, string $status): bool

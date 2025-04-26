@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class SpellCheckerService
 {
     private const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-    private string $geminiApiKey;
+    private const GEMINI_API_KEY = 'AIzaSyDJC5a7CU7aGG-Ix12IH-OqGQGnbBJtgQU'; // Remplacez par votre clé API Gemini
 
     private HttpClientInterface $httpClient;
     private LoggerInterface $logger;
@@ -17,7 +17,6 @@ class SpellCheckerService
     {
         $this->httpClient = $httpClient;
         $this->logger = $logger;
-        $this->geminiApiKey = $_ENV['GEMINI_API_KEY'] ?? 'AIzaSyDJC5a7CU7aGG-Ix12IH-OqGQGnbBJtgQU';
     }
 
     /**

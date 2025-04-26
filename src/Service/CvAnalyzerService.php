@@ -8,11 +8,10 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class CvAnalyzerService
 {
+    private const AFFINDA_API_KEY = 'AFFINDA_API_KEY_REMOVED';
     private const AFFINDA_API_URL = 'https://api.affinda.com/v3/documents';
     private const AFFINDA_WORKSPACE_ID = 'WORKSPACE_ID_REMOVED';
     private const AFFINDA_COLLECTION_ID = 'COLLECTION_ID_REMOVED';
-
-    private string $affindaApiKey;
 
     private HttpClientInterface $httpClient;
     private LoggerInterface $logger;
@@ -21,7 +20,6 @@ class CvAnalyzerService
     {
         $this->httpClient = $httpClient;
         $this->logger = $logger;
-        $this->affindaApiKey = $_ENV['AFFINDA_API_KEY'] ?? 'AFFINDA_API_KEY_REMOVED';
     }
 
     public function analyzeCv(string $cvPath): array

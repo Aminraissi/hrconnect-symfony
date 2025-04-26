@@ -23,8 +23,8 @@ class GeminiCvEvaluatorService
         $this->requestStack = $requestStack;
         $this->cvAnalyzerService = $cvAnalyzerService;
 
-        // Clé API Gemini depuis les variables d'environnement
-        $this->geminiApiKey = $_ENV['GEMINI_API_KEY'] ?? 'AIzaSyAHGWEZe3xMZLRbtOUtufclqYmn_mgOlls';
+        // Clé API Gemini
+        $this->geminiApiKey = 'AIzaSyAHGWEZe3xMZLRbtOUtufclqYmn_mgOlls';
 
         // Définition des critères d'évaluation
         $this->criteria = [
