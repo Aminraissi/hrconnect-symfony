@@ -139,9 +139,7 @@ class CandidatCandidatureController extends AbstractController
                 ]);
             }
 
-            // Note: La lettre de motivation n'est plus utilisée dans la nouvelle structure
-
-            // Enregistrer la candidature
+            
             $this->em->persist($candidature);
             $this->em->flush();
 
