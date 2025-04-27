@@ -27,35 +27,35 @@
 		rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/glightbox/css/glightbox.css') }}">
 
 		<!-- Theme CSS -->
-		<link id="style-switch" rel="stylesheet" type="text/css" href="{{ asset('assets/css/style-front.css') }}">
+		<link id="style-switch" rel="stylesheet" type="text/css" href="{{ asset('assets/css/style-front.css') }}"> {% block css %}{% endblock %}
 
 
-	</head>
+		</head>
 
-	<body>
+		<body>
 
-		{% include 'front_office/_navbar.html.twig' %}
+			{% include 'front_office/_navbar.html.twig' %}
 
 
-		<main>
-			{% block body %}
-				body
-			{% endblock %}
-		</main>
+			<main>
+				{% block body %}
+					body
+				{% endblock %}
+			</main>
 
-		{% include 'front_office/_footer.html.twig' %}
+			{% include 'front_office/_footer.html.twig' %}
 
-		{% block js %}
+			{% block js %}
 
-			<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-			<script>
-				window.OneSignalDeferred = window.OneSignalDeferred || [];
+				<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+				<script>
+					window.OneSignalDeferred = window.OneSignalDeferred || [];
 OneSignalDeferred.push(async function (OneSignal) {
 await OneSignal.init({appId: "410afd00-19fd-40f7-9130-fd59b80ed108"});
 });
-			</script>
-		{% endblock %}
+				</script>
+			{% endblock %}
 
 
-	</body>
-</html>
+		</body>
+	</html>
