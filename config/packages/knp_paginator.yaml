@@ -1,9 +1,10 @@
-# Configuration officielle du bundle KnpPaginator
 knp_paginator:
-    template:
-        pagination: '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig'
+    page_range: 5
     default_options:
         page_name: page
         sort_field_name: sort
         sort_direction_name: direction
-        distinct: true
+        filter_field_name: filter
+    template:
+        pagination: '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig' # For Bootstrap 5
+        sortable: '@KnpPaginator/Pagination/sortable_link.html.twig'

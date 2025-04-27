@@ -42,6 +42,12 @@ services:
             $sid: '%env(HAYTHEM_TWILIO_SID)%'
             $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
             $from: '%env(HAYTHEM_TWILIO_FROM)%'
+    App\Service\TwilioServiceAlaa:
+        class: App\Service\TwilioService
+        arguments:
+            $sid: '%env(ALAA_TWILIO_SID)%'
+            $token: '%env(ALAA_TWILIO_TOKEN)%'
+            $from: '%env(ALAA_TWILIO_FROM)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -5,9 +5,12 @@
 {% block body %}
     <h1>Liste des demandes de congé</h1>
 
+    <!-- Ajouter le bouton "Ajouter une demande de congé" -->
+   
+
     <form method="get" action="{{ path('app_demande_conge_index') }}">
         <div class="form-group">
-            <input type="text" name="search" value="{{ app.request.query.get('search') }}" placeholder="Rechercher..." class="form-control">
+            <input type="text" name="search" value="{{ searchTerm }}" placeholder="Rechercher..." class="form-control">
         </div>
         <button type="submit" class="btn btn-primary my-2">Rechercher</button>
     </form>
@@ -15,27 +18,18 @@
     <table class="table">
         <thead>
             <tr>
-                <th>
-                    <a href="{{ path('app_demande_conge_index', { 'sort': 'e.nom', 'direction': direction == 'ASC' ? 'DESC' : 'ASC' }) }}">Employé</a>
-                </th>
-                <th>
-                    <a href="{{ path('app_demande_conge_index', { 'sort': 'd.typeConge', 'direction': direction == 'ASC' ? 'DESC' : 'ASC' }) }}">Type de congé</a>
-                </th>
-                <th>
-                    <a href="{{ path('app_demande_conge_index', { 'sort': 'd.dateDebut', 'direction': direction == 'ASC' ? 'DESC' : 'ASC' }) }}">Date début</a>
-                </th>
-                <th>
-                    <a href="{{ path('app_demande_conge_index', { 'sort': 'd.dateFin', 'direction': direction == 'ASC' ? 'DESC' : 'ASC' }) }}">Date fin</a>
-                </th>
-                <th>
-                    <a href="{{ path('app_demande_conge_index', { 'sort': 'd.statut', 'direction': direction == 'ASC' ? 'DESC' : 'ASC' }) }}">Statut</a>
-                </th>
+                <th>Employé</th>
+                <th>Type de congé</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Statut</th>
+                <th>Solde Congés</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for demande_conge in pagination %}
-            <tr>
+            <tr class="{{ demande_conge.employe.soldeConges <= -7 ? 'table-danger' : '' }}">
                 <td>
                     {% if demande_conge.employe %}
                         <strong>{{ demande_conge.employe.nom }} {{ demande_conge.employe.prenom }}</strong><br>
@@ -49,22 +43,27 @@
                 <td>{{ demande_conge.dateFin ? demande_conge.dateFin|date('Y-m-d') : '' }}</td>
                 <td>{{ demande_conge.statut }}</td>
                 <td>
+                    {% if demande_conge.employe %}
+                        {{ demande_conge.employe.soldeConges ?? 'N/A' }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
                     <a href="{{ path('app_demande_conge_edit', { 'id': demande_conge.id }) }}" class="btn btn-warning btn-sm">Modifier</a>
                     <a href="{{ path('app_demande_conge_delete', { 'id': demande_conge.id }) }}" class="btn btn-danger btn-sm">Supprimer</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="6">Aucune demande trouvée</td>
+                <td colspan="7">Aucune demande de congé trouvée.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+     <a href="{{ path('app_demande_conge_new') }}" class="btn btn-success my-2">Ajouter une demande de congé</a>
 
-    {# Voici la vraie pagination propre #}
     <div class="d-flex justify-content-center">
         {{ knp_pagination_render(pagination) }}
     </div>
-
-    <a href="{{ path('app_demande_conge_new') }}" class="btn btn-success my-3">Créer une nouvelle demande</a>
 {% endblock %}
