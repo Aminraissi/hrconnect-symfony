@@ -7,6 +7,8 @@ use App\Service\StripeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -62,11 +64,42 @@ final class FormationPaymentController extends AbstractController
     }
 
     #[Route('/frontoffice/formations/{id}/payment/success', name: 'app_formation_payment_success')]
-    public function success($id): Response
+    public function success(MailerInterface $mailer, FormationRepository $formationRepository, \Doctrine\ORM\EntityManagerInterface $entityManager, $id): Response
     {
-        return $this->render('payment/success.html.twig', [
-            'message' => 'Payment was successful!',
+
+        $formation = $formationRepository->find($id);
+
+        if (! $formation) {
+            throw $this->createNotFoundException('Formation not found');
+        }
+
+        $user = $this->getUser();
+
+        if (! $user) {
+            throw $this->createAccessDeniedException('User not authenticated');
+        }
+
+        $formation->addUser($user);
+
+        $entityManager->persist($formation);
+        $entityManager->flush();
+
+        $htmlContent = $this->renderView('formations/payment_success_email.html.twig', [
+            'name'           => $user->getNom() . ' ' . $user->getPrenom(),
+            'formation_name' => $formation->getTitle(),
+            'formation_link' => 'http://127.0.0.1:8000/frontoffice/mes-formations',
         ]);
+
+        $email = (new Email())
+            ->from('your_email@example.com')
+            ->to('haithemdridiweb@gmail.com')
+            ->subject('Confirmation de votre paiement pour la formation ' . $formation->getTitle())
+            ->html($htmlContent);
+
+        $mailer->send($email);
+
+        return $this->redirectToRoute('app_mes_formations');
+
     }
 
     #[Route('/frontoffice/formations/{id}/cancel', name: 'app_formation_payment_cancel')]

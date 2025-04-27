@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +19,13 @@ class LoginController extends AbstractController
 
         return $this->render('login/login.html.twig', [
             'last_username' => $lastUsername,
-            'error' => $error,
+            'error'         => $error,
         ]);
+    }
+
+    #[Route('/logout', name: 'logout', methods: ['GET'])]
+    public function logout(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }
