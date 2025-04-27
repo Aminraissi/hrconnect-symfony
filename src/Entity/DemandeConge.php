@@ -117,7 +117,7 @@ class DemandeConge
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: ValiderConge::class, mappedBy: 'demandeConge')]
+    #[ORM\OneToMany(targetEntity: ValiderConge::class, mappedBy: 'demandeConge', cascade: ['remove'])]
     private Collection $validerConges;
 
     public function __construct()

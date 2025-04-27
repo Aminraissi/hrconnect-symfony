@@ -10,6 +10,9 @@ parameters:
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
+    mailjet.api_key: 'MAILJET_API_KEY_REMOVED'
+    mailjet.api_secret: 'MAILJET_API_SECRET_REMOVED'
+    
 
 
 services:
@@ -17,7 +20,8 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        
+ 
+   
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -48,6 +52,11 @@ services:
             $sid: '%env(HAYTHEM_TWILIO_SID)%'
             $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
             $from: '%env(HAYTHEM_TWILIO_FROM)%'
+    App\Service\TwilioServiceAlaa:
+        arguments:
+            $sid: '%env(ALAA_TWILIO_SID)%'
+            $token: '%env(ALAA_TWILIO_TOKEN)%'
+            $from: '%env(ALAA_TWILIO_FROM)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -71,10 +80,16 @@ services:
             $logger: '@logger'
             $mailer: '@mailer'
      # Service d'email pour les candidatures
+    App\Service\EmailSenderService:
+        arguments:
+            $mailjetApiKey: '%mailjet.api_key%'
+            $mailjetApiSecret: '%mailjet.api_secret%'
+
     App\Service\FileContentChecker:
         arguments:
             - '@parameter_bag'
 twig:
     globals:
         google_maps_api_key: '%google_maps_api_key%'
+
 
