@@ -9,7 +9,7 @@
 	<main>
 
 		<!-- =======================
-																																																																				Page Banner START -->
+																																																																						Page Banner START -->
 		<section class="py-4">
 			<div class="container">
 				<div class="row">
@@ -33,10 +33,10 @@
 			</div>
 		</section>
 		<!-- =======================
-																																																																				Page Banner END -->
+																																																																						Page Banner END -->
 
 		<!-- =======================
-																																																																				Page content START -->
+																																																																						Page content START -->
 		<section class="pt-0">
 			<div class="container">
 
@@ -121,7 +121,7 @@
 											{% if formation.is_online %}
 												<a href="{{ path('app_user_formation_meet', { id: formation.id }) }}" class="btn btn-primary w-100">Rejoindre la réunion en ligne</a>
 											{% endif %}
-											<a class="btn btn-success w-100">Démarrer Le Quiz</a>
+											<a href="{{ path('app_formation_quiz', { id: formation.id }) }}" class="btn btn-success w-100">Démarrer Le Quiz</a>
 										</div>
 									</div>
 								</div>
@@ -138,10 +138,10 @@
 			</div>
 		</section>
 		<!-- =======================
-																																																																				Page content END -->
+																																																																						Page content END -->
 
 		<!-- =======================
-																																																																				Newsletter START -->
+																																																																						Newsletter START -->
 
 
 	</main>
