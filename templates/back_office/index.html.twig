@@ -1,8 +1,15 @@
 {% extends 'back_office.html.twig' %}
 
-{% block title %}Hello BackOfficeController!
+{% block title %}
+    Hello BackOfficeController!
 {% endblock %}
 
 {% block body %}
-	admin template
+<div class="card" style="max-width: 400px; margin: 20px auto; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); border-radius: 10px;">
+    <h2 class="text-center">Météo actuelle 🌤️</h2>
+    <hr>
+    <p><strong>Ville:</strong> {{ city }}</p>
+    <p><strong>Température:</strong> {{ temp }}°C</p>
+    <p><strong>Description:</strong> {{ description }}</p>
+</div>
 {% endblock %}

@@ -2,8 +2,6 @@
 namespace App\Entity;
 
 use App\Repository\QuizRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -120,7 +118,7 @@ class Quiz
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Employe::class, inversedBy: 'quizs')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'quizs')]
     #[ORM\JoinTable(
         name: 'quiz_reponses',
         joinColumns: [
@@ -130,37 +128,37 @@ class Quiz
             new ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id'),
         ]
     )]
-    private Collection $employes;
+    // private Collection $employes;
 
     public function __construct()
     {
-        $this->employes = new ArrayCollection();
+        // $this->employes = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, Employe>
-     */
-    public function getEmployes(): Collection
-    {
-        if (! $this->employes instanceof Collection) {
-            $this->employes = new ArrayCollection();
-        }
-        return $this->employes;
-    }
+    // /**
+    //  * @return Collection<int, Employe>
+    //  */
+    // public function getEmployes(): Collection
+    // {
+    //     if (! $this->employes instanceof Collection) {
+    //         $this->employes = new ArrayCollection();
+    //     }
+    //     return $this->employes;
+    // }
 
-    public function addEmploye(Employe $employe): self
-    {
-        if (! $this->getEmployes()->contains($employe)) {
-            $this->getEmployes()->add($employe);
-        }
-        return $this;
-    }
+    // public function addEmploye(Employe $employe): self
+    // {
+    //     if (! $this->getEmployes()->contains($employe)) {
+    //         $this->getEmployes()->add($employe);
+    //     }
+    //     return $this;
+    // }
 
-    public function removeEmploye(Employe $employe): self
-    {
-        $this->getEmployes()->removeElement($employe);
-        return $this;
-    }
+    // public function removeEmploye(Employe $employe): self
+    // {
+    //     $this->getEmployes()->removeElement($employe);
+    //     return $this;
+    // }
 
     public function getNumReponseCorrect(): ?int
     {

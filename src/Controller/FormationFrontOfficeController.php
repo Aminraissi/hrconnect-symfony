@@ -3,6 +3,12 @@ namespace App\Controller;
 
 use App\Repository\FormationRepository;
 use App\Service\TwilioService;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,8 +35,28 @@ final class FormationFrontOfficeController extends AbstractController
             throw $this->createNotFoundException('Formation not found');
         }
 
+        $link = " https://maps.google.com/?q=" . $formation->getLat() . "," . $formation->getLng();
+
+        $qrCode = new QrCode(
+            data: $link,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::Low,
+            size: 300,
+            margin: 10,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin,
+            foregroundColor: new Color(0, 0, 0),
+            backgroundColor: new Color(255, 255, 255)
+        );
+
+        $writer = new PngWriter();
+
+        $result = $writer->write($qrCode);
+
+        $qr = $result->getDataUri();
+
         return $this->render('formations/details_formation.twig', [
             'formation' => $formation,
+            'qr'        => $qr,
         ]);
     }
 
@@ -123,4 +149,16 @@ final class FormationFrontOfficeController extends AbstractController
         ]);
     }
 
+    #[Route('/frontoffice/mes-formations', name: 'app_mes_formations')]
+    public function mesFormations(FormationRepository $formationRepository, ): Response
+    {
+
+        $user = $this->getUser();
+
+        $formations = $formationRepository->findFormationsByUserId($user->getId());
+
+        return $this->render('formations/mes_formations.html.twig', [
+            'formations' => $formations,
+        ]);
+    }
 }

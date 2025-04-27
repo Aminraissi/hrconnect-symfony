@@ -1,0 +1,60 @@
+{% extends 'front_office.html.twig' %}
+
+{% block title %}
+	Training List
+{% endblock %}
+
+{% block body %}
+	<main>
+
+
+		<section class="pt-5">
+			<div class="container">
+
+				<div
+					class="row g-4 g-sm-5">
+					<!-- Main content START -->
+					<div
+						class="col-xl-12 mb-4 mb-sm-0">
+
+
+						<!-- Personal info START -->
+						<div class="card card-body shadow p-4">
+
+							<h5 class="mb-3">{{ formation.title }}</h5>
+
+							{% if app.session.flashBag.has('error') %}
+								<div class="alert alert-danger" role="alert">
+									{{ app.session.flashBag.get('error')|first }}
+								</div>
+							{% endif %}
+
+							{% if app.session.flashBag.has('success') %}
+								<div class="alert alert-success" role="alert">
+									{{ app.session.flashBag.get('success')|first }}
+								</div>
+
+								<a href="{{ asset(filePath) }}" target="_blank" class="btn btn-success btn-lg mt-3">
+									Afficher l'attestation de réussite
+								</a>
+
+							{% endif %}
+
+
+						</div>
+						<!-- Personal info END -->
+					</div>
+					<!-- Main content END -->
+
+
+				</div>
+				<!-- Right sidebar END -->
+
+			</div>
+			<!-- Row END -->
+		</div>
+	</section>
+	<!-- =======================
+																																																																																																	Page content END -->
+
+</main>{% endblock %}

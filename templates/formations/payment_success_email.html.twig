@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Confirmation de Paiement</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			/* Simple Bootstrap-like inline styles */
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f8f9fa;
+				padding: 20px;
+				margin: 0;
+			}
+			.container {
+				background-color: #ffffff;
+				padding: 30px;
+				border-radius: 8px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+				max-width: 600px;
+				margin: 20px auto;
+			}
+			.btn {
+				display: inline-block;
+				padding: 10px 20px;
+				margin-top: 20px;
+				font-size: 16px;
+				color: #ffffff;
+				background-color: #0d6efd;
+				text-decoration: none;
+				border-radius: 5px;
+			}
+			h1 {
+				color: #0d6efd;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Confirmation de Paiement</h1>
+			<p>Bonjour
+				{{ name }},</p>
+
+			<p>Nous vous confirmons la réception de votre paiement pour la formation
+				<strong>{{ formation_name }}</strong>.</p>
+
+			<p>Merci de votre confiance. Nous sommes impatients de vous accompagner tout au long de votre parcours de formation.</p>
+
+			<a href="{{ formation_link }}" class="btn">Accéder à la formation</a>
+
+			<p style="margin-top: 30px;">Cordialement,<br>L'équipe Formation</p>
+		</div>
+	</body>
+</html>

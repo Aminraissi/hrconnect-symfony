@@ -16,6 +16,8 @@
         "guzzlehttp/guzzle": "^6.5",
         "knplabs/knp-paginator-bundle": "^6.8",
         "mailjet/mailjet-apiv3-php": "^1.5",
+        "dompdf/dompdf": "^3.1",
+        "endroid/qr-code": "^6.0",
         "phpdocumentor/reflection-docblock": "^5.6",
         "phpstan/phpdoc-parser": "^2.1",
         "smalot/pdfparser": "^2.12",
