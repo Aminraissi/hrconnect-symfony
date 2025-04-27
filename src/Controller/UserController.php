@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Form\UserProfileType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -158,19 +159,22 @@ final class UserController extends AbstractController
             throw $this->createAccessDeniedException('You must be logged in to access your profile.');
         }
 
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserProfileType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
-            $user->setPassword($hashedPassword);
-
+            $plainPassword = $form->get('password')->getData();
+            if (!empty($plainPassword)) {
+                $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+                $user->setPassword($hashedPassword);
+            }
+        
             $entityManager->flush();
-
+        
             $this->addFlash('success', 'Profile updated successfully!');
-
             return $this->redirectToRoute('app_user_profile_front');
         }
+        
 
         return $this->render('user/profile_front.html.twig', [
             'form' => $form->createView(),
