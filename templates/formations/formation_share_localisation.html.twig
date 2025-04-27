@@ -4,6 +4,7 @@
 	Training List
 {% endblock %}
 
+
 {% block body %}
 	<main>
 
@@ -46,6 +47,8 @@
 									<label class="form-label">Message :</label>
 									<textarea class="form-control" rows="3" disabled>{{message}}</textarea>
 								</div>
+								<div class="g-recaptcha mb-2" data-sitekey="6LelOyYrAAAAAAph1jHv5rgfbJarPhim41YFICeM"></div>
+
 								<button type="submit" class="btn btn-primary">Envoyer</button>
 							</form>
 
@@ -65,6 +68,8 @@
 		</div>
 	</section>
 	<!-- =======================
-																																																																																						Page content END -->
+																																																																																															Page content END -->
 
-</main>{% endblock %}
+</main>{% endblock %}{% block js %}
+{{ parent() }}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>{% endblock %}
