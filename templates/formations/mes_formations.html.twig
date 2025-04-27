@@ -9,7 +9,7 @@
 	<main>
 
 		<!-- =======================
-																																												Page Banner START -->
+																																																																				Page Banner START -->
 		<section class="py-4">
 			<div class="container">
 				<div class="row">
@@ -33,10 +33,10 @@
 			</div>
 		</section>
 		<!-- =======================
-																																												Page Banner END -->
+																																																																				Page Banner END -->
 
 		<!-- =======================
-																																												Page content START -->
+																																																																				Page content START -->
 		<section class="pt-0">
 			<div class="container">
 
@@ -102,7 +102,7 @@
 										<!-- Card footer -->
 										<div class="card-footer pt-0 pb-3">
 											<hr>
-											<div class="d-flex justify-content-between">
+											<div class="d-flex justify-content-between mb-3">
 												<span class="h6 fw-light mb-0">
 													<i class="fas fa-map-marker-alt text-danger me-2"></i>
 													{% if formation.is_online %}
@@ -117,6 +117,11 @@
 													TND
 												</span>
 											</div>
+
+											{% if formation.is_online %}
+												<a href="{{ path('app_user_formation_meet', { id: formation.id }) }}" class="btn btn-primary w-100">Rejoindre la réunion en ligne</a>
+											{% endif %}
+											<a class="btn btn-success w-100">Démarrer Le Quiz</a>
 										</div>
 									</div>
 								</div>
@@ -133,10 +138,10 @@
 			</div>
 		</section>
 		<!-- =======================
-																																												Page content END -->
+																																																																				Page content END -->
 
 		<!-- =======================
-																																												Newsletter START -->
+																																																																				Newsletter START -->
 
 
 	</main>
