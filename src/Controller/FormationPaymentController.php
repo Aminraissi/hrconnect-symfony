@@ -98,6 +98,8 @@ final class FormationPaymentController extends AbstractController
 
         $mailer->send($email);
 
+        $this->addFlash('success', 'Le paiement a été effectué avec succès. Vous avez été inscrit avec succès à la formation ' . $formation->getTitle() . '.');
+
         return $this->redirectToRoute('app_mes_formations');
 
     }
