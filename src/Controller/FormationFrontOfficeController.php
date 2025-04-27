@@ -152,6 +152,13 @@ final class FormationFrontOfficeController extends AbstractController
     #[Route('/frontoffice/mes-formations', name: 'app_mes_formations')]
     public function mesFormations(FormationRepository $formationRepository, ): Response
     {
-        dd("hello");
+
+        $user = $this->getUser();
+
+        $formations = $formationRepository->findFormationsByUserId($user->getId());
+
+        return $this->render('formations/mes_formations.html.twig', [
+            'formations' => $formations,
+        ]);
     }
 }
