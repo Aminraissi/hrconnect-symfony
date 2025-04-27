@@ -20,7 +20,7 @@
 	<main>
 
 		<!-- =======================
-																																																																																																																																																																						Page intro START -->
+																																																																																																																																																																																																														Page intro START -->
 		<section class="bg-light py-0 ">
 			<div class="container">
 				<div class="row py-3">
@@ -38,10 +38,10 @@
 			</div>
 		</section>
 		<!-- =======================
-																																																																																																																																																																						Page intro END -->
+																																																																																																																																																																																																														Page intro END -->
 
 		<!-- =======================
-																																																																																																																																																																						Page content START -->
+																																																																																																																																																																																																														Page content START -->
 		<section class="pb-0 py-lg-5">
 			<div class="container">
 				<div
@@ -70,9 +70,43 @@
 
 										<div id="map"></div>
 
-										<a class="btn btn-sm btn-primary mt-3" href="{{ path('app_user_formation_share_localisation', { id: formation.id }) }}">
-											Envoyer la localisation a mon téléphone
-										</a>
+										<button class="btn btn-sm btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#locationModal">
+											Partager la localisation de la formation
+										</button>
+
+										<!-- Bootstrap Modal -->
+										<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="locationModalLabel">Partager la localisation</h5>
+														<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+													</div>
+													<div class="modal-body">
+														<center>
+															<p>Voici la localisation de la formation :</p>
+
+															<p>
+																<strong>Lieu:</strong>
+																{{ formation.place }}
+															</p>
+
+
+															<img src="{{ qr }}" alt="QR Code">
+
+
+															<a class="btn btn-sm btn-primary mt-1" href="{{ path('app_user_formation_share_localisation', { id: formation.id }) }}">
+																Envoyer la localisation a mon téléphone
+															</a>
+														</center>
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+													</div>
+												</div>
+											</div>
+										</div>
+
 									{% endif %}
 
 								</div>
@@ -175,7 +209,7 @@
 			</div>
 		</section>
 		<!-- =======================
-																																																																																																																																																																						Page content END -->
+																																																																																																																																																																																																														Page content END -->
 
 
 	</main>
@@ -184,6 +218,7 @@
 
 
 {% block js %}
+	{{ parent() }}
 	{% if not formation.is_online %}
 
 		<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
