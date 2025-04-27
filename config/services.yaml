@@ -41,6 +41,12 @@ services:
             $appId: '%env(ONESIGNAL_APP_ID)%'
             $appKey: '%env(ONESIGNAL_API_KEY)%'
 
+    App\Service\TwilioService:
+        arguments:
+            $sid: '%env(HAYTHEM_TWILIO_SID)%'
+            $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
+            $from: '%env(HAYTHEM_TWILIO_FROM)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

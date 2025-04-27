@@ -20,7 +20,7 @@
 	<main>
 
 		<!-- =======================
-																																																																																																																																																										Page intro START -->
+																																																																																																																																																																						Page intro START -->
 		<section class="bg-light py-0 ">
 			<div class="container">
 				<div class="row py-3">
@@ -38,10 +38,10 @@
 			</div>
 		</section>
 		<!-- =======================
-																																																																																																																																																										Page intro END -->
+																																																																																																																																																																						Page intro END -->
 
 		<!-- =======================
-																																																																																																																																																										Page content START -->
+																																																																																																																																																																						Page content START -->
 		<section class="pb-0 py-lg-5">
 			<div class="container">
 				<div
@@ -69,6 +69,10 @@
 										<h5 class="mb-3">Emplacement</h5>
 
 										<div id="map"></div>
+
+										<a class="btn btn-sm btn-primary mt-3" href="{{ path('app_user_formation_share_localisation', { id: formation.id }) }}">
+											Envoyer la localisation a mon téléphone
+										</a>
 									{% endif %}
 
 								</div>
@@ -171,7 +175,7 @@
 			</div>
 		</section>
 		<!-- =======================
-																																																																																																																																																										Page content END -->
+																																																																																																																																																																						Page content END -->
 
 
 	</main>

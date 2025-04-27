@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Repository\FormationRepository;
+use App\Service\TwilioService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,6 +69,37 @@ final class FormationFrontOfficeController extends AbstractController
 
         return $this->render('formations/formation_meet.html.twig', [
             'formation' => $formation,
+        ]);
+    }
+
+    #[Route('/frontoffice/formations/{id}/share_localisation', name: 'app_user_formation_share_localisation')]
+    public function shareLocalisation(FormationRepository $formationRepository, Request $request, TwilioService $twilioService, $id): Response
+    {
+        $formation = $formationRepository->find($id);
+
+        if (! $formation) {
+            throw $this->createNotFoundException('Formation not found');
+        }
+
+        $message = "Bonjour , voila la localisation de la formation : " . $formation->getTitle() . " https://maps.google.com/?q=" . $formation->getLat() . "," . $formation->getLng() . " . Merci de votre participation !";
+
+        if ($request->isMethod('POST')) {
+            $phone = $request->request->get('phone');
+            if (empty($phone) || strlen($phone) !== 8) {
+                $this->addFlash('error', 'Veuillez entrer un numéro de téléphone valide.');
+            } else {
+                $phone = $request->request->get('phone');
+
+                $twilioService->sendSms("+216" . $phone, $message);
+
+                $this->addFlash('success', 'La localisation a été partagée avec succès.');
+            }
+
+        }
+
+        return $this->render('formations/formation_share_localisation.html.twig', [
+            'formation' => $formation,
+            'message'   => $message,
         ]);
     }
 
