@@ -5,19 +5,36 @@
 {% block body %}
     <h1>Liste des absences</h1>
 
+    <form method="get" action="{{ path('app_absence_index') }}">
+        <div class="form-group">
+            <input type="text" name="search" value="{{ app.request.query.get('search') }}" placeholder="Rechercher..." class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
     <table class="table">
         <thead>
             <tr>
-                <th>Employé</th>
-                <th>Motif</th>
-                <th>Justificatif</th>
-                <th>Remarque</th>
-                <th>Date d'enregistrement</th>
+                <th>
+                    <a href="{{ path('app_absence_index', {'sort': 'e.nom', 'direction': direction == 'ASC' ? 'DESC' : 'ASC'}) }}">Employé</a>
+                </th>
+                <th>
+                    <a href="{{ path('app_absence_index', {'sort': 'a.motif', 'direction': direction == 'ASC' ? 'DESC' : 'ASC'}) }}">Motif</a>
+                </th>
+                <th>
+                    <a href="{{ path('app_absence_index', {'sort': 'a.justificatif', 'direction': direction == 'ASC' ? 'DESC' : 'ASC'}) }}">Justificatif</a>
+                </th>
+                <th>
+                    <a href="{{ path('app_absence_index', {'sort': 'a.remarque', 'direction': direction == 'ASC' ? 'DESC' : 'ASC'}) }}">Remarque</a>
+                </th>
+                <th>
+                    <a href="{{ path('app_absence_index', {'sort': 'a.date_enregistrement', 'direction': direction == 'ASC' ? 'DESC' : 'ASC'}) }}">Date d'enregistrement</a>
+                </th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for absence in absences %}
+        {% for absence in pagination %}
             <tr>
                 <td>
                     {% if absence.employe %}
@@ -30,7 +47,7 @@
                 <td>{{ absence.motif }}</td>
                 <td>{{ absence.justificatif }}</td>
                 <td>{{ absence.remarque }}</td>
-                <td>{{ absence.dateEnregistrement ? absence.dateEnregistrement|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ absence.date_enregistrement ? absence.date_enregistrement|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     <button class="btn btn-warning" onclick="window.location.href='{{ path('app_absence_edit', {'id': absence.id}) }}'">Modifier</button>
                     <a href="{{ path('app_absence_delete', {'id': absence.id}) }}" class="btn btn-danger">Supprimer</a>
@@ -43,6 +60,17 @@
         {% endfor %}
         </tbody>
     </table>
+
+    <div class="pagination">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="{{ path('app_absence_index', {'page': pagination.currentPageNumber - 1}) }}">Précédent</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="{{ path('app_absence_index', {'page': pagination.currentPageNumber + 1}) }}">Suivant</a>
+            </li>
+        </ul>
+    </div>
 
     <a href="{{ path('app_absence_new') }}" class="btn btn-success">Créer une nouvelle absence</a>
 {% endblock %}
