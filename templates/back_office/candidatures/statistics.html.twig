@@ -1,0 +1,332 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Statistiques des candidatures{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .stats-card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .stats-icon {
+            font-size: 2.5rem;
+            color: #fff;
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        .stats-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        .stats-info p {
+            margin-bottom: 0;
+            color: #6c757d;
+        }
+        .progress-bar-container {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+        }
+        .chart-container {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        .bg-primary-light {
+            background-color: rgba(118, 56, 255, 0.1);
+        }
+        .bg-success-light {
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+        .bg-danger-light {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+        .bg-warning-light {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+        .bg-info-light {
+            background-color: rgba(23, 162, 184, 0.1);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-12 col-sm-12 col-12">
+            <div class="breadcrumb-path mb-4">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_back_office') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('back.candidatures.index') }}">Candidatures</a>
+                    </li>
+                    <li class="breadcrumb-item active">Statistiques</li>
+                </ul>
+                <h3>Statistiques des candidatures</h3>
+            </div>
+        </div>
+
+        <!-- Statistiques générales -->
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="row">
+                <!-- Total des candidatures -->
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card stats-card bg-primary-light">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-primary">
+                                    <i data-feather="file-text"></i>
+                                </div>
+                                <div class="stats-info">
+                                    <h3>{{ totalCandidatures }}</h3>
+                                    <p>Candidatures</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidatures acceptées -->
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card stats-card bg-success-light">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-success">
+                                    <i data-feather="check-circle"></i>
+                                </div>
+                                <div class="stats-info">
+                                    <h3>{{ statusStats.acceptee }}</h3>
+                                    <p>Acceptées</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidatures refusées -->
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card stats-card bg-danger-light">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-danger">
+                                    <i data-feather="x-circle"></i>
+                                </div>
+                                <div class="stats-info">
+                                    <h3>{{ statusStats.refusee }}</h3>
+                                    <p>Refusées</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidatures en attente -->
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card stats-card bg-warning-light">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-warning">
+                                    <i data-feather="clock"></i>
+                                </div>
+                                <div class="stats-info">
+                                    <h3>{{ statusStats.en_attente + statusStats['En cours'] }}</h3>
+                                    <p>En attente</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique de répartition des statuts -->
+        <div class="col-xl-6 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Répartition des candidatures par statut</h5>
+                </div>
+                <div class="card-body">
+                    <div id="status-chart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique des scores CV -->
+        <div class="col-xl-6 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Scores des CV</h5>
+                </div>
+                <div class="card-body">
+                    <div id="cv-score-chart" class="chart-container"></div>
+                    <div class="mt-3">
+                        {% if cvScoreStats.totalWithScore > 0 %}
+                            <p><strong>Score moyen des CV :</strong> {{ cvScoreStats.avgScore }}%</p>
+                            <p><strong>Pourcentage de CV avec score > 50% :</strong> {{ cvScoreStats.highScorePercentage|round(1) }}%</p>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar bg-success" style="width: {{ cvScoreStats.highScorePercentage }}%"></div>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Aucune candidature avec un score CV n'a été trouvée.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section des candidatures mensuelles supprimée -->
+
+        <!-- Top 5 des offres d'emploi -->
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Top 5 des offres d'emploi les plus demandées</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Offre d'emploi</th>
+                                    <th>Total</th>
+                                    <th>Acceptées</th>
+                                    <th>Refusées</th>
+                                    <th>En attente</th>
+                                    <th>En cours</th>
+                                    <th>Pourcentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for offre in offreStats %}
+                                    <tr>
+                                        <td>{{ offre.title }}</td>
+                                        <td>{{ offre.count }}</td>
+                                        <td>
+                                            <span class="badge badge-success">{{ offre.acceptedCount }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-danger">{{ offre.rejectedCount }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-warning">{{ offre.pendingCount }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-info">{{ offre.inProgressCount }}</span>
+                                        </td>
+                                        <td>
+                                            {% set percentage = (offre.count / totalCandidatures * 100)|round(1) %}
+                                            <div class="progress-bar-container">
+                                                <div class="progress-bar bg-primary" style="width: {{ percentage }}%"></div>
+                                            </div>
+                                            <span class="ml-2">{{ percentage }}%</span>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center">Aucune donnée disponible</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser les icônes Feather
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Graphique de répartition des statuts
+            var statusOptions = {
+                chart: {
+                    type: 'donut',
+                    height: 300
+                },
+                series: [
+                    {{ statusStats.acceptee }},
+                    {{ statusStats.refusee }},
+                    {{ statusStats.en_attente }},
+                    {{ statusStats['En cours'] }}
+                ],
+                labels: ['Acceptées', 'Refusées', 'En attente', 'En cours'],
+                colors: ['#28a745', '#dc3545', '#ffc107', '#17a2b8'],
+                legend: {
+                    position: 'bottom'
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            };
+            var statusChart = new ApexCharts(document.querySelector("#status-chart"), statusOptions);
+            statusChart.render();
+
+            // Graphique des scores CV
+            {% if cvScoreStats.totalWithScore > 0 %}
+                var cvScoreOptions = {
+                    chart: {
+                        type: 'pie',
+                        height: 300
+                    },
+                    series: [{{ cvScoreStats.highScore }}, {{ cvScoreStats.lowScore }}],
+                    labels: ['Score > 50%', 'Score < 50%'],
+                    colors: ['#28a745', '#dc3545'],
+                    legend: {
+                        position: 'bottom'
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+                var cvScoreChart = new ApexCharts(document.querySelector("#cv-score-chart"), cvScoreOptions);
+                cvScoreChart.render();
+            {% else %}
+                // Afficher un message si aucune donnée n'est disponible
+                document.querySelector("#cv-score-chart").innerHTML = '<div class="text-center p-5"><p class="text-muted">Aucune donnée disponible</p></div>';
+            {% endif %}
+
+            // Code du graphique des candidatures mensuelles supprimé
+        });
+    </script>
+{% endblock %}

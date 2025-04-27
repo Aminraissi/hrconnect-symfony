@@ -1,0 +1,311 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+    Liste des offres d'emploi
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+        }
+        .btn-view, .btn-apply {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 5px;
+            border-radius: 5px;
+            color: white;
+        }
+        .btn-view {
+            background-color: #17a2b8;
+        }
+        .btn-apply {
+            background-color: #28a745;
+        }
+        .action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Styles pour la recherche */
+        .search-box {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-results {
+            transition: all 0.3s ease;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .table-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        .table-heading h2 {
+            margin: 0;
+        }
+        #search-loader {
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Animation pour le loader */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spinner-border {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            vertical-align: text-bottom;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin .75s linear infinite;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-12 col-sm-12 col-12">
+            <div class="breadcrumb-path mb-4">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_back_office') }}"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        Liste des offres d'emploi</li>
+                </ul>
+                <h3>Offres d'emploi</h3>
+            </div>
+        </div>
+
+        <!-- Début du formulaire de recherche avancée -->
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card search-box">
+                <div class="card-header">
+                    <h5 class="card-title">Recherche avancée</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i data-feather="search"></i></span>
+                                </div>
+                                <input type="text" id="search-title" class="form-control" placeholder="Rechercher une offre par titre..." value="{{ searchTerm|default('') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" id="search-button" class="btn btn-primary">
+                                <i data-feather="search"></i> Rechercher
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin du formulaire de recherche avancée -->
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="head-link-set">
+                <ul>
+                    <li>
+                        <a class="active" href="{{ path('back.candidat.offres_emploi.index') }}">Toutes les offres</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_candidature_suivi') }}">Suivre ma candidature</a>
+                    </li>
+                </ul>
+                {# Pas de bouton "Ajouter une offre" pour les candidats #}
+            </div>
+        </div>
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="row">
+                <div class="col-xl-10 col-sm-8 col-12 ">
+                    <div id="results-count">
+                        <label class="employee_count">{{ offres|length }} Offres</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="table-heading">
+                    <h2>Liste des offres</h2>
+                </div>
+                <div class="text-center mb-3" id="search-loader" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Chargement...</span>
+                    </div>
+                    <p class="mt-2">Recherche en cours...</p>
+                </div>
+                <div class="table-responsive search-results" id="search-results">
+                    <table class="table custom-table no-footer">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Localisation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body">
+                            {% for offre in offres %}
+                                <tr>
+                                    <td>
+                                        <div class="table-img">
+                                            <a href="#">
+                                                <label>
+                                                    {% if searchTerm is defined and searchTerm %}
+                                                        {{ offre.title|replace({(searchTerm): '<span class="highlight">' ~ searchTerm ~ '</span>'})|raw }}
+                                                    {% else %}
+                                                        {{ offre.title }}
+                                                    {% endif %}
+                                                </label>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label class="action_label2">{{ offre.location }}</label>
+                                    </td>
+                                    <td>
+                                        <div class="action">
+                                            <a href="{{ path('back.candidat.offres_emploi.show', {'id': offre.id}) }}" class="btn btn-info" title="Voir le détail">
+                                                <i data-feather="eye"></i> Voir détail
+                                            </a>
+                                            <a href="{{ path('app_candidat_candidature_new', {'id': offre.id}) }}" class="btn btn-success" title="Postuler">
+                                                <i data-feather="send"></i> Postuler
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {# Remplacer le parent() par les scripts individuels sans ApexCharts #}
+    <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/feather.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser les icônes Feather
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Éléments du DOM
+            const searchInput = document.getElementById('search-title');
+            const searchButton = document.getElementById('search-button');
+            const searchLoader = document.getElementById('search-loader');
+            const resultsBody = document.getElementById('results-body');
+            const resultsCount = document.getElementById('results-count');
+
+            // Fonction pour effectuer la recherche
+            function performSearch() {
+                // Récupérer la valeur de recherche
+                const searchValue = searchInput.value.trim();
+                
+                // Afficher le loader
+                searchLoader.style.display = 'block';
+                
+                // Construire l'URL avec les paramètres
+                const url = '{{ path("back.candidat.offres_emploi.advanced_search") }}?title=' + encodeURIComponent(searchValue);
+                
+                // Effectuer la requête AJAX avec jQuery (plus simple)
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        // Masquer le loader
+                        searchLoader.style.display = 'none';
+                        
+                        // Mettre à jour les résultats
+                        resultsBody.innerHTML = data;
+                        
+                        // Compter le nombre de lignes dans le résultat
+                        const rowCount = $(resultsBody).find('tr').length;
+                        
+                        // Mettre à jour le compteur de résultats
+                        resultsCount.innerHTML = '<label class="employee_count">' + rowCount + ' offre(s) trouvée(s)' + (searchValue ? ' pour "' + searchValue + '"' : '') + '</label>';
+                        
+                        // Réinitialiser les icônes Feather
+                        if (typeof feather !== 'undefined') {
+                            feather.replace();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Masquer le loader
+                        searchLoader.style.display = 'none';
+                        
+                        // Afficher l'erreur
+                        console.error('Erreur lors de la recherche:', error);
+                        alert('Une erreur est survenue lors de la recherche. Veuillez réessayer.');
+                    }
+                });
+            }
+
+            // Gestionnaire d'événement pour le champ de recherche (recherche en temps réel)
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performSearch, 300);
+            });
+
+            // Gestionnaire d'événement pour le bouton de recherche
+            searchButton.addEventListener('click', performSearch);
+
+            // Gestionnaire d'événement pour la touche Entrée
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performSearch();
+                }
+            });
+        });
+    </script>
+{% endblock %}

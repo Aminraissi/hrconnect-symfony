@@ -6,11 +6,14 @@
 parameters:
     cv_directory: '%kernel.project_dir%/public/uploads/cv'
     lettre_motivation_directory: '%kernel.project_dir%/public/uploads/lettre_motivation'
+<<<<<<< HEAD
     google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
 
+=======
+>>>>>>> c46329a9d0ec47f0a2dda6ddc0b06029248ff631
 
 services:
     # default configuration for services in *this* file
@@ -27,16 +30,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-    
-    App\Service\StripeService:
-        arguments:
-            $secretKey: '%stripe.secret_key%'
-
-    App\Service\PaypalService:
-        arguments:
-            $clientId: '%env(PAYPAL_CLIENT_ID)%'
-            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
-            $apiUrl: '%env(PAYPAL_API_URL)%'
 
     App\Service\NotificationService:
         arguments:
@@ -64,6 +57,7 @@ services:
         arguments:
             $logger: '@logger'
             $mailer: '@mailer'
+<<<<<<< HEAD
      # Service d'email pour les candidatures
     App\Service\FileContentChecker:
         arguments:
@@ -72,3 +66,5 @@ twig:
     globals:
         google_maps_api_key: '%google_maps_api_key%'
 
+=======
+>>>>>>> c46329a9d0ec47f0a2dda6ddc0b06029248ff631

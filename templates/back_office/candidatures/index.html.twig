@@ -97,9 +97,6 @@
 							<a class="active" href="{{ path('back.candidatures.index') }}">Toutes les candidatures</a>
 						</li>
 						<li>
-							<a href="{{ path('back.candidatures.index', {'statut': 'en_attente'}) }}">En attente</a>
-						</li>
-						<li>
 							<a href="{{ path('back.candidatures.index', {'statut': 'en_cours'}) }}">En cours</a>
 						</li>
 						<li>
@@ -113,8 +110,13 @@
 			</div>
 			<div class="col-xl-12 col-sm-12 col-12 mb-4">
 				<div class="row">
-					<div class="col-xl-10 col-sm-8 col-12">
+					<div class="col-xl-8 col-sm-6 col-12">
 						<label class="employee_count">{{ candidatures|length }} Candidatures</label>
+					</div>
+					<div class="col-xl-4 col-sm-6 col-12 text-right">
+						<a href="{{ path('back.candidatures.statistics') }}" class="btn btn-primary">
+							<i data-feather="bar-chart-2"></i> Statistiques
+						</a>
 					</div>
 				</div>
 			</div>
@@ -122,11 +124,7 @@
 				<div class="card">
 					<div class="card-header">
 						<h3 class="card-title">Liste des candidatures</h3>
-						<div class="card-tools">
-							<a href="{{ path('back.offres_emploi.index') }}" class="btn btn-primary">
-								<i class="fas fa-plus"></i> Nouvelle candidature
-							</a>
-						</div>
+
 					</div>
 					<div class="table-responsive">
 						<table class="table custom-table no-footer">
@@ -141,18 +139,25 @@
 								</tr>
 							</thead>
 							<tbody>
-								{% for candidature in candidatures %}
+								{% if candidatures is empty %}
 									<tr>
-										<td>
-											<div class="table-img">
-												<a href="#">
-													<label>{{ candidature.candidat.firstName }} {{ candidature.candidat.lastName }}</label>
-												</a>
-											</div>
+										<td colspan="6" class="text-center">
+											<p>Aucune candidature trouvée.</p>
 										</td>
-										<td>
-											<label>{{ candidature.offreEmploi.title }}</label>
-										</td>
+									</tr>
+								{% else %}
+									{% for candidature in candidatures %}
+										<tr>
+											<td>
+												<div class="table-img">
+													<a href="#">
+														<label>{{ candidature.candidat.firstName }} {{ candidature.candidat.lastName }}</label>
+													</a>
+												</div>
+											</td>
+											<td>
+												<label>{{ candidature.offreEmploi.title }}</label>
+											</td>
 										<td>
 											{% if candidature.cv %}
 											<a href="{{ path('back.candidatures.view_cv', {'id': candidature.id}) }}" class="btn btn-sm btn-info" title="Voir le CV">
@@ -184,13 +189,14 @@
 												<a href="{{ path('back.candidatures.edit', {'id': candidature.id}) }}" class="btn btn-warning" title="Modifier">
 													<i data-feather="edit"></i> Modifier
 												</a>
-												<a href="{{ path('back.candidatures.delete', {'id': candidature.id}) }}" class="btn btn-danger" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?')">
-													<i data-feather="trash"></i> Supprimer
+												<a href="{{ path('back.candidatures.reject', {'id': candidature.id}) }}" class="btn btn-danger" title="Refuser" onclick="return confirm('Êtes-vous sûr de vouloir refuser cette candidature ?')">
+													<i data-feather="x-circle"></i> Refuser
 												</a>
 											</div>
 										</td>
 									</tr>
 								{% endfor %}
+								{% endif %}
 							</tbody>
 						</table>
 					</div>

@@ -41,7 +41,11 @@ class EmailService
             $this->logger->info('Offre: ' . $offreEmploi->getTitle());
 
             // Déterminer le template à utiliser en fonction du statut
-            if ($status === 'accepted') {
+            // Utiliser le statut de la candidature si aucun statut n'est spécifié
+            $actualStatus = $status ?: $candidature->getStatus();
+            $this->logger->info('Statut utilisé pour l\'email: "' . $actualStatus . '"');
+
+            if ($actualStatus === 'accepted' || $actualStatus === 'acceptee') {
                 $this->logger->info('Envoi d\'un email d\'ACCEPTATION');
                 $subject = 'Félicitations ! Votre candidature a été acceptée';
                 $htmlContent = $this->getAcceptedTemplate([
@@ -49,7 +53,7 @@ class EmailService
                     'lastName' => $candidat->getLastName(),
                     'jobTitle' => $offreEmploi->getTitle()
                 ]);
-            } else if ($status === 'rejected') {
+            } else if ($actualStatus === 'rejected' || $actualStatus === 'refusee') {
                 $this->logger->info('Envoi d\'un email de REFUS');
                 $subject = 'Mise à jour sur votre candidature';
                 $htmlContent = $this->getRejectedTemplate([
@@ -58,7 +62,7 @@ class EmailService
                     'jobTitle' => $offreEmploi->getTitle()
                 ]);
             } else {
-                $this->logger->warning('Statut inconnu: "' . $status . '". Utilisation du template par défaut.');
+                $this->logger->warning('Statut inconnu: "' . $actualStatus . '". Utilisation du template par défaut.');
                 $subject = 'Mise à jour de votre candidature';
                 $htmlContent = $this->getDefaultTemplate([
                     'firstName' => $candidat->getFirstName(),
