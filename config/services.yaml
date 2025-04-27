@@ -9,6 +9,7 @@ parameters:
     google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
 
 
 services:
@@ -16,6 +17,7 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -62,6 +64,11 @@ services:
         arguments:
             $logger: '@logger'
             $mailer: '@mailer'
+     # Service d'email pour les candidatures
+    App\Service\FileContentChecker:
+        arguments:
+            - '@parameter_bag'
 twig:
     globals:
         google_maps_api_key: '%google_maps_api_key%'
+
