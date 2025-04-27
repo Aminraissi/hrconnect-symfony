@@ -4,11 +4,23 @@
 	Training List
 {% endblock %}
 
+{% block css %}
+	{{ parent() }}
+
+	<style>
+		#map {
+			height: 500px;
+			width: 100%;
+			margin-top: 10px;
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
 	<main>
 
 		<!-- =======================
-																																																																																						Page intro START -->
+																																																																																																																																																																						Page intro START -->
 		<section class="bg-light py-0 ">
 			<div class="container">
 				<div class="row py-3">
@@ -20,25 +32,16 @@
 						<h1>{{ formation.title }}</h1>
 						<p>{{ formation.description }}</p>
 						<!-- Content -->
-						<ul class="list-inline mb-0">
-							<li class="list-inline-item h6 me-3 mb-1 mb-sm-0">
-								<i class="fas fa-star text-warning me-2"></i>4.5/5.0</li>
-							<li class="list-inline-item h6 me-3 mb-1 mb-sm-0">
-								<i class="fas fa-user-graduate text-orange me-2"></i>12k Enrolled</li>
-							<li class="list-inline-item h6 me-3 mb-1 mb-sm-0">
-								<i class="fas fa-signal text-success me-2"></i>All levels</li>
-							<li class="list-inline-item h6 me-3 mb-1 mb-sm-0">
-								<i class="bi bi-patch-exclamation-fill text-danger me-2"></i>Last updated 09/2021</li>
-						</ul>
+
 					</div>
 				</div>
 			</div>
 		</section>
 		<!-- =======================
-																																																																																						Page intro END -->
+																																																																																																																																																																						Page intro END -->
 
 		<!-- =======================
-																																																																																						Page content START -->
+																																																																																																																																																																						Page content START -->
 		<section class="pb-0 py-lg-5">
 			<div class="container">
 				<div
@@ -60,6 +63,17 @@
 									<!-- Course detail START -->
 									<h5 class="mb-3">Course Description</h5>
 									{{ formation.description|raw }}
+
+									{% if not formation.is_online %}
+										<hr class="my-4">
+										<h5 class="mb-3">Emplacement</h5>
+
+										<div id="map"></div>
+
+										<a class="btn btn-sm btn-primary mt-3" href="{{ path('app_user_formation_share_localisation', { id: formation.id }) }}">
+											Envoyer la localisation a mon téléphone
+										</a>
+									{% endif %}
 
 								</div>
 								<!-- Content END -->
@@ -137,28 +151,8 @@
 									<ul class="list-group list-group-borderless">
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 											<span class="h6 fw-light mb-0">
-												<i class="fas fa-fw fa-book-open text-primary"></i>Lectures</span>
-											<span>30</span>
-										</li>
-										<li class="list-group-item d-flex justify-content-between align-items-center">
-											<span class="h6 fw-light mb-0">
-												<i class="fas fa-fw fa-clock text-primary"></i>Duration</span>
-											<span>4h 50m</span>
-										</li>
-										<li class="list-group-item d-flex justify-content-between align-items-center">
-											<span class="h6 fw-light mb-0">
-												<i class="fas fa-fw fa-signal text-primary"></i>Skills</span>
-											<span>Beginner</span>
-										</li>
-										<li class="list-group-item d-flex justify-content-between align-items-center">
-											<span class="h6 fw-light mb-0">
-												<i class="fas fa-fw fa-globe text-primary"></i>Language</span>
-											<span>English</span>
-										</li>
-										<li class="list-group-item d-flex justify-content-between align-items-center">
-											<span class="h6 fw-light mb-0">
 												<i class="fas fa-fw fa-user-clock text-primary"></i>Deadline</span>
-											<span>Nov 30 2021</span>
+											<span>{{ formation.end_date|date('d/m/Y') }}</span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 											<span class="h6 fw-light mb-0">
@@ -181,9 +175,43 @@
 			</div>
 		</section>
 		<!-- =======================
-																																																																																						Page content END -->
+																																																																																																																																																																						Page content END -->
 
 
 	</main>
 
+{% endblock %}
+
+
+{% block js %}
+	{% if not formation.is_online %}
+
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
+
+
+		<script>
+			let map,
+marker,
+autocomplete;
+
+function initMap() {
+const initialPosition = {
+lat: {{ formation.lat }},
+lng: {{ formation.lng }}
+};
+
+map = new google.maps.Map(document.getElementById("map"), {
+center: initialPosition,
+zoom: 15
+});
+
+marker = new google.maps.Marker({map: map, draggable: false, position: initialPosition});
+
+marker.setVisible(true);
+}
+
+window.onload = initMap;
+		</script>
+
+	{% endif %}
 {% endblock %}

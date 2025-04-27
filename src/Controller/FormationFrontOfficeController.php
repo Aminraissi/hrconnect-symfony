@@ -2,10 +2,12 @@
 namespace App\Controller;
 
 use App\Repository\FormationRepository;
+use App\Service\TwilioService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class FormationFrontOfficeController extends AbstractController
 {
@@ -68,6 +70,56 @@ final class FormationFrontOfficeController extends AbstractController
 
         return $this->render('formations/formation_meet.html.twig', [
             'formation' => $formation,
+        ]);
+    }
+
+    #[Route('/frontoffice/formations/{id}/share_localisation', name: 'app_user_formation_share_localisation')]
+    public function shareLocalisation(FormationRepository $formationRepository, Request $request, TwilioService $twilioService, HttpClientInterface $client, $id): Response
+    {
+        $formation = $formationRepository->find($id);
+
+        if (! $formation) {
+            throw $this->createNotFoundException('Formation not found');
+        }
+
+        $message = "Bonjour , voila la localisation de la formation : " . $formation->getTitle() . " https://maps.google.com/?q=" . $formation->getLat() . "," . $formation->getLng() . " . Merci de votre participation !";
+
+        if ($request->isMethod('POST')) {
+
+            $recaptchaResponse = $request->request->get('g-recaptcha-response');
+
+            if (! $recaptchaResponse) {
+                $this->addFlash('error', 'Veuillez valider le captcha.');
+            } else {
+                $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+                    'body' => [
+                        'secret'   => $_ENV['GOOGLE_RECAPTCHA_SECRET_KEY'],
+                        'response' => $recaptchaResponse,
+                        'remoteip' => $request->getClientIp(),
+                    ],
+                ]);
+                $data = $response->toArray();
+                if (! isset($data['success']) || ! $data['success']) {
+                    $this->addFlash('error', 'Captcha validation failed. Please try again.');
+                } else {
+                    $phone = $request->request->get('phone');
+                    if (empty($phone) || strlen($phone) !== 8) {
+                        $this->addFlash('error', 'Veuillez entrer un numéro de téléphone valide.');
+                    } else {
+                        $phone = $request->request->get('phone');
+
+                        $twilioService->sendSms("+216" . $phone, $message);
+
+                        $this->addFlash('success', 'La localisation a été partagée avec succès.');
+                    }
+                }
+            }
+
+        }
+
+        return $this->render('formations/formation_share_localisation.html.twig', [
+            'formation' => $formation,
+            'message'   => $message,
         ]);
     }
 
