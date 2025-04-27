@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Modifier la réponse à la réclamation</h1>
+
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-primary mt-3">Mettre à jour</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

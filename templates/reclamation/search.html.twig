@@ -1,0 +1,45 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Recherche Reclamation{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h3 class="mb-4">Recherche par nom de l'employé</h3>
+
+        <form method="get" action="{{ path('app_reclamation_search') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Nom de l'employé" value="{{ search_query ?? '' }}">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </div>
+        </form>
+
+        {% if reclamations is not empty %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employé</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reclamations %}
+                        <tr>
+                            <td>{{ r.id }}</td>
+                            <td>{{ r.employeeName }}</td>
+                            <td>{{ r.type }}</td>
+                            <td>{{ r.description }}</td>
+                            <td>{{ r.status }}</td>
+                            <td>{{ r.dateOfSubmission ? r.dateOfSubmission|date('Y-m-d') : '' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elseif search_query is not empty %}
+            <p>Aucune réclamation trouvée pour "{{ search_query }}".</p>
+        {% endif %}
+    </div>
+{% endblock %}
