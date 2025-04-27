@@ -6,14 +6,11 @@
 parameters:
     cv_directory: '%kernel.project_dir%/public/uploads/cv'
     lettre_motivation_directory: '%kernel.project_dir%/public/uploads/lettre_motivation'
-<<<<<<< HEAD
     google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
 
-=======
->>>>>>> c46329a9d0ec47f0a2dda6ddc0b06029248ff631
 
 services:
     # default configuration for services in *this* file
@@ -36,6 +33,12 @@ services:
             $appId: '%env(ONESIGNAL_APP_ID)%'
             $appKey: '%env(ONESIGNAL_API_KEY)%'
 
+    App\Service\TwilioService:
+        arguments:
+            $sid: '%env(HAYTHEM_TWILIO_SID)%'
+            $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
+            $from: '%env(HAYTHEM_TWILIO_FROM)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
@@ -57,7 +60,6 @@ services:
         arguments:
             $logger: '@logger'
             $mailer: '@mailer'
-<<<<<<< HEAD
      # Service d'email pour les candidatures
     App\Service\FileContentChecker:
         arguments:
@@ -66,5 +68,3 @@ twig:
     globals:
         google_maps_api_key: '%google_maps_api_key%'
 
-=======
->>>>>>> c46329a9d0ec47f0a2dda6ddc0b06029248ff631
