@@ -1,0 +1,32 @@
+<h1>Users List</h1>
+
+<table border="1" cellspacing="0" cellpadding="5" width="100%">
+    <thead>
+        <tr>
+            <th>CIN</th>
+            <th>Tel</th>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Id</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.cin }}</td>
+            <td>{{ user.tel }}</td>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.prenom }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.roles|join(', ') }}</td>
+            <td>{{ user.id }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="7">No records found</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
