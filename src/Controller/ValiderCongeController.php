@@ -5,9 +5,12 @@ namespace App\Controller;
 use App\Entity\ValiderConge;
 use App\Form\ValiderCongeType;
 use App\Repository\ValiderCongeRepository;
+use App\Service\TwilioServiceAlaa ;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,6 +18,13 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/valider/conge')]
 final class ValiderCongeController extends AbstractController
 {
+    private const FIXED_PHONE_NUMBER = '+21695343410';
+
+    public function __construct(
+        private readonly LoggerInterface $logger
+    ) {
+    }
+
     #[Route(name: 'app_valider_conge_index', methods: ['GET'])]
     public function index(Request $request, ValiderCongeRepository $validerCongeRepository, PaginatorInterface $paginator): Response
     {
@@ -47,37 +57,15 @@ final class ValiderCongeController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_valider_conge_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $validerConge = new ValiderConge();
-        $validerConge->setDateValidation(new \DateTime());
-
-        $form = $this->createForm(ValiderCongeType::class, $validerConge);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $demandeConge = $validerConge->getDemandeConge();
-            if ($demandeConge) {
-                $demandeConge->setStatut($validerConge->getStatut());
-                $entityManager->persist($demandeConge);
-            }
-
-            $entityManager->persist($validerConge);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_valider_conge_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('valider_conge/new.html.twig', [
-            'valider_conge' => $validerConge,
-            'form' => $form,
-        ]);
-    }
+   
 
     #[Route('/{id}/edit', name: 'app_valider_conge_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, ValiderConge $validerConge, EntityManagerInterface $entityManager): Response
-    {
+    public function edit(
+        Request $request,
+        ValiderConge $validerConge,
+        EntityManagerInterface $entityManager,
+        #[Autowire(service: 'App\Service\TwilioServiceAlaa')] TwilioServiceAlaa $twilioService
+    ): Response {
         $form = $this->createForm(ValiderCongeType::class, $validerConge);
         $form->handleRequest($request);
 
@@ -89,6 +77,25 @@ final class ValiderCongeController extends AbstractController
             }
 
             $entityManager->flush();
+
+            //try {
+                $employe = $demandeConge?->getEmploye();
+                $message = sprintf(
+                    'Mise à jour congé: %s %s - Type: %s - Période: %s au %s - Statut: %s',
+                    $employe?->getPrenom() ?? 'Employé',
+                    $employe?->getNom() ?? 'Inconnu',
+                    $demandeConge?->getTypeConge() ?? 'N/A',
+                    $demandeConge?->getDateDebut()?->format('d/m/Y') ?? 'N/A',
+                    $demandeConge?->getDateFin()?->format('d/m/Y') ?? 'N/A',
+                    $validerConge->getStatut()
+                );
+
+                $twilioService->sendSms(self::FIXED_PHONE_NUMBER, $message);
+                $this->addFlash('success', 'Notification SMS envoyée au +21652979407');
+             /*catch (\Exception $e) {
+                $this->logger->error('Twilio SMS Error: ' . $e->getMessage());
+                $this->addFlash('error', 'Échec d\'envoi SMS. Contactez l\'administrateur.');*/
+            
 
             return $this->redirectToRoute('app_valider_conge_index', [], Response::HTTP_SEE_OTHER);
         }
