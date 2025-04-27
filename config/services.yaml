@@ -28,6 +28,16 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\StripeService:
+        arguments:
+            $secretKey: '%stripe.secret_key%'
+            
+    App\Service\PaypalService:
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
+            $apiUrl: '%env(PAYPAL_API_URL)%'
+
     App\Service\NotificationService:
         arguments:
             $appId: '%env(ONESIGNAL_APP_ID)%'
