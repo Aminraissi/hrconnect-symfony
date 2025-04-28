@@ -1,182 +1,128 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\TicketReclamationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TicketReclamationRepository::class)]
-#[ORM\Table(name: 'ticket_reclamation')]
 class TicketReclamation
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Reclamation::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'Reclamation must be selected.')]
+    private ?Reclamation $reclamation = null;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'HR Staff Name is required.')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z\s]+$/', 
+        message: 'HR Staff Name must contain only letters and spaces.'
+    )]
+    private ?string $hrStaffName = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'Response message is required.')]
+    #[Assert\Length(
+        max: 500,
+        maxMessage: 'Response message must be at most {{ limit }} characters.'
+    )]
+    private ?string $responseMessage = null;
+
+    #[ORM\Column(type: 'datetime')]
+    #[Assert\NotNull(message: 'Date of response is required.')]
+    #[Assert\LessThanOrEqual('today', message: 'Date of response cannot be in the future.')]
+    private ?\DateTimeInterface $dateOfResponse = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(
+        max: 500,
+        maxMessage: 'Action taken must be at most {{ limit }} characters.'
+    )]
+    private ?string $actionTaken = null;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Resolution status is required.')]
+    #[Assert\Choice(
+        choices: ['Resolved', 'Pending', 'Closed'],
+        message: 'Choose a valid resolution status: Resolved, Pending, or Closed.'
+    )]
+    private ?string $resolutionStatus = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function getReclamation(): ?Reclamation
     {
-        $this->id = $id;
-        return $this;
+        return $this->reclamation;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $reclamation_id = null;
-
-    public function getReclamation_id(): ?int
+    public function setReclamation(?Reclamation $reclamation): self
     {
-        return $this->reclamation_id;
-    }
-
-    public function setReclamation_id(int $reclamation_id): self
-    {
-        $this->reclamation_id = $reclamation_id;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $hr_staff_name = null;
-
-    public function getHr_staff_name(): ?string
-    {
-        return $this->hr_staff_name;
-    }
-
-    public function setHr_staff_name(string $hr_staff_name): self
-    {
-        $this->hr_staff_name = $hr_staff_name;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $response_message = null;
-
-    public function getResponse_message(): ?string
-    {
-        return $this->response_message;
-    }
-
-    public function setResponse_message(?string $response_message): self
-    {
-        $this->response_message = $response_message;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $date_of_response = null;
-
-    public function getDate_of_response(): ?\DateTimeInterface
-    {
-        return $this->date_of_response;
-    }
-
-    public function setDate_of_response(\DateTimeInterface $date_of_response) : self
-    {
-        $this->date_of_response = $date_of_response;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $action_taken = null;
-
-    public function getAction_taken(): ?string
-    {
-        return $this->action_taken;
-    }
-
-    public function setAction_taken(?string $action_taken): self
-    {
-        $this->action_taken = $action_taken;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $resolution_status = null;
-
-    public function getResolution_status(): ?string
-    {
-        return $this->resolution_status;
-    }
-
-    public function setResolution_status(?string $resolution_status): self
-    {
-        $this->resolution_status = $resolution_status;
-        return $this;
-    }
-
-    public function getReclamationId(): ?int
-    {
-        return $this->reclamation_id;
-    }
-
-    public function setReclamationId(int $reclamation_id): static
-    {
-        $this->reclamation_id = $reclamation_id;
-
+        $this->reclamation = $reclamation;
         return $this;
     }
 
     public function getHrStaffName(): ?string
     {
-        return $this->hr_staff_name;
+        return $this->hrStaffName;
     }
 
-    public function setHrStaffName(string $hr_staff_name): static
+    public function setHrStaffName(string $hrStaffName): self
     {
-        $this->hr_staff_name = $hr_staff_name;
-
+        $this->hrStaffName = $hrStaffName;
         return $this;
     }
 
     public function getResponseMessage(): ?string
     {
-        return $this->response_message;
+        return $this->responseMessage;
     }
 
-    public function setResponseMessage(?string $response_message): static
+    public function setResponseMessage(?string $responseMessage): self
     {
-        $this->response_message = $response_message;
-
+        $this->responseMessage = $responseMessage;
         return $this;
     }
 
     public function getDateOfResponse(): ?\DateTimeInterface
     {
-        return $this->date_of_response;
+        return $this->dateOfResponse;
     }
 
-    public function setDateOfResponse(\DateTimeInterface $date_of_response): static
+    public function setDateOfResponse(\DateTimeInterface $dateOfResponse): self
     {
-        $this->date_of_response = $date_of_response;
-
+        $this->dateOfResponse = $dateOfResponse;
         return $this;
     }
 
     public function getActionTaken(): ?string
     {
-        return $this->action_taken;
+        return $this->actionTaken;
     }
 
-    public function setActionTaken(?string $action_taken): static
+    public function setActionTaken(?string $actionTaken): self
     {
-        $this->action_taken = $action_taken;
-
+        $this->actionTaken = $actionTaken;
         return $this;
     }
 
     public function getResolutionStatus(): ?string
     {
-        return $this->resolution_status;
+        return $this->resolutionStatus;
     }
 
-    public function setResolutionStatus(?string $resolution_status): static
+    public function setResolutionStatus(?string $resolutionStatus): self
     {
-        $this->resolution_status = $resolution_status;
-
+        $this->resolutionStatus = $resolutionStatus;
         return $this;
     }
-
 }
