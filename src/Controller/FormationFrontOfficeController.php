@@ -71,6 +71,11 @@ final class FormationFrontOfficeController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $paymentMethod = $request->request->get('paymentMethod');
+
+            if ($formation->getPrice() == 0) {
+                return $this->redirectToRoute('app_formation_payment_success', ['id' => $id]);
+            }
+
             if ($paymentMethod == "card") {
                 return $this->redirectToRoute('app_formation_payment_stripe', ['id' => $id]);
             } else {
