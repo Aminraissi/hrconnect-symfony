@@ -10,6 +10,7 @@ parameters:
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
+    profile_pictures_directory: '%kernel.project_dir%/public/uploads/profile_pictures'
     mailjet.api_key: 'MAILJET_API_KEY_REMOVED'
     mailjet.api_secret: 'MAILJET_API_SECRET_REMOVED'
     weather_api_key: 'WEATHER_API_KEY_REMOVED'

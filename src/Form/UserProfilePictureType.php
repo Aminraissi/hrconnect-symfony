@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Entity\User;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+
+class UserProfilePictureType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('profilePictureFile', VichImageType::class, [
+                'required' => true,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'label' => false,
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => User::class,
+        ]);
+    }
+}
