@@ -22,7 +22,7 @@ final class FormationQuizController extends AbstractController
             throw $this->createNotFoundException('Formation not found');
         }
 
-        $questions = $quizRepository->findBy(['formation' => $formation]);
+        $questions = $quizRepository->findBy(['formation' => $formation], ['id' => 'ASC']);
 
         if (! $questions) {
             throw $this->createNotFoundException('Quiz not found for this formation');
@@ -30,12 +30,23 @@ final class FormationQuizController extends AbstractController
 
         $questionsSize = count($questions);
 
+        $existingResponse = $quizReponseRepository->findOneBy([
+            'employe' => $this->getUser(),
+            'quiz'    => $questions[$q - 1],
+        ]);
+
+        if ($existingResponse) {
+            return $this->redirectToRoute('app_formation_quiz_result', [
+                'id' => $id,
+            ]);
+        }
+
         if ($request->isMethod('POST')) {
             $reponse = $request->request->get('reponse');
             if ($reponse != null) {
 
                 $quizReponse = new QuizReponse();
-                $quizReponse->setQuiz($questions[$q]);
+                $quizReponse->setQuiz($questions[$q - 1]);
                 $quizReponse->setEmploye($this->getUser());
                 $quizReponse->setNumReponse($reponse);
 
