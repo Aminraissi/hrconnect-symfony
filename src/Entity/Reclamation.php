@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ReclamationRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 #[ORM\Table(name: 'reclamation')]
@@ -15,23 +16,33 @@ class Reclamation
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $employee_name = null;
+    #[ORM\Column(name: 'employee_name', type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Employee name is required")]
+    private ?string $employeeName = null;
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Type is required")]
     private ?string $type = null;
 
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "Description is required")]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $date_of_submission = null;
+    #[ORM\Column(name: 'date_of_submission', type: 'datetime', nullable: false)]
+    private ?\DateTimeInterface $dateOfSubmission = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $status = null;
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Priority is required")]
     private ?string $priority = null;
+
+    // ✅ Automatically set the date when a new object is created
+    public function __construct()
+    {
+        $this->dateOfSubmission = new \DateTime(); // now
+    }
 
     public function getId(): ?int
     {
@@ -44,14 +55,14 @@ class Reclamation
         return $this;
     }
 
-    public function getEmployee_name(): ?string
+    public function getEmployeeName(): ?string
     {
-        return $this->employee_name;
+        return $this->employeeName;
     }
 
-    public function setEmployee_name(string $employee_name): self
+    public function setEmployeeName(string $employeeName): self
     {
-        $this->employee_name = $employee_name;
+        $this->employeeName = $employeeName;
         return $this;
     }
 
@@ -77,14 +88,14 @@ class Reclamation
         return $this;
     }
 
-    public function getDate_of_submission(): ?\DateTimeInterface
+    public function getDateOfSubmission(): ?\DateTimeInterface
     {
-        return $this->date_of_submission;
+        return $this->dateOfSubmission;
     }
 
-    public function setDate_of_submission(\DateTimeInterface $date_of_submission): self
+    public function setDateOfSubmission(\DateTimeInterface $dateOfSubmission): self
     {
-        $this->date_of_submission = $date_of_submission;
+        $this->dateOfSubmission = $dateOfSubmission;
         return $this;
     }
 
@@ -107,30 +118,6 @@ class Reclamation
     public function setPriority(string $priority): self
     {
         $this->priority = $priority;
-        return $this;
-    }
-
-    public function getEmployeeName(): ?string
-    {
-        return $this->employee_name;
-    }
-
-    public function setEmployeeName(string $employee_name): static
-    {
-        $this->employee_name = $employee_name;
-
-        return $this;
-    }
-
-    public function getDateOfSubmission(): ?\DateTimeInterface
-    {
-        return $this->date_of_submission;
-    }
-
-    public function setDateOfSubmission(\DateTimeInterface $date_of_submission): static
-    {
-        $this->date_of_submission = $date_of_submission;
-
         return $this;
     }
 }

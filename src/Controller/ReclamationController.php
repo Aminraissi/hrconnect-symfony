@@ -3,10 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Reclamation;
-use App\Entity\TicketReclamation;
 use App\Form\ReclamationType;
 use App\Repository\ReclamationRepository;
-use App\Repository\TicketReclamationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +17,6 @@ class ReclamationController extends AbstractController
     #[Route('', name: 'app_reclamation_index', methods: ['GET'])]
     public function index(ReclamationRepository $reclamationRepository): Response
     {
-        // Sorting by id DESC instead of non-existent 'dateOfSubmission'
         $reclamations = $reclamationRepository->findBy([], ['id' => 'DESC']);
 
         return $this->render('reclamation/index.html.twig', [
@@ -35,26 +32,41 @@ class ReclamationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $reclamation->setDateOfSubmission(new \DateTime());
+
             $em->persist($reclamation);
             $em->flush();
 
-            $this->addFlash('success', 'Reclamation submitted successfully.');
+            $this->addFlash('success', 'Réclamation soumise avec succès.');
+
             return $this->redirectToRoute('app_reclamation_index');
         }
 
         return $this->render('reclamation/new.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{id}', name: 'app_reclamation_show', methods: ['GET'])]
-    public function show(Reclamation $reclamation, TicketReclamationRepository $ticketRepo): Response
+    public function show(?Reclamation $reclamation): Response
     {
-        $ticket = $ticketRepo->findOneBy(['reclamation' => $reclamation]);
+        if (!$reclamation) {
+            $this->addFlash('error', 'Reclamation not found.');
+            return $this->redirectToRoute('app_reclamation_index');
+        }
 
         return $this->render('reclamation/show.html.twig', [
             'reclamation' => $reclamation,
-            'ticket' => $ticket,
+        ]);
+    }
+
+    #[Route('/resolved', name: 'app_reclamation_resolved')]
+    public function resolved(ReclamationRepository $reclamationRepository): Response
+    {
+        $resolvedReclamations = $reclamationRepository->findBy(['status' => 'resolved']);
+
+        return $this->render('reclamation/resolved.html.twig', [
+            'reclamations' => $resolvedReclamations,
         ]);
     }
 
@@ -74,6 +86,22 @@ class ReclamationController extends AbstractController
         return $this->render('reclamation/edit.html.twig', [
             'form' => $form,
             'reclamation' => $reclamation,
+        ]);
+    }
+
+    #[Route('/reclamation/search', name: 'app_reclamation_search', methods: ['GET'])]
+    public function search(Request $request, ReclamationRepository $repository): Response
+    {
+        $employeeName = $request->query->get('employee_name');
+
+        if ($employeeName) {
+            $reclamations = $repository->findByEmployeeName($employeeName);
+        } else {
+            $reclamations = $repository->findAll();
+        }
+
+        return $this->render('reclamation/index.html.twig', [
+            'reclamations' => $reclamations,
         ]);
     }
 
