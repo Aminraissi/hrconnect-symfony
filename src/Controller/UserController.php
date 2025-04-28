@@ -15,6 +15,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/user')]
 final class UserController extends AbstractController
@@ -150,36 +152,65 @@ final class UserController extends AbstractController
         return $this->render('home.html.twig');
     }
 
+    
     #[Route('/profile', name: 'app_user_profile_front', methods: ['GET', 'POST'])]
-    public function profileFront(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function profileFront(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, SluggerInterface $slugger): Response
     {
         $user = $this->getUser();
-
+    
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to access your profile.');
         }
-
+    
+        $originalPassword = $user->getPassword(); 
+    
         $form = $this->createForm(UserProfileType::class, $user);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('password')->getData();
-            if (!empty($plainPassword)) {
+    
+            if ($plainPassword) {
                 $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
                 $user->setPassword($hashedPassword);
+            } else {
+                $user->setPassword($originalPassword);
             }
-        
+    
+            // Handle Profile Picture Upload
+            $profilePictureFile = $form->get('profilePicture')->getData();
+    
+            if ($profilePictureFile) {
+                $originalFilename = pathinfo($profilePictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$profilePictureFile->guessExtension();
+    
+                try {
+                    $profilePictureFile->move(
+                        $this->getParameter('profile_pictures_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Handle exception if something happens during file upload
+                }
+    
+                $user->setProfilePicture($newFilename);
+            }
+    
+            $user->setUpdatedAt(new \DateTime());
+    
+            $entityManager->persist($user);
             $entityManager->flush();
-        
+    
             $this->addFlash('success', 'Profile updated successfully!');
             return $this->redirectToRoute('app_user_profile_front');
         }
-        
-
+    
         return $this->render('user/profile_front.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+    
     #[Route('/user/download/pdf', name: 'app_user_download_pdf', methods: ['GET'])]
 public function downloadPdf(UserRepository $userRepository): Response
 {

@@ -10,6 +10,7 @@ parameters:
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
+    profile_pictures_directory: '%kernel.project_dir%/public/uploads/profile_pictures'
 
 
 services:

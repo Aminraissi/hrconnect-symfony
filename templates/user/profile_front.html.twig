@@ -72,7 +72,11 @@
 <div class="container">
 
   <div style="text-align:center;">
-    <img src="{{ asset('images/profile.png') }}" alt="Profile" width="100" style="border-radius:50%; border:3px solid #007bff;">
+    {% if app.user.profilePicture %}
+        <img src="{{ asset('uploads/profile_pictures/' ~ app.user.profilePicture) }}" alt="Profile" width="100" style="border-radius:50%; border:3px solid #007bff;">
+    {% else %}
+        <img src="{{ asset('images/profile.png') }}" alt="Profile" width="100" style="border-radius:50%; border:3px solid #007bff;">
+    {% endif %}
     <h2>{{ app.user.nom }} {{ app.user.prenom }}</h2>
     <p>{{ app.user.email }}</p>
   </div>
@@ -88,7 +92,7 @@
   {% endfor %}
 
   {# Profile Form #}
-  {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+  {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
     <table>
       {% for field in form %}
           {% if field.vars.block_prefixes is not defined or 'hidden' not in field.vars.block_prefixes %}

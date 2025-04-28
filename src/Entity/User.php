@@ -176,4 +176,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return null;
     }
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+private ?string $profilePicture = null;
+
+#[ORM\Column(type: 'datetime', nullable: true)]
+private ?\DateTimeInterface $updatedAt = null;
+
+public function getProfilePicture(): ?string
+{
+    return $this->profilePicture;
+}
+
+public function setProfilePicture(?string $profilePicture): self
+{
+    $this->profilePicture = $profilePicture;
+    return $this;
+}
+
+public function getUpdatedAt(): ?\DateTimeInterface
+{
+    return $this->updatedAt;
+}
+
+public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+{
+    $this->updatedAt = $updatedAt;
+    return $this;
+}
+
 }
