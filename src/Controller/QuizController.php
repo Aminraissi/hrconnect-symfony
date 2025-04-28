@@ -6,6 +6,7 @@ use App\Form\QuizType;
 use App\Repository\FormationRepository;
 use App\Repository\QuizRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class QuizController extends AbstractController
 {
     #[Route(name: 'app_quiz_index', methods: ['GET'])]
-    public function index(int $fid, Request $request, FormationRepository $formationRepository, QuizRepository $quizRepository): Response
+    public function index(int $fid, Request $request, FormationRepository $formationRepository, QuizRepository $quizRepository, PaginatorInterface $paginator): Response
     {
         $formation = $formationRepository->find($fid);
 
@@ -30,9 +31,15 @@ final class QuizController extends AbstractController
             $quizzes = $quizRepository->findBy(['formation' => $fid]);
         }
 
+        $pagination = $paginator->paginate(
+            $quizzes,
+            $request->query->getInt('page', 1),
+            5,
+        );
+
         return $this->render('quiz/index.html.twig', [
             'formation' => $formation,
-            'quizzes'   => $quizzes,
+            'quizzes'   => $pagination,
         ]);
     }
 

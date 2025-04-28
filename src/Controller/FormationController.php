@@ -5,6 +5,7 @@ use App\Entity\Formation;
 use App\Form\FormationType;
 use App\Repository\FormationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,20 +15,29 @@ use Symfony\Component\Routing\Attribute\Route;
 final class FormationController extends AbstractController
 {
     #[Route(name: 'app_formations_index', methods: ['GET'])]
-    public function index(Request $request, FormationRepository $formationRepository): Response
+    public function index(Request $request, FormationRepository $formationRepository, PaginatorInterface $paginator): Response
     {
         $type = $request->query->get('type');
 
         if ($type == 'free') {
-            $formations = $formationRepository->findBy(['price' => 0]);
-        } else if ($type == 'paid') {
-            $formations = $formationRepository->findPaidFormations();
+            $query = $formationRepository->createQueryBuilder('f')
+                ->where('f.price = 0')
+                ->getQuery();
+        } elseif ($type == 'paid') {
+            $query = $formationRepository->findPaidFormations();
         } else {
-            $formations = $formationRepository->findAll();
+            $query = $formationRepository->createQueryBuilder('f')
+                ->getQuery();
         }
 
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            7
+        );
+
         return $this->render('formations/index.html.twig', [
-            'formations' => $formations,
+            'formations' => $pagination, // Now paginated
             'type'       => $type,
         ]);
     }
