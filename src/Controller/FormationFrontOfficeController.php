@@ -71,6 +71,11 @@ final class FormationFrontOfficeController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $paymentMethod = $request->request->get('paymentMethod');
+
+            if ($formation->getPrice() == 0) {
+                return $this->redirectToRoute('app_formation_payment_success', ['id' => $id]);
+            }
+
             if ($paymentMethod == "card") {
                 return $this->redirectToRoute('app_formation_payment_stripe', ['id' => $id]);
             } else {
@@ -152,6 +157,13 @@ final class FormationFrontOfficeController extends AbstractController
     #[Route('/frontoffice/mes-formations', name: 'app_mes_formations')]
     public function mesFormations(FormationRepository $formationRepository, ): Response
     {
-        dd("hello");
+
+        $user = $this->getUser();
+
+        $formations = $formationRepository->findFormationsByUserId($user->getId());
+
+        return $this->render('formations/mes_formations.html.twig', [
+            'formations' => $formations,
+        ]);
     }
 }

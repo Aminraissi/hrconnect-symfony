@@ -23,6 +23,23 @@ class FormationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findFormationsByUserId($userId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT f.*
+            FROM formations f
+            INNER JOIN formation_participation fp ON f.id = fp.formation_id
+            WHERE fp.employe_id = :userId
+        ';
+
+        $stmt      = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $userId]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
     //    /**
     //     * @return Formation[] Returns an array of Formation objects
     //     */

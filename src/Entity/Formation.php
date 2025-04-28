@@ -43,8 +43,8 @@ class Formation
     }
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    #[Assert\NotBlank(message: 'The title is required.')]
-    #[Assert\Length(max: 255, maxMessage: 'The title must not exceed 255 characters.')]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le titre ne doit pas dépasser 255 caractères.')]
     private ?string $title = null;
 
     public function getTitle(): ?string
@@ -59,7 +59,7 @@ class Formation
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: 'The image is required.')]
+    // #[Assert\NotBlank(message: 'The image is required.')]
     private ?string $image = null;
 
     public function getImage(): ?string
@@ -74,8 +74,8 @@ class Formation
     }
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    #[Assert\NotBlank(message: 'The description is required.')]
-    #[Assert\Length(max: 255, maxMessage: 'The description must not exceed 255 characters.')]
+    #[Assert\NotBlank(message: 'La description est obligatoire.')]
+    #[Assert\Length(max: 255, maxMessage: 'La description ne doit pas dépasser 255 caractères.')]
     private ?string $description = null;
 
     public function getDescription(): ?string
@@ -119,7 +119,7 @@ class Formation
 
     #[ORM\Column(type: 'decimal', nullable: true)]
     // #[Assert\NotNull(message: 'Latitude is required.')]
-    #[Assert\Type(type: 'float', message: 'Latitude must be a decimal number.')]
+    #[Assert\Type(type: 'float', message: 'La latitude doit être un nombre décimal.')]
     private ?float $lat = null;
 
     public function getLat(): ?float
@@ -135,7 +135,7 @@ class Formation
 
     #[ORM\Column(type: 'decimal', nullable: true)]
     // #[Assert\NotNull(message: 'Longitude is required.')]
-    #[Assert\Type(type: 'float', message: 'Longitude must be a decimal number.')]
+    #[Assert\Type(type: 'float', message: 'La longitude doit être un nombre décimal.')]
     private ?float $lng = null;
 
     public function getLng(): ?float
@@ -178,9 +178,9 @@ class Formation
     }
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    #[Assert\NotNull(message: 'Start date is required.')]
-    #[Assert\Type(\DateTimeInterface::class, message: 'Start date must be a valid datetime.')]
-    #[Assert\GreaterThanOrEqual(value: "now", message: "Start date must be greater than or equal to the current date and time.")]
+    #[Assert\NotNull(message: 'La date de début est obligatoire.')]
+    #[Assert\Type(\DateTimeInterface::class, message: 'La date de début doit être une date et heure valide.')]
+    #[Assert\GreaterThanOrEqual(value: "now", message: "La date de début doit être supérieure ou égale à la date et heure actuelle.")]
     private ?\DateTimeInterface $start_date = null;
 
     public function getStart_date(): ?\DateTimeInterface
@@ -195,8 +195,8 @@ class Formation
     }
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    #[Assert\NotNull(message: 'End date is required.')]
-    #[Assert\Type(\DateTimeInterface::class, message: 'End date must be a valid datetime.')]
+    #[Assert\NotNull(message: 'La date de fin est obligatoire.')]
+    #[Assert\Type(\DateTimeInterface::class, message: 'La date de fin doit être une date et heure valide.')]
     #[Assert\Expression(
         "this.getEndDate() >= this.getStartDate()",
         message: "End date must be after start date."
@@ -215,9 +215,9 @@ class Formation
     }
 
     #[ORM\Column(type : 'decimal', nullable: true)]
-    #[Assert\NotNull(message: 'Price is required.')]
-    #[Assert\Type(type: 'float', message: 'Price must be a decimal number.')]
-    #[Assert\GreaterThanOrEqual(value: 0, message: 'Price must be zero or positive.')]
+    #[Assert\NotNull(message: 'Le prix est obligatoire.')]
+    #[Assert\Type(type: 'float', message: 'Le prix doit être un nombre décimal.')]
+    #[Assert\GreaterThanOrEqual(value: 0, message: 'Le prix doit être supérieur ou égal à zéro.')]
     private ?float $price = null;
 
     public function getPrice(): ?float

@@ -1,7 +1,7 @@
 {% extends 'back_office.html.twig' %}
 
 {% block title %}
-	Training List
+	Liste des formations
 {% endblock %}
 
 {% block body %}
@@ -13,7 +13,7 @@
 						<a href="index.html"><img src="{{ asset('assets/img/')}}" class="mr-2" alt="breadcrumb"/>Home</a>
 					</li>
 					<li class="breadcrumb-item active">
-						Training List
+						Liste des formations
 					</li>
 				</ul>
 				<h3>Questions</h3>
@@ -34,27 +34,27 @@
 				</ul>
 				<a class="btn-add" href="{{ url('app_formations_new') }}">
 					<i data-feather="plus"></i>
-					Add new training course
+					Ajouter une formation
 				</a>
 			</div>
 		</div>
 		<div class="col-xl-12 col-sm-12 col-12 mb-4">
 			<div class="card">
 				<div class="table-heading">
-					<h2>Training List</h2>
+					<h2>Liste des formations</h2>
 				</div>
 				<div class="table-responsive">
 					<table class="table  custom-table no-footer">
 						<thead>
 							<tr>
 								<th>Id</th>
-								<th>Title</th>
-								<th>Place</th>
-								<th>Price</th>
-								<th>For</th>
-								<th>Start_date</th>
-								<th>End_date</th>
-								<th>actions</th>
+								<th>Titre</th>
+								<th>Lieu</th>
+								<th>Prix</th>
+								<th>Disponible pour</th>
+								<th>Date de début</th>
+								<th>Date de fin</th>
+								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -104,7 +104,7 @@
 											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.id) }}">
 											<a class="btn btn-success btn-sm" href="{{ path('app_formations_show', {'id': formation.id}) }}">
 												<i class="fas fa-eye"></i>
-												Show
+												Affichier
 											</a>
 											<a class="btn btn-primary btn-sm" href="{{ path('app_quiz_index', {'fid': formation.id}) }}">
 												<i class="fas fa-eye"></i>
@@ -112,11 +112,11 @@
 											</a>
 											<a class="btn btn-success btn-sm" href="{{ path('app_formations_edit', {'id': formation.id}) }}">
 												<i class="fas fa-edit"></i>
-												Edit
+												Modifier
 											</a>
 											<button class="btn btn-danger btn-sm">
 												<i class="fas fa-trash"></i>
-												Delete
+												Supprimer
 											</button>
 										</form>
 
@@ -125,6 +125,13 @@
 							{% endfor %}
 						</tbody>
 					</table>
+
+					<center>
+						<div class="navigation">
+							{{ knp_pagination_render(formations) }}
+						</div>
+					</center>
+
 				</div>
 			</div>
 		</div>

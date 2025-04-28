@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Ajouter une réponse à une réclamation</h1>
+
+        {{ form_start(form) }}
+
+        <div class="mb-3">
+            {{ form_label(form.reclamation) }}
+            {{ form_widget(form.reclamation, {'attr': {'class': 'form-control' ~ (form_errors(form.reclamation) ? ' is-invalid' : '') }}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.reclamation) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.hrStaffName) }}
+            {{ form_widget(form.hrStaffName, {'attr': {'class': 'form-control' ~ (form_errors(form.hrStaffName) ? ' is-invalid' : '') }}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.hrStaffName) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.responseMessage) }}
+            {{ form_widget(form.responseMessage, {'attr': {'class': 'form-control' ~ (form_errors(form.responseMessage) ? ' is-invalid' : '') }}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.responseMessage) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.actionTaken) }}
+            {{ form_widget(form.actionTaken, {'attr': {'class': 'form-control' ~ (form_errors(form.actionTaken) ? ' is-invalid' : '') }}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.actionTaken) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.resolutionStatus) }}
+            {{ form_widget(form.resolutionStatus, {'attr': {'class': 'form-control' ~ (form_errors(form.resolutionStatus) ? ' is-invalid' : '') }}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.resolutionStatus) }}
+            </div>
+        </div>
+
+        <button class="btn btn-primary mt-3">Valider</button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'front_office.html.twig' %}
+
+{% block title %}
+	Mes Formations
+{% endblock %}
+
+
+{% block body %}
+	<main>
+
+		<!-- =======================
+																																																																						Page Banner START -->
+		<section class="py-4">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<div class="bg-light p-4 text-center rounded-3">
+							<h1 class="m-0">Mes Formations</h1>
+							<!-- Breadcrumb -->
+							<div class="d-flex justify-content-center">
+								<nav aria-label="breadcrumb">
+									<ol class="breadcrumb breadcrumb-dots mb-0">
+										<li class="breadcrumb-item">
+											<a href="/">Home</a>
+										</li>
+										<li class="breadcrumb-item active" aria-current="page">Mes Formations</li>
+									</ol>
+								</nav>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- =======================
+																																																																						Page Banner END -->
+
+		<!-- =======================
+																																																																						Page content START -->
+		<section class="pt-0">
+			<div class="container">
+
+
+				{% for message in app.flashes('success') %}
+					<div class="alert alert-success">{{ message }}</div>
+				{% endfor %}
+
+
+				<div
+					class="row mt-3">
+					<!-- Main content START -->
+					<div
+						class="col-12">
+
+						<!-- Course Grid START -->
+						<div class="row g-4">
+							{% for formation in formations %}
+
+								<div class="col-sm-6 col-lg-4 col-xl-3">
+									<div
+										class="card shadow h-100">
+										<!-- Image -->
+										<img
+										src="{{ asset(formation.image) }}" class="card-img-top" alt="course image">
+										<!-- Card body -->
+										<div
+											class="card-body pb-0">
+											<!-- Badge and favorite -->
+											<div class="d-flex justify-content-between mb-2">
+												<a href="#" class="badge bg-purple bg-opacity-10 text-purple">All level</a>
+												<a href="#" class="h6 mb-0">
+													<i class="far fa-heart"></i>
+												</a>
+											</div>
+											<!-- Title -->
+											<h5 class="card-title fw-normal">
+												<a href="{{ path('app_user_formation_details', { id: formation.id }) }}">{{ formation.title }}</a>
+											</h5>
+											<p class="mb-2 text-truncate-2">
+												{{ formation.description }}
+											</p>
+											<!-- Rating star -->
+											<ul class="list-inline mb-0">
+												<li class="list-inline-item me-0 small">
+													<i class="fas fa-star text-warning"></i>
+												</li>
+												<li class="list-inline-item me-0 small">
+													<i class="fas fa-star text-warning"></i>
+												</li>
+												<li class="list-inline-item me-0 small">
+													<i class="fas fa-star text-warning"></i>
+												</li>
+												<li class="list-inline-item me-0 small">
+													<i class="fas fa-star text-warning"></i>
+												</li>
+												<li class="list-inline-item me-0 small">
+													<i class="far fa-star text-warning"></i>
+												</li>
+												<li class="list-inline-item ms-2 h6 fw-light mb-0">4.0/5.0</li>
+											</ul>
+										</div>
+										<!-- Card footer -->
+										<div class="card-footer pt-0 pb-3">
+											<hr>
+											<div class="d-flex justify-content-between mb-3">
+												<span class="h6 fw-light mb-0">
+													<i class="fas fa-map-marker-alt text-danger me-2"></i>
+													{% if formation.is_online %}
+														En ligne
+													{% else %}
+														{{ formation.place|slice(0, 15) ~ '...' }}
+													{% endif %}
+												</span>
+												<span class="h6 fw-light mb-0">
+													<i class="fas fa-dollar-sign text-orange me-2"></i>
+													{{ formation.price }}
+													TND
+												</span>
+											</div>
+
+											{% if formation.is_online %}
+												<a href="{{ path('app_user_formation_meet', { id: formation.id }) }}" class="btn btn-primary w-100">Rejoindre la réunion en ligne</a>
+											{% endif %}
+											<a href="{{ path('app_formation_quiz', { id: formation.id }) }}" class="btn btn-success w-100">Démarrer Le Quiz</a>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+
+						</div>
+						<!-- Course Grid END -->
+
+
+					</div>
+					<!-- Main content END -->
+				</div>
+				<!-- Row END -->
+			</div>
+		</section>
+		<!-- =======================
+																																																																						Page content END -->
+
+		<!-- =======================
+																																																																						Newsletter START -->
+
+
+	</main>
+{% endblock %}
