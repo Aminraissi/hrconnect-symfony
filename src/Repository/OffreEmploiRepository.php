@@ -17,8 +17,6 @@ class OffreEmploiRepository extends ServiceEntityRepository
 
     public function findAllActive(): array
     {
-        // Note: isActive n'est plus un champ mappé dans la base de données
-        // Nous récupérons donc toutes les offres sans filtrage
         return $this->createQueryBuilder('o')
             ->orderBy('o.id', 'DESC')
             ->getQuery()
@@ -27,8 +25,6 @@ class OffreEmploiRepository extends ServiceEntityRepository
 
     public function findByTypeContrat(string $typeContrat): array
     {
-        // Note: typeContrat et isActive ne sont plus des champs mappés dans la base de données
-        // Nous récupérons donc toutes les offres sans filtrage
         return $this->createQueryBuilder('o')
             ->orderBy('o.id', 'DESC')
             ->getQuery()

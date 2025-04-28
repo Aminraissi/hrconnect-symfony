@@ -16,14 +16,11 @@ parameters:
     weather_api_key: 'WEATHER_API_KEY_REMOVED'
     
 
-
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
- 
-   
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -34,34 +31,16 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Service\StripeService:
-        arguments:
-            $secretKey: '%stripe.secret_key%'
-            
-    App\Service\PaypalService:
-        arguments:
-            $clientId: '%env(PAYPAL_CLIENT_ID)%'
-            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
-            $apiUrl: '%env(PAYPAL_API_URL)%'
-
-    App\Service\NotificationService:
-        arguments:
-            $appId: '%env(ONESIGNAL_APP_ID)%'
-            $appKey: '%env(ONESIGNAL_API_KEY)%'
-
-    App\Service\TwilioService:
-        arguments:
-            $sid: '%env(HAYTHEM_TWILIO_SID)%'
-            $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
-            $from: '%env(HAYTHEM_TWILIO_FROM)%'
-    App\Service\TwilioServiceAlaa:
-        arguments:
-            $sid: '%env(ALAA_TWILIO_SID)%'
-            $token: '%env(ALAA_TWILIO_TOKEN)%'
-            $from: '%env(ALAA_TWILIO_FROM)%'
-
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Service Twilio pour l'envoi de SMS (Amine)
+    App\Service\TwilioSmsServiceAmine:
+        arguments:
+            $sid: 'TWILIO_SID_REMOVED'
+            $token: '2e17a427bbc6b36463b4529116f45cef'
+            $from: '+12294754264'
+            $logger: '@logger'
 
     # Service d'analyse de CV avec Gemini
     App\Service\GeminiCvEvaluatorService:

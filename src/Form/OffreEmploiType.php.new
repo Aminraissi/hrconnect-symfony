@@ -42,7 +42,7 @@ class OffreEmploiType extends AbstractType
                 'label' => 'Localisation',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Ex: Paris'
+                    'placeholder' => 'Ex: Paris, France'
                 ],
                 'constraints' => [
                     new NotBlank(['message' => 'La localisation est obligatoire']),
@@ -51,10 +51,6 @@ class OffreEmploiType extends AbstractType
                         'max' => 100,
                         'minMessage' => 'La localisation doit contenir au moins {{ limit }} caractères',
                         'maxMessage' => 'La localisation ne peut pas dépasser {{ limit }} caractères'
-                    ]),
-                    new Regex([
-                        'pattern' => '/^[a-zA-Z0-9À-ÿ\s\-\,\.]+$/',
-                        'message' => 'La localisation contient des caractères non autorisés'
                     ])
                 ]
             ])
@@ -95,13 +91,7 @@ class OffreEmploiType extends AbstractType
                     'class' => 'form-control',
                     'placeholder' => 'Ex: 45000€ - 55000€ annuel'
                 ],
-                'required' => false,
-                'constraints' => [
-                    new Regex([
-                        'pattern' => '/^[0-9\s\-\€\$\,\.]+$/',
-                        'message' => 'Le salaire doit contenir uniquement des chiffres, des espaces, des tirets et des symboles monétaires'
-                    ])
-                ]
+                'required' => false
             ])
             ->add('profilRecherche', TextareaType::class, [
                 'label' => 'Profil recherché',

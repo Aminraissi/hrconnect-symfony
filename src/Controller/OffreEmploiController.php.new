@@ -24,6 +24,7 @@ class OffreEmploiController extends AbstractController
     public function index(OffreEmploiRepository $repository): Response
     {
         try {
+            // Utiliser l'ID au lieu de datePublication pour le tri
             $offres = $repository->findBy([], ['id' => 'DESC']);
             $this->logger->info('Nombre d\'offres récupérées : ' . count($offres));
 
@@ -48,10 +49,11 @@ class OffreEmploiController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->logger->info('Formulaire soumis et valide pour ajouter une offre');
-
+            
             try {
+                // Définir les champs qui ne sont pas dans le formulaire
                 $offre->setDatePublication(new \DateTime());
-
+                
                 $this->em->persist($offre);
                 $this->em->flush();
 

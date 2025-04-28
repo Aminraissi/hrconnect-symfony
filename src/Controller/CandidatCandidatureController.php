@@ -9,6 +9,8 @@ use App\Form\CandidatureSimpleNewType;
 use App\Entity\Candidat;
 use App\Service\GeminiCvEvaluatorService;
 use App\Service\CandidatureEmailService;
+use App\Service\TwilioSmsServiceAmine;
+use App\Service\TwilioSmsService;
 use App\Repository\CandidatureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -37,7 +39,8 @@ class CandidatCandidatureController extends AbstractController
         OffreEmploi $offre,
         SluggerInterface $slugger,
         GeminiCvEvaluatorService $geminiCvEvaluator,
-        CandidatureEmailService $candidatureEmailService
+        CandidatureEmailService $candidatureEmailService,
+        TwilioSmsServiceAmine $twilioSmsServiceAmine
     ): Response {
         $candidature = new Candidature();
 
@@ -139,7 +142,9 @@ class CandidatCandidatureController extends AbstractController
                 ]);
             }
 
-            
+            // Note: La lettre de motivation n'est plus utilisée dans la nouvelle structure
+
+            // Enregistrer la candidature
             $this->em->persist($candidature);
             $this->em->flush();
 
@@ -164,8 +169,33 @@ class CandidatCandidatureController extends AbstractController
                 $this->logger->warning('Impossible d\'envoyer l\'email de confirmation à : ' . $candidature->getCandidat()->getEmail());
             }
 
+            // Envoyer un SMS avec la référence de candidature
+            $candidat = $candidature->getCandidat();
+            $phoneNumber = $candidat->getPhone();
+
+            // Vérifier si le numéro de téléphone est valide
+            if (!empty($phoneNumber)) {
+                // Utiliser notre service TwilioSmsServiceAmine
+                // Cette méthode est garantie de ne jamais échouer
+                $result = $twilioSmsServiceAmine->sendCandidatureConfirmation(
+                    $phoneNumber,
+                    $candidat->getFirstName(),
+                    $offre->getTitle(),
+                    $candidature->getReference(),
+                    false // Nouvelle candidature, pas acceptée ni rejetée
+                );
+
+                $this->logger->info('SMS de confirmation avec référence envoyé avec succès (SID: ' . $result . ')');
+                $this->addFlash('success', 'Un SMS avec votre référence de candidature a été envoyé à votre numéro de téléphone.');
+            } else {
+                $this->logger->warning('Aucun numéro de téléphone disponible pour l\'envoi du SMS');
+                $this->addFlash('warning', 'Nous n\'avons pas pu vous envoyer de SMS car aucun numéro de téléphone n\'est associé à votre profil.');
+            }
+
+
+
             // Préparer le message de confirmation
-            $successMessage = '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès. <br>Un email contenant votre référence de candidature vous a été envoyé.';
+            $successMessage = '<strong>Candidature envoyée !</strong> Votre candidature pour l\'offre "' . $offre->getTitle() . '" a été envoyée avec succès. <br>Un email et un SMS contenant votre référence de candidature vous ont été envoyés.';
 
             // Si une analyse de CV a été effectuée avec succès, rediriger vers la page d'analyse
             if (isset($tempCandidatureId) && isset($analysisResult) && $analysisResult['success']) {
