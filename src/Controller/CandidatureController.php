@@ -17,6 +17,7 @@ use App\Service\CvAnalyzerService;
 use App\Service\TwilioSmsServiceAmine;
 use App\Service\TwilioSmsService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +42,7 @@ class CandidatureController extends AbstractController
     }
 
     #[Route('/', name: 'back.candidatures.index')]
-    public function index(CandidatureRepository $repository, OffreEmploiRepository $offreRepository, Request $request): Response
+    public function index(CandidatureRepository $repository, OffreEmploiRepository $offreRepository, Request $request, PaginatorInterface $paginator): Response
     {
         $this->logger->info('Début de la méthode index des candidatures');
 
@@ -65,12 +66,34 @@ class CandidatureController extends AbstractController
         $allCandidatures = $repository->findAll();
         $this->logger->info('Nombre total de candidatures dans la base : ' . count($allCandidatures));
 
-        // Récupérer les candidatures filtrées
-        $candidatures = $repository->findBy($criteria, ['id' => 'DESC']);
+        // Créer une requête pour les candidatures filtrées
+        $query = $repository->createQueryBuilder('c')
+            ->orderBy('c.id', 'DESC');
+
+        // Appliquer les filtres
+        if ($offreId) {
+            $query->andWhere('c.offreEmploi = :offreId')
+                ->setParameter('offreId', $offreId);
+        }
+        if ($status) {
+            $query->andWhere('c.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        // Paginer les résultats
+        $candidatures = $paginator->paginate(
+            $query->getQuery(),
+            $request->query->getInt('page', 1), // Numéro de page, 1 par défaut
+            10 // 10 candidatures par page
+        );
+
         $this->logger->info('Nombre de candidatures après filtrage : ' . count($candidatures));
 
-        // Afficher les IDs des candidatures pour déboguer
-        $candidatureIds = array_map(function($c) { return $c->getId(); }, $candidatures);
+        // Pour le débogage, récupérer les IDs des candidatures de la page actuelle
+        $candidatureIds = [];
+        foreach ($candidatures as $candidature) {
+            $candidatureIds[] = $candidature->getId();
+        }
         $this->logger->info('IDs des candidatures récupérées : ' . implode(', ', $candidatureIds ?: ['aucun']));
 
         // Vérifier quelles candidatures ont été refusées manuellement
