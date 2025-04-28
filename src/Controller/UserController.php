@@ -11,15 +11,26 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/user')]
 final class UserController extends AbstractController
 {
     #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(UserRepository $userRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        $query = $userRepository->createQueryBuilder('u')->getQuery();
+    
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), // Page number
+            10 
+        );
+    
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'pagination' => $pagination,
         ]);
     }
 
@@ -131,4 +142,55 @@ final class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index');
     }
+
+    #[Route('/home', name: 'app_home', methods: ['GET'])]
+    public function home(): Response
+    {
+        return $this->render('home.html.twig');
+    }
+
+    #[Route('/profile', name: 'app_user_profile_front', methods: ['GET', 'POST'])]
+    public function profileFront(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to access your profile.');
+        }
+
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Profile updated successfully!');
+
+            return $this->redirectToRoute('app_user_profile_front');
+        }
+
+        return $this->render('user/profile_front.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+    #[Route('/user/download/pdf', name: 'app_user_download_pdf', methods: ['GET'])]
+public function downloadPdf(UserRepository $userRepository): Response
+{
+    $users = $userRepository->findAll();
+
+    // Generate HTML for PDF
+    $html = $this->renderView('user/pdf.html.twig', [
+        'users' => $users,
+    ]);
+
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'landscape');
+    $dompdf->render();
+
+    return new Response($dompdf->stream('users_list.pdf', ["Attachment" => true]));
+}
 }

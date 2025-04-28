@@ -259,48 +259,48 @@ class Formation
         return $this;
     }
 
-    // #[ORM\ManyToMany(targetEntity: Employe::class, inversedBy: 'formations')]
-    // #[ORM\JoinTable(
-    //     name: 'formation_participation',
-    //     joinColumns: [
-    //         new ORM\JoinColumn(name: 'formation_id', referencedColumnName: 'id'),
-    //     ],
-    //     inverseJoinColumns: [
-    //         new ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id'),
-    //     ]
-    // )]
-    // private Collection $employes;
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'formations')]
+    #[ORM\JoinTable(
+        name: 'formation_participation',
+        joinColumns: [
+            new ORM\JoinColumn(name: 'formation_id', referencedColumnName: 'id'),
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(name: 'employe_id', referencedColumnName: 'id'),
+        ]
+    )]
+    private Collection $users;
 
     public function __construct()
     {
         $this->quizs = new ArrayCollection();
-        // $this->employes = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
-    // /**
-    //  * @return Collection<int, Employe>
-    //  */
-    // public function getEmployes(): Collection
-    // {
-    //     if (! $this->employes instanceof Collection) {
-    //         $this->employes = new ArrayCollection();
-    //     }
-    //     return $this->employes;
-    // }
+    /**
+     * @return Collection<int, Employe>
+     */
+    public function getUsers(): Collection
+    {
+        if (! $this->users instanceof Collection) {
+            $this->users = new ArrayCollection();
+        }
+        return $this->users;
+    }
 
-    // public function addEmploye(Employe $employe): self
-    // {
-    //     if (! $this->getEmployes()->contains($employe)) {
-    //         $this->getEmployes()->add($employe);
-    //     }
-    //     return $this;
-    // }
+    public function addUser(User $user): self
+    {
+        if (! $this->getUsers()->contains($user)) {
+            $this->getUsers()->add($user);
+        }
+        return $this;
+    }
 
-    // public function removeEmploye(Employe $employe): self
-    // {
-    //     $this->getEmployes()->removeElement($employe);
-    //     return $this;
-    // }
+    public function removeUser(User $user): self
+    {
+        $this->getUsers()->removeElement($user);
+        return $this;
+    }
 
     public function isOnline(): ?bool
     {

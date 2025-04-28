@@ -8,7 +8,7 @@
 	<main>
 
 		<!-- =======================
-																																														Page Banner START -->
+																																																																																																																														Page Banner START -->
 		<section class="py-0">
 			<div class="container">
 				<div class="row">
@@ -38,10 +38,10 @@
 			</div>
 		</section>
 		<!-- =======================
-																																														Page Banner END -->
+																																																																																																																														Page Banner END -->
 
 		<!-- =======================
-																																														Page content START -->
+																																																																																																																														Page content START -->
 		<section class="pt-5">
 			<div class="container">
 
@@ -61,78 +61,36 @@
 									{{ app.session.flashBag.get('error')|first }}
 								</div>
 							{% endif %}
-							<h5 class="mb-0">Personal Details</h5>
+							<h5 class="mb-0">Détails personnels</h5>
 
 							<!-- Form START -->
 							<form
 								class="row g-3 mt-0" method="post">
 								<!-- Name -->
-								<div class="col-md-6 bg-light-input">
-									<label for="yourName" class="form-label">Your name *</label>
-									<input type="text" class="form-control" id="yourName" placeholder="Name">
+								<div class="col-md-12 bg-light-input">
+									<label for="yourName" class="form-label">Nom</label>
+									<input type="text" class="form-control" value="{{ app.user.nom }} {{ app.user.prenom }}" disabled>
 								</div>
 								<!-- Email -->
-								<div class="col-md-6 bg-light-input">
-									<label for="emailInput" class="form-label">Email address *</label>
-									<input type="email" class="form-control" id="emailInput" placeholder="Email">
+								<div class="col-md-12 bg-light-input">
+									<label for="emailInput" class="form-label">Email</label>
+									<input type="email" class="form-control" value="{{ app.user.email }}" disabled>
 								</div>
-								<!-- Number -->
-								<div class="col-md-6 bg-light-input">
-									<label for="mobileNumber" class="form-label">Mobile number *</label>
-									<input type="text" class="form-control" id="mobileNumber" placeholder="Mobile number">
-								</div>
-								<!-- Country option -->
-								<div class="col-md-6 bg-light-input">
-									<label for="mobileNumber" class="form-label">Select country *</label>
-									<select class="form-select js-choice" aria-label=".form-select-lg">
-										<option value="">Select country</option>
-										<option>India</option>
-										<option>China</option>
-										<option>USA</option>
-										<option>Canada</option>
-										<option>Paris</option>
-										<option>Australia</option>
-										<option>Japan</option>
-										<option>Brazil</option>
-									</select>
-								</div>
-								<!-- State option -->
-								<div class="col-md-6 bg-light-input">
-									<label for="mobileNumber" class="form-label">Select state *</label>
-									<select class="form-select js-choice" aria-label=".form-select-lg">
-										<option value="">Select state</option>
-										<option>Maharashtra</option>
-										<option>Delhi</option>
-										<option>Punjab</option>
-										<option>London</option>
-										<option>New york</option>
-										<option>California</option>
-									</select>
-								</div>
-								<!-- Postal code -->
-								<div class="col-md-6 bg-light-input">
-									<label for="postalCode" class="form-label">Postal code *</label>
-									<input type="text" class="form-control" id="postalCode" placeholder="PIN code">
-								</div>
-								<!-- Address -->
-								<div class="col-md-6 bg-light-input">
-									<label for="address" class="form-label">Address *</label>
-									<input type="text" class="form-control" id="address" placeholder="Address">
-								</div>
-
 								<!-- Payment Method -->
 								<div class="col-12">
-									<label class="form-label">Select Payment Method *</label>
-									<div class="form-check">
+									<label class="form-label">Methode de paiement</label>
+									<div class="form-check mb-3">
 										<input class="form-check-input" type="radio" name="paymentMethod" id="paymentCard" value="card" checked>
 										<label class="form-check-label" for="paymentCard">
-											Pay with Card
+											<img class="rounded-circle" width="50px" height="70px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZ7NLEhx9NXhhdHXQS4f8ypbiQRec72Zw_Rw&s" alt="Paypal Icon">
+											Carte bancaire
 										</label>
 									</div>
 									<div class="form-check">
 										<input class="form-check-input" type="radio" name="paymentMethod" id="paymentPaypal" value="paypal">
 										<label class="form-check-label" for="paymentPaypal">
-											Pay with PayPal
+											<img class="rounded-circle" width="50px" height="50px" src="https://img.utdstc.com/icon/d49/c48/d49c4851fcbdecccece71a27cddf0a6bddb23173461e763ec32cd08eeb778c69:200" alt="Paypal Icon">
+											Paypal
 										</label>
 									</div>
 								</div>
@@ -140,8 +98,16 @@
 
 								<!-- Button -->
 								<div class="col-12 text-end">
-									<button type="submit" class="btn btn-primary mb-0">Save changes</button>
+									<button type="submit" class="btn btn-primary btn btn-lg btn-success mb-0">
+										Continuer vers le paiement
+									</button>
 								</div>
+
+								<p class="small mb-0 mt-2 text-center">En finalisant votre achat, vous acceptez ces
+									<a href="#">
+										<strong>Conditions d'utilisation</strong>
+									</a>
+								</p>
 							</form>
 							<!-- Form END -->
 
@@ -159,7 +125,7 @@
 								<div
 									class="card card-body shadow p-4 mb-4">
 									<!-- Title -->
-									<h4 class="mb-4">Order Summary</h4>
+									<h4 class="mb-4">Résumé de la commande</h4>
 
 
 									<!-- Course item START -->
@@ -198,17 +164,17 @@
 									</li>
 								</ul>
 
-								<!-- Button -->
-								<div class="d-grid">
-									<a href="#" class="btn btn-lg btn-success">Place Order</a>
-								</div>
+								{# <!-- Button -->
+																																																								<div class="d-grid">
+																																																									<a href="#" class="btn btn-lg btn-success">Place Order</a>
+																																																								</div> #}
 
-								<!-- Content -->
-								<p class="small mb-0 mt-2 text-center">By completing your purchase, you agree to these
-									<a href="#">
-										<strong>Terms of Service</strong>
-									</a>
-								</p>
+							<!-- Content -->
+								{# <p class="small mb-0 mt-2 text-center">By completing your purchase, you agree to these
+																																									<a href="#">
+																																										<strong>Terms of Service</strong>
+																																									</a>
+																																								</p> #}
 
 							</div>
 							<!-- Order summary END -->
@@ -249,6 +215,6 @@
 		</div>
 	</section>
 	<!-- =======================
-																																					Page content END -->
+																																																																													Page content END -->
 
 </main>{% endblock %}

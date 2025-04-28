@@ -1,0 +1,70 @@
+{% extends 'front_office.html.twig' %}
+
+{% block title %}
+	Training List
+{% endblock %}
+
+{% block body %}
+	<main>
+
+
+		<section class="pt-5">
+			<div class="container">
+
+				<div
+					class="row g-4 g-sm-5">
+					<!-- Main content START -->
+					<div
+						class="col-xl-12 mb-4 mb-sm-0">
+
+
+						<!-- Personal info START -->
+						<div class="card card-body shadow p-4">
+
+							{% if app.session.flashBag.has('error') %}
+								<div class="alert alert-danger" role="alert">
+									{{ app.session.flashBag.get('error')|first }}
+								</div>
+							{% endif %}
+
+							<h5 class="mb-3">{{ question.question }}</h5>
+
+							<form method="post">
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="radio" value="1" name="reponse">
+									<label class="form-check-label">{{ question.reponse1 }}</label>
+								</div>
+
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="radio" value="2" name="reponse">
+									<label class="form-check-label">{{ question.reponse2 }}</label>
+								</div>
+
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="radio" value="3" name="reponse">
+									<label class="form-check-label">{{ question.reponse3 }}</label>
+								</div>
+
+								<button type="submit" class="btn btn-primary">
+									Suivant
+								</button>
+
+							</form>
+
+						</div>
+						<!-- Personal info END -->
+					</div>
+					<!-- Main content END -->
+
+
+				</div>
+				<!-- Right sidebar END -->
+
+			</div>
+			<!-- Row END -->
+		</div>
+	</section>
+	<!-- =======================
+																																																																																			Page content END -->
+
+</main>{% endblock %}
