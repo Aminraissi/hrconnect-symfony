@@ -59,7 +59,7 @@ class Formation
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: 'The image is required.')]
+    // #[Assert\NotBlank(message: 'The image is required.')]
     private ?string $image = null;
 
     public function getImage(): ?string

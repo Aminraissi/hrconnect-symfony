@@ -50,6 +50,39 @@ final class FormationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $file = $request->files->get('image');
+
+            if ($file == null) {
+                $this->addFlash('danger', 'Choisir une image');
+                return $this->render('formations/new.html.twig', [
+                    'formation' => $formation,
+                    'form'      => $form,
+                ]);
+            }
+
+            $imageContent = file_get_contents($file->getPathname());
+
+            $apiKey = $_ENV['IMG_BB_API_KEY'];
+            $url    = 'https://api.imgbb.com/1/upload?key=' . $apiKey;
+            $data   = [
+                'image' => base64_encode($imageContent),
+            ];
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            $responseData = json_decode($response, true);
+            if (isset($responseData['data']['url'])) {
+                $imageUrl = $responseData['data']['url'];
+                $formation->setImage($imageUrl);
+            }
+
             $entityManager->persist($formation);
             $entityManager->flush();
 
@@ -79,6 +112,33 @@ final class FormationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $file = $request->files->get('image');
+
+            if ($file != null) {
+                $imageContent = file_get_contents($file->getPathname());
+
+                $apiKey = $_ENV['IMG_BB_API_KEY'];
+                $url    = 'https://api.imgbb.com/1/upload?key=' . $apiKey;
+                $data   = [
+                    'image' => base64_encode($imageContent),
+                ];
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($ch);
+                curl_close($ch);
+
+                $responseData = json_decode($response, true);
+                if (isset($responseData['data']['url'])) {
+                    $imageUrl = $responseData['data']['url'];
+                    $formation->setImage($imageUrl);
+                }
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_formations_index', [], Response::HTTP_SEE_OTHER);
