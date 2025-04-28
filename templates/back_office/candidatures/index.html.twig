@@ -134,7 +134,7 @@
 									<th>Offre</th>
 									<th>CV</th>
 									<th>Statut</th>
-									<th>Score</th>
+									<th>Évaluation</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -173,10 +173,16 @@
 											</label>
 										</td>
 										<td>
-											{% if candidature.status|lower == 'refusee' %}
-												<span class="badge badge-danger">< 50%</span>
+											{% if candidature.status|lower == 'acceptee' %}
+												<span class="badge badge-success">Acceptée</span>
+											{% elseif candidature.status|lower == 'refusee' %}
+												{% if candidature.id in manuallyRejected %}
+													<span class="badge badge-secondary">Refusée manuellement</span>
+												{% else %}
+													<span class="badge badge-danger">Score < 50%</span>
+												{% endif %}
 											{% else %}
-												<span class="badge badge-success">≥ 50%</span>
+												<span class="badge badge-info">Score ≥ 50%</span>
 											{% endif %}
 										</td>
 										<td>
@@ -189,8 +195,8 @@
 												<a href="{{ path('back.candidatures.edit', {'id': candidature.id}) }}" class="btn btn-warning" title="Modifier">
 													<i data-feather="edit"></i> Modifier
 												</a>
-												<a href="{{ path('back.candidatures.reject', {'id': candidature.id}) }}" class="btn btn-danger" title="Refuser" onclick="return confirm('Êtes-vous sûr de vouloir refuser cette candidature ?')">
-													<i data-feather="x-circle"></i> Refuser
+												<a href="{{ path('back.candidatures.reject', {'id': candidature.id}) }}" class="btn btn-danger" title="Refuser manuellement" onclick="return confirm('Êtes-vous sûr de vouloir refuser manuellement cette candidature ?')">
+													<i data-feather="x-circle"></i> Refuser manuellement
 												</a>
 											</div>
 										</td>

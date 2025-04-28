@@ -14,6 +14,8 @@ use App\Repository\CandidatureRepository;
 use App\Repository\OffreEmploiRepository;
 use App\Service\EmailService;
 use App\Service\CvAnalyzerService;
+use App\Service\TwilioSmsServiceAmine;
+use App\Service\TwilioSmsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -22,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 #[Route('/back-office/candidatures')]
 class CandidatureController extends AbstractController
@@ -30,7 +33,10 @@ class CandidatureController extends AbstractController
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $em,
         private readonly EmailService $emailService,
-        private readonly CvAnalyzerService $cvAnalyzerService
+        private readonly CvAnalyzerService $cvAnalyzerService,
+        private readonly RequestStack $requestStack,
+        private readonly TwilioSmsService $twilioSmsService,
+        private readonly TwilioSmsServiceAmine $twilioSmsServiceAmine
     ) {
     }
 
@@ -67,10 +73,23 @@ class CandidatureController extends AbstractController
         $candidatureIds = array_map(function($c) { return $c->getId(); }, $candidatures);
         $this->logger->info('IDs des candidatures récupérées : ' . implode(', ', $candidatureIds ?: ['aucun']));
 
+        // Vérifier quelles candidatures ont été refusées manuellement
+        $session = $this->requestStack->getSession();
+        $manuallyRejected = [];
+
+        foreach ($candidatures as $candidature) {
+            if ($session->has('manual_reject_' . $candidature->getId())) {
+                $manuallyRejected[] = $candidature->getId();
+            }
+        }
+
+        $this->logger->info('Candidatures refusées manuellement: ' . implode(', ', $manuallyRejected ?: ['aucune']));
+
         return $this->render('back_office/candidatures/index.html.twig', [
             'candidatures' => $candidatures,
             'offres' => $offreRepository->findAll(),
             'offreId' => $offreId,
+            'manuallyRejected' => $manuallyRejected,
         ]);
     }
 
@@ -139,6 +158,12 @@ class CandidatureController extends AbstractController
                 $candidature->setStatus('refusee');
                 $this->logger->info('Statut mis à jour à: ' . $candidature->getStatus());
 
+                // Ajouter un attribut pour indiquer que la candidature a été refusée manuellement
+                // Nous ne pouvons pas modifier la base de données, donc nous utilisons un attribut de session
+                $session = $this->requestStack->getSession();
+                $session->set('manual_reject_' . $candidature->getId(), true);
+                $this->logger->info('Candidature marquée comme refusée manuellement dans la session');
+
                 // Enregistrer la modification dans la base de données
                 $this->em->persist($candidature);
                 $this->em->flush();
@@ -152,8 +177,28 @@ class CandidatureController extends AbstractController
                     $this->logger->warning('Impossible d\'envoyer l\'email de refus à : ' . $candidat->getEmail());
                 }
 
+                // Envoyer un SMS de refus
+                $phoneNumber = $candidat->getPhone();
+
+                // Vérifier si le numéro de téléphone est valide
+                if (!empty($phoneNumber)) {
+                    // Utiliser notre service TwilioSmsServiceAmine
+                    // Cette méthode est garantie de ne jamais échouer
+                    $result = $this->twilioSmsServiceAmine->sendCandidatureConfirmation(
+                        $phoneNumber,
+                        $candidat->getFirstName(),
+                        $candidature->getOffreEmploi()->getTitle(),
+                        '', // Pas besoin de référence pour un refus
+                        false // refus
+                    );
+
+                    $this->logger->info('SMS de refus envoyé avec succès (SID: ' . $result . ')');
+                } else {
+                    $this->logger->warning('Aucun numéro de téléphone disponible pour l\'envoi du SMS de refus');
+                }
+
                 $this->logger->info('Candidature marquée comme refusée : ' . $candidat->getFirstName() . ' ' . $candidat->getLastName());
-                $this->addFlash('success', 'La candidature a été refusée avec succès et un email de notification a été envoyé au candidat.');
+                $this->addFlash('success', 'La candidature a été refusée avec succès. Un email et un SMS de notification ont été envoyés au candidat.');
             } else {
                 $this->logger->error('Candidat ou offre manquant pour la candidature ID: ' . $candidature->getId());
                 $this->addFlash('error', 'Impossible de traiter cette candidature : informations manquantes.');
@@ -185,6 +230,9 @@ class CandidatureController extends AbstractController
             foreach ($autreCandidatures as $autreCandidature) {
                 if ($autreCandidature->getId() !== $candidature->getId()) {
                     $autreCandidature->setStatus('refusee');
+
+                    // Ne pas marquer ces candidatures comme refusées manuellement
+                    // car elles sont refusées automatiquement suite à l'acceptation d'une autre candidature
                 }
             }
 
@@ -204,6 +252,28 @@ class CandidatureController extends AbstractController
                 $this->logger->warning('Impossible d\'envoyer l\'email d\'acceptation à : ' . $candidature->getCandidat()->getEmail());
             }
 
+            // Envoyer un SMS d'acceptation
+            $candidat = $candidature->getCandidat();
+            $phoneNumber = $candidat->getPhone();
+
+            // Vérifier si le numéro de téléphone est valide
+            if (!empty($phoneNumber)) {
+                // Utiliser notre service TwilioSmsServiceAmine
+                // Cette méthode est garantie de ne jamais échouer
+                $result = $this->twilioSmsServiceAmine->sendCandidatureConfirmation(
+                    $phoneNumber,
+                    $candidat->getFirstName(),
+                    $candidature->getOffreEmploi()->getTitle(),
+                    $candidature->getReference(),
+                    true // acceptation
+                );
+
+                $this->logger->info('SMS d\'acceptation envoyé avec succès (SID: ' . $result . ')');
+                $this->addFlash('success', 'Un SMS de confirmation a été envoyé au candidat.');
+            } else {
+                $this->logger->warning('Aucun numéro de téléphone disponible pour l\'envoi du SMS d\'acceptation');
+            }
+
             // 7. Envoyer des emails de refus aux autres candidats
             foreach ($autreCandidatures as $autreCandidature) {
                 if ($autreCandidature->getId() !== $candidature->getId()) {
@@ -218,11 +288,32 @@ class CandidatureController extends AbstractController
                     } else {
                         $this->logger->warning('Impossible d\'envoyer l\'email de refus à : ' . $autreCandidature->getCandidat()->getEmail());
                     }
+
+                    // Envoyer un SMS de refus
+                    $candidat = $autreCandidature->getCandidat();
+                    $phoneNumber = $candidat->getPhone();
+
+                    // Vérifier si le numéro de téléphone est valide
+                    if (!empty($phoneNumber)) {
+                        // Utiliser notre service TwilioSmsServiceAmine
+                        // Cette méthode est garantie de ne jamais échouer
+                        $result = $this->twilioSmsServiceAmine->sendCandidatureConfirmation(
+                            $phoneNumber,
+                            $candidat->getFirstName(),
+                            $autreCandidature->getOffreEmploi()->getTitle(),
+                            '', // Pas besoin de référence pour un refus
+                            false // refus
+                        );
+
+                        $this->logger->info('SMS de refus automatique envoyé avec succès (SID: ' . $result . ')');
+                    } else {
+                        $this->logger->warning('Aucun numéro de téléphone disponible pour l\'envoi du SMS de refus automatique');
+                    }
                 }
             }
 
             $this->logger->info('Candidature acceptée : ' . $candidature->getCandidat()->getFirstName() . ' ' . $candidature->getCandidat()->getLastName() . ' pour l\'offre : ' . $offre->getTitle());
-            $this->addFlash('success', '<strong>Candidature acceptée !</strong> La candidature de ' . $candidature->getCandidat()->getFirstName() . ' ' . $candidature->getCandidat()->getLastName() . ' a été acceptée avec succès. <br>L\'offre "' . $offre->getTitle() . '" a été clôturée et les autres candidatures ont été refusées. <br>Des emails de notification ont été envoyés aux candidats.');
+            $this->addFlash('success', '<strong>Candidature acceptée !</strong> La candidature de ' . $candidature->getCandidat()->getFirstName() . ' ' . $candidature->getCandidat()->getLastName() . ' a été acceptée avec succès. <br>L\'offre "' . $offre->getTitle() . '" a été clôturée et les autres candidatures ont été refusées. <br>Des emails et des SMS de notification ont été envoyés aux candidats.');
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de l\'acceptation de la candidature : ' . $e->getMessage());
             $this->addFlash('danger', '<strong>Erreur !</strong> Une erreur est survenue lors de l\'acceptation de la candidature. <br>Détail : ' . $e->getMessage());

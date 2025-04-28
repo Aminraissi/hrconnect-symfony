@@ -37,6 +37,7 @@ class CandidatureSuiviType extends AbstractType
     {
         $resolver->setDefaults([
             // Configure your form options here
+            'attr' => ['novalidate' => 'novalidate'] // Désactive la validation HTML5 pour utiliser uniquement la validation Symfony
         ]);
     }
 }

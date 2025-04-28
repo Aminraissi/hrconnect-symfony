@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OffreEmploiRepository::class)]
 class OffreEmploi
@@ -17,30 +16,14 @@ class OffreEmploi
     private ?int $id = null;
 
     #[ORM\Column(length: 200)]
-    #[Assert\NotBlank(message: 'Le titre est obligatoire')]
-    #[Assert\Length(
-        min: 5,
-        max: 200,
-        minMessage: 'Le titre doit contenir au moins {{ limit }} caractères',
-        maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères'
-    )]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: 'La description est obligatoire')]
     private ?string $description = null;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank(message: 'La localisation est obligatoire')]
-    #[Assert\Length(
-        min: 2,
-        max: 100,
-        minMessage: 'La localisation doit contenir au moins {{ limit }} caractères',
-        maxMessage: 'La localisation ne peut pas dépasser {{ limit }} caractères'
-    )]
     private ?string $location = null;
 
-    // Champs ajoutés pour maintenir la compatibilité avec le code existant
     private ?bool $isActive = true;
 
     private ?\DateTimeInterface $datePublication = null;
@@ -133,7 +116,6 @@ class OffreEmploi
         return $this;
     }
 
-    // Méthodes de compatibilité pour l'ancien code
     public function getTitre(): ?string
     {
         return $this->title;
@@ -166,8 +148,6 @@ class OffreEmploi
         $this->isActive = $isActive;
         return $this;
     }
-
-
 
     public function getDatePublication(): ?\DateTimeInterface
     {
