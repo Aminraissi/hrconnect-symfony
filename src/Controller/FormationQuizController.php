@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class FormationQuizController extends AbstractController
 {
@@ -32,15 +33,17 @@ final class FormationQuizController extends AbstractController
 
         $questionsSize = count($questions);
 
-        $existingResponse = $quizReponseRepository->findOneBy([
-            'employe' => $this->getUser(),
-            'quiz'    => $questions[0],
-        ]);
-
-        if ($existingResponse) {
-            return $this->redirectToRoute('app_formation_quiz_result', [
-                'id' => $id,
+        if ($q <= $questionsSize) {
+            $existingResponse = $quizReponseRepository->findOneBy([
+                'employe' => $this->getUser(),
+                'quiz'    => $questions[$q - 1],
             ]);
+
+            if ($existingResponse) {
+                return $this->redirectToRoute('app_formation_quiz_result', [
+                    'id' => $id,
+                ]);
+            }
         }
 
         if ($request->isMethod('POST')) {
@@ -158,7 +161,7 @@ final class FormationQuizController extends AbstractController
     }
 
     #[Route('/frontoffice/mes-formations/{id}/quiz/{q}/correction', name: 'app_formation_quiz_correction')]
-    public function correctionQuiz(QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, FormationRepository $formationRepository, Request $request, \Doctrine\ORM\EntityManagerInterface $entityManager, $id, $q = 1): Response
+    public function correctionQuiz(HttpClientInterface $client, QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, FormationRepository $formationRepository, Request $request, \Doctrine\ORM\EntityManagerInterface $entityManager, $id, $q = 1): Response
     {
         $formation = $formationRepository->find($id);
         if (! $formation) {
@@ -172,6 +175,37 @@ final class FormationQuizController extends AbstractController
         }
 
         $questionsSize = count($questions);
+
+        $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyA1esrizXh4EJvldkXp_II946D5yaBGTbE';
+
+        $bonneReponse = null;
+
+        if ($questions[$q - 1]->getNum_reponse_correct()) {
+            $bonneReponse = $questions[$q - 1]->getReponse1();
+        } else if ($questions[$q - 1]->getNum_reponse_correct()) {
+            $bonneReponse = $questions[$q - 1]->getReponse2();
+        } else {
+            $bonneReponse = $questions[$q - 1]->getReponse3();
+        }
+
+        $payload = [
+            "contents" => [
+                [
+                    "parts" => [
+                        ["text" => "Expliquer la question suivtante : " . $questions[$q - 1]->getQuestion() . "et pour quoi la reponse correcte est : " . $bonneReponse . " repondre en 3 ou 4 lignes"],
+                    ],
+                ],
+            ],
+        ];
+
+        $response = $client->request('POST', $url, [
+            'json' => $payload,
+        ]);
+
+        $data = $response->toArray();
+
+        // Extract the text
+        $geminiReponse = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'No text found';
 
         if ($request->isMethod('POST')) {
             // $reponse = $request->request->get('reponse');
@@ -212,6 +246,7 @@ final class FormationQuizController extends AbstractController
             'questions_size' => $questionsSize,
             'question'       => $questions[$q - 1],
             'userReponse'    => $userReponse,
+            'geminiReponse'  => $geminiReponse,
         ]);
     }
 }

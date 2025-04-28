@@ -55,6 +55,19 @@
 									<label class="form-check-label {% if question.getNum_reponse_correct() == 3 %}bg-success text-white{% endif %}">{{ question.reponse3 }}</label>
 								</div>
 
+								<p>
+									<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+										Afficher une explication
+									</button>
+								</p>
+								<div>
+									<div class="collapse collapse-horizontal" id="collapseWidthExample">
+										<div class="card card-body" style="width: 100%;">
+											{{ geminiReponse }}
+										</div>
+									</div>
+								</div>
+
 								<button type="submit" class="btn btn-primary">
 									Suivant
 								</button>
@@ -75,6 +88,6 @@
 		</div>
 	</section>
 	<!-- =======================
-																																																																																																						Page content END -->
+																																																																																																												Page content END -->
 
 </main>{% endblock %}
