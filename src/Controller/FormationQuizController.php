@@ -10,6 +10,8 @@ use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class FormationQuizController extends AbstractController
@@ -32,7 +34,7 @@ final class FormationQuizController extends AbstractController
 
         $existingResponse = $quizReponseRepository->findOneBy([
             'employe' => $this->getUser(),
-            'quiz'    => $questions[$q - 1],
+            'quiz'    => $questions[0],
         ]);
 
         if ($existingResponse) {
@@ -77,7 +79,7 @@ final class FormationQuizController extends AbstractController
     }
 
     #[Route('/frontoffice/mes-formations/{id}/quiz-result', name: 'app_formation_quiz_result')]
-    public function quizResult(FormationRepository $formationRepository, QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, $id): Response
+    public function quizResult(FormationRepository $formationRepository, QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, MailerInterface $mailer, $id): Response
     {
 
         $formation = $formationRepository->find($id);
@@ -129,6 +131,21 @@ final class FormationQuizController extends AbstractController
             }
 
             file_put_contents($pdfFilepath, $pdfOutput);
+
+            // envoyer l'e pdf par mail
+
+            $email = (new Email())
+                ->from('example@example.com')
+                ->to($this->getUser()->getEmail())
+                ->subject('Attestation de réussite de la formation ' . $formation->getTitle())
+                ->html('<p>Bonjour, veuillez trouver ci-joint votre attestation de réussite de la formation <strong>' . $formation->getTitle() . '</strong></p>')
+                ->attachFromPath(
+                    $this->getParameter('kernel.project_dir') . '/public/' . $filePath,
+                    'attestation.pdf',
+                    'application/pdf'
+                );
+
+            $mailer->send($email);
 
         } else {
             $this->addFlash('error', 'Vous avez échoué le quiz avec un score de ' . $score . '/' . $questionsSize);
