@@ -27,12 +27,25 @@
 								<div class="alert alert-danger" role="alert">
 									{{ app.session.flashBag.get('error')|first }}
 								</div>
+
+
+								<a href="{{ path('app_formation_quiz_correction', { id: formation.id }) }}" target="_blank" class="btn btn-primary btn-lg mt-2">
+									Afficher la correction
+								</a>
+
 							{% endif %}
+
 
 							{% if app.session.flashBag.has('success') %}
 								<div class="alert alert-success" role="alert">
 									{{ app.session.flashBag.get('success')|first }}
 								</div>
+
+
+								<a href="{{ path('app_formation_quiz_correction', { id: formation.id }) }}" target="_blank" class="btn btn-primary btn-lg mt-2">
+									Afficher la correction
+								</a>
+
 
 								<a href="{{ asset(filePath) }}" target="_blank" class="btn btn-success btn-lg mt-3">
 									Afficher l'attestation de réussite
@@ -55,6 +68,6 @@
 		</div>
 	</section>
 	<!-- =======================
-																																																																																																	Page content END -->
+																																																																																																									Page content END -->
 
 </main>{% endblock %}

@@ -1,100 +1,123 @@
 {% extends 'back_office.html.twig' %}
 
 {% block title %}
-	Reclamation List
+    Reclamation List
 {% endblock %}
 
 {% block body %}
-	<div class="row">
-		<div class="col-xl-12 col-sm-12 col-12">
-			<div class="breadcrumb-path mb-4">
-				<ul class="breadcrumb">
-					<li class="breadcrumb-item">
-						<a href="{{ path('app_back_office') }}">
-							<img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home
-						</a>
-					</li>
-					<li class="breadcrumb-item active">Reclamation List</li>
-				</ul>
-				<h3>Reclamations</h3>
-			</div>
-		</div>
+    <div class="row">
+        <div class="col-xl-12 col-sm-12 col-12">
+            <div class="breadcrumb-path mb-4">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_back_office') }}">
+                            <img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Reclamation List</li>
+                </ul>
+                <h3>Reclamations</h3>
+            </div>
+        </div>
 
-		<div class="col-xl-12 col-sm-12 col-12 mb-4">
-			<div class="head-link-set">
-				<ul>
-					<li><a class="active" href="#">All Reclamations</a></li>
-					<li><a href="#">Resolved</a></li>
-					<li><a href="#">Pending</a></li>
-				</ul>
-				<a class="btn-add" href="{{ path('app_reclamation_new') }}">
-					<i data-feather="plus"></i>
-					Add new reclamation
-				</a>
-			</div>
-		</div>
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="head-link-set d-flex justify-content-between align-items-center">
+                <ul class="mb-0">
+                    <li><a class="active" href="{{ path('app_reclamation_index') }}">All Reclamations</a></li>
+                    <li><a href="{{ path('app_reclamation_resolved') }}">Resolved</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <!-- Search form -->
+                    <form method="GET" action="{{ path('app_reclamation_search') }}" class="d-flex me-2">
+<input type="text" name="employee_name" class="form-control me-2" placeholder="Search by employee..." id="employee_name_input">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Recherche
+                        </button>
+                    </form>
 
-		<div class="col-xl-12 col-sm-12 col-12 mb-4">
-			<div class="card">
-				<div class="table-heading">
-					<h2>Reclamations</h2>
-				</div>
-				<div class="table-responsive">
-					<table class="table custom-table no-footer">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Employé</th>
-								<th>Type</th>
-								<th>Message</th>
-								<th>Status</th>
-								<th>Date</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for reclamation in reclamations %}
-								<tr>
-									<td>{{ reclamation.id }}</td>
-									<td>{{ reclamation.employeeName }}</td>
-									<td>{{ reclamation.type }}</td>
-									<td>
-										{{ reclamation.description|length > 30 
-											? reclamation.description|slice(0, 30) ~ '...' 
-											: reclamation.description }}
-									</td>
-									<td>
-										<span class="badge bg-{{ reclamation.status == 'resolved' ? 'success' : 'warning' }}">
-											{{ reclamation.status ? reclamation.status|capitalize : 'Pending' }}
-										</span>
-									</td>
-									<td>
-										{{ reclamation.dateOfSubmission ? reclamation.dateOfSubmission|date('Y-m-d H:i') : '' }}
-									</td>
-									<td>
-										<form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
-											<a class="btn btn-success btn-sm" href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}">
-												<i class="fas fa-eye"></i> Show
-											</a>
-											<a class="btn btn-info btn-sm" href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}">
-												<i class="fas fa-edit"></i> Edit
-											</a>
-											<button class="btn btn-danger btn-sm">
-												<i class="fas fa-trash"></i> Delete
-											</button>
-										</form>
-									</td>
-								</tr>
-							{% else %}
-								<tr>
-									<td colspan="7" class="text-center">Pas de réclamations.</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <!-- Add button -->
+                    <a class="btn-add" href="{{ path('app_reclamation_new') }}">
+                        <i data-feather="plus"></i> Add new reclamation
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-12 col-sm-12 col-12 mb-4">
+            <div class="card">
+                <div class="table-heading d-flex justify-content-between align-items-center">
+                    <h2>Reclamations</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table custom-table no-footer">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Employé</th>
+                                <th>Type</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reclamation in reclamations %}
+                                <tr>
+                                    <td>{{ reclamation.id }}</td>
+                                    <td>{{ reclamation.employeeName }}</td>
+                                    <td>{{ reclamation.type }}</td>
+                                    <td>
+                                        {{ reclamation.description|length > 30 
+                                            ? reclamation.description|slice(0, 30) ~ '...' 
+                                            : reclamation.description }}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ reclamation.status == 'resolved' ? 'success' : 'warning' }}">
+                                            {{ reclamation.status ? reclamation.status|capitalize : 'Pending' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{ reclamation.dateOfSubmission ? reclamation.dateOfSubmission|date('Y-m-d H:i') : '' }}
+                                    </td>
+                                    <td>
+                                        <form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+                                            <a class="btn btn-success btn-sm" href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}">
+                                                <i class="fas fa-eye"></i> Show
+                                            </a>
+                                            <a class="btn btn-info btn-sm" href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <button class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No reclamations found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+	<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchForm = document.querySelector('form[action="{{ path('app_reclamation_search') }}"]');
+        const employeeInput = document.getElementById('employee_name_input');
+
+        searchForm.addEventListener('submit', function (e) {
+            if (employeeInput.value.trim() === '') {
+                e.preventDefault(); // Stop form from submitting
+                alert('Veuillez entrer un nom d\'employé avant de rechercher.'); // Show a custom alert
+            }
+        });
+    });
+</script>
+
 {% endblock %}

@@ -15,7 +15,7 @@ class FormationType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('image')
+            // ->add('image')
             ->add('description')
             ->add('is_online')
             ->add('place')

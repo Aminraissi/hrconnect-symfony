@@ -6,6 +6,15 @@
 parameters:
     cv_directory: '%kernel.project_dir%/public/uploads/cv'
     lettre_motivation_directory: '%kernel.project_dir%/public/uploads/lettre_motivation'
+    google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
+    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
+    profile_pictures_directory: '%kernel.project_dir%/public/uploads/profile_pictures'
+    mailjet.api_key: 'MAILJET_API_KEY_REMOVED'
+    mailjet.api_secret: 'MAILJET_API_SECRET_REMOVED'
+    weather_api_key: 'WEATHER_API_KEY_REMOVED'
+    
 
 services:
     # default configuration for services in *this* file
@@ -51,3 +60,20 @@ services:
         arguments:
             $logger: '@logger'
             $mailer: '@mailer'
+     # Service d'email pour les candidatures
+    App\Service\EmailSenderService:
+        arguments:
+            $mailjetApiKey: '%mailjet.api_key%'
+            $mailjetApiSecret: '%mailjet.api_secret%'
+    App\Service\WeatherService:
+        arguments:
+            $apiKey: '%weather_api_key%'
+
+    App\Service\FileContentChecker:
+        arguments:
+            - '@parameter_bag'
+twig:
+    globals:
+        google_maps_api_key: '%google_maps_api_key%'
+
+

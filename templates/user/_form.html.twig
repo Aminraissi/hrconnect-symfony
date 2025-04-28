@@ -1,23 +1,27 @@
 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 <table>
     {% for field in form %}
-        <tr>
-            <td>{{ form_label(field) }}</td>
-            <td>{{ form_widget(field) }}</td>
-            <td>
-                {% if field.vars.errors|length > 0 %}
-                    <div class="alert alert-danger">
+        {% if field.vars.block_prefixes is not defined or 'hidden' not in field.vars.block_prefixes %}
+            <tr>
+                <td>{{ form_label(field) }}</td>
+                <td>{{ form_widget(field) }}</td>
+                <td>
+                    {% if field.vars.errors|length > 0 %}
                         {% for error in field.vars.errors %}
-                            <span>{{ error.message }}</span><br>
+                            <div style="color: red;">{{ error.message }}</div>
                         {% endfor %}
-                    </div>
-                {% endif %}
-            </td>
-        </tr>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
     {% endfor %}
+
+    {# ADD THIS! #}
+    {{ form_row(form._token) }}
+
     <tr>
         <td colspan="3" style="text-align: right;">
-            <button class="btn-add">{{ button_label|default('Save') }}</button>
+            <button type="submit">Update</button>
         </td>
     </tr>
 </table>

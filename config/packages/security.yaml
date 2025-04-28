@@ -22,7 +22,7 @@ security:
                 check_path: login
                 username_parameter: email
                 password_parameter: password
-                default_target_path: /back-office
+                success_handler: App\Security\CustomLoginSuccessHandler
                 enable_csrf: true
             logout:
                 path: /logout

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>My Profile — HR Connect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('{{ asset('images/slider-1.jpg') }}') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .navbar {
+      display: flex;
+      background-color: #0B2154;
+      padding: 1rem;
+      color: white;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    .container {
+      margin: 80px auto;
+      padding: 20px;
+      background: white;
+      max-width: 800px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    table {
+      width: 100%;
+    }
+    table td {
+      padding: 10px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      background: #f8f9fa;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div><strong>HR Connect</strong></div>
+  <div>
+    <a href="{{ path('app_home') }}">Home</a>
+    <a href="#">About</a>
+    <a href="#">Services</a>
+    <a href="#">Blog</a>
+    <a href="{{ path('app_user_profile_front') }}">Profile</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div style="text-align:center;">
+    {% if app.user.profilePicture %}
+        <img src="{{ asset('uploads/profile_pictures/' ~ app.user.profilePicture) }}" alt="Profile" width="100" style="border-radius:50%; border:3px solid #007bff;">
+    {% else %}
+        <img src="{{ asset('images/profile.png') }}" alt="Profile" width="100" style="border-radius:50%; border:3px solid #007bff;">
+    {% endif %}
+    <h2>{{ app.user.nom }} {{ app.user.prenom }}</h2>
+    <p>{{ app.user.email }}</p>
+  </div>
+
+  <hr>
+
+  {# Flash messages #}
+  {% for message in app.flashes('success') %}
+    <div style="color: green; margin-bottom:10px;">{{ message }}</div>
+  {% endfor %}
+  {% for message in app.flashes('error') %}
+    <div style="color: red; margin-bottom:10px;">{{ message }}</div>
+  {% endfor %}
+
+  {# Profile Form #}
+  {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+    <table>
+      {% for field in form %}
+          {% if field.vars.block_prefixes is not defined or 'hidden' not in field.vars.block_prefixes %}
+              <tr>
+                  <td>{{ form_label(field) }}</td>
+                  <td>{{ form_widget(field) }}</td>
+              </tr>
+          {% endif %}
+      {% endfor %}
+      <tr>
+          <td colspan="2" style="text-align: right;">
+              {{ form_row(form._token) }}
+              <button type="submit">Update</button>
+          </td>
+      </tr>
+    </table>
+  {{ form_end(form) }}
+
+</div>
+
+<footer>
+  &copy; {{ "now"|date("Y") }} HR Connect — Made with ❤️
+</footer>
+
+</body>
+</html>

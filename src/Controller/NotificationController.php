@@ -21,7 +21,7 @@ final class NotificationController extends AbstractController
             );
 
             if ($response === false) {
-                $this->addFlash('error', 'Failed to send notification.');
+                $this->addFlash('error', 'Échec de l\'envoi de la notification.');
             } else {
                 $this->addFlash('success', 'Notification sent successfully.');
             }
