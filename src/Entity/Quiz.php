@@ -41,8 +41,8 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: 'The question is required.')]
-    #[Assert\Length(max: 255, maxMessage: 'The question must not exceed 255 characters.')]
+    #[Assert\NotBlank(message: 'La question est obligatoire.')]
+    #[Assert\Length(max: 255, maxMessage: 'La question ne doit pas dépasser 255 caractères.')]
     private ?string $question = null;
 
     public function getQuestion(): ?string
@@ -57,7 +57,7 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: 'The first answer is required.')]
+    #[Assert\NotBlank(message: 'La première réponse est obligatoire.')]
     private ?string $reponse1 = null;
 
     public function getReponse1(): ?string
@@ -72,7 +72,7 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: 'The second answer is required.')]
+    #[Assert\NotBlank(message: 'La deuxième réponse est obligatoire.')]
     private ?string $reponse2 = null;
 
     public function getReponse2(): ?string
@@ -87,7 +87,7 @@ class Quiz
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: 'The third answer is required.')]
+    #[Assert\NotBlank(message: 'La troisième réponse est obligatoire.')]
     private ?string $reponse3 = null;
 
     public function getReponse3(): ?string
@@ -102,8 +102,8 @@ class Quiz
     }
 
     #[ORM\Column(type: 'integer', nullable: false)]
-    #[Assert\NotBlank(message: 'The correct answer number is required.')]
-    #[Assert\Range(min: 1, max: 3, notInRangeMessage: 'The correct answer number must be between {{ min }} and {{ max }}.')]
+    #[Assert\NotBlank(message: 'Le numéro de la réponse correcte est obligatoire.')]
+    #[Assert\Range(min: 1, max: 3, notInRangeMessage: 'Le numéro de la réponse correcte doit être entre {{ min }} et {{ max }}.')]
 
     private ?int $num_reponse_correct = null;
 
