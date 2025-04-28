@@ -10,6 +10,8 @@ use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class FormationQuizController extends AbstractController
@@ -22,7 +24,7 @@ final class FormationQuizController extends AbstractController
             throw $this->createNotFoundException('Formation not found');
         }
 
-        $questions = $quizRepository->findBy(['formation' => $formation]);
+        $questions = $quizRepository->findBy(['formation' => $formation], ['id' => 'ASC']);
 
         if (! $questions) {
             throw $this->createNotFoundException('Quiz not found for this formation');
@@ -30,12 +32,23 @@ final class FormationQuizController extends AbstractController
 
         $questionsSize = count($questions);
 
+        $existingResponse = $quizReponseRepository->findOneBy([
+            'employe' => $this->getUser(),
+            'quiz'    => $questions[0],
+        ]);
+
+        if ($existingResponse) {
+            return $this->redirectToRoute('app_formation_quiz_result', [
+                'id' => $id,
+            ]);
+        }
+
         if ($request->isMethod('POST')) {
             $reponse = $request->request->get('reponse');
             if ($reponse != null) {
 
                 $quizReponse = new QuizReponse();
-                $quizReponse->setQuiz($questions[$q]);
+                $quizReponse->setQuiz($questions[$q - 1]);
                 $quizReponse->setEmploye($this->getUser());
                 $quizReponse->setNumReponse($reponse);
 
@@ -66,7 +79,7 @@ final class FormationQuizController extends AbstractController
     }
 
     #[Route('/frontoffice/mes-formations/{id}/quiz-result', name: 'app_formation_quiz_result')]
-    public function quizResult(FormationRepository $formationRepository, QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, $id): Response
+    public function quizResult(FormationRepository $formationRepository, QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, MailerInterface $mailer, $id): Response
     {
 
         $formation = $formationRepository->find($id);
@@ -119,6 +132,21 @@ final class FormationQuizController extends AbstractController
 
             file_put_contents($pdfFilepath, $pdfOutput);
 
+            // envoyer l'e pdf par mail
+
+            $email = (new Email())
+                ->from('example@example.com')
+                ->to($this->getUser()->getEmail())
+                ->subject('Attestation de réussite de la formation ' . $formation->getTitle())
+                ->html('<p>Bonjour, veuillez trouver ci-joint votre attestation de réussite de la formation <strong>' . $formation->getTitle() . '</strong></p>')
+                ->attachFromPath(
+                    $this->getParameter('kernel.project_dir') . '/public/' . $filePath,
+                    'attestation.pdf',
+                    'application/pdf'
+                );
+
+            $mailer->send($email);
+
         } else {
             $this->addFlash('error', 'Vous avez échoué le quiz avec un score de ' . $score . '/' . $questionsSize);
         }
@@ -126,6 +154,64 @@ final class FormationQuizController extends AbstractController
         return $this->render('formations/quiz/result.html.twig', [
             'formation' => $formation,
             'filePath'  => $filePath ?? null,
+        ]);
+    }
+
+    #[Route('/frontoffice/mes-formations/{id}/quiz/{q}/correction', name: 'app_formation_quiz_correction')]
+    public function correctionQuiz(QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, FormationRepository $formationRepository, Request $request, \Doctrine\ORM\EntityManagerInterface $entityManager, $id, $q = 1): Response
+    {
+        $formation = $formationRepository->find($id);
+        if (! $formation) {
+            throw $this->createNotFoundException('Formation not found');
+        }
+
+        $questions = $quizRepository->findBy(['formation' => $formation], ['id' => 'ASC']);
+
+        if (! $questions) {
+            throw $this->createNotFoundException('Quiz not found for this formation');
+        }
+
+        $questionsSize = count($questions);
+
+        if ($request->isMethod('POST')) {
+            // $reponse = $request->request->get('reponse');
+            // if ($reponse != null) {
+
+            //     $quizReponse = new QuizReponse();
+            //     $quizReponse->setQuiz($questions[$q - 1]);
+            //     $quizReponse->setEmploye($this->getUser());
+            //     $quizReponse->setNumReponse($reponse);
+
+            //     $em = $entityManager;
+            //     $em->persist($quizReponse);
+            //     $em->flush();
+
+            return $this->redirectToRoute('app_formation_quiz_correction', [
+                'id' => $id,
+                'q'  => $q + 1,
+            ]);
+            // } else {
+            //     $this->addFlash('error', 'Choisissez une réponse');
+            // }
+        }
+
+        $userReponse = $quizReponseRepository->findOneBy([
+            'employe' => $this->getUser(),
+            'quiz'    => $questions[$q - 1],
+        ]);
+
+        if ($q > $questionsSize) {
+
+            return $this->redirectToRoute('app_formation_quiz_correction', [
+                'id' => $id,
+            ]);
+        }
+
+        return $this->render('formations/quiz/correction.html.twig', [
+            'formation'      => $formation,
+            'questions_size' => $questionsSize,
+            'question'       => $questions[$q - 1],
+            'userReponse'    => $userReponse,
         ]);
     }
 }
