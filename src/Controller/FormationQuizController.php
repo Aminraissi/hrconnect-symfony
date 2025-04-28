@@ -156,4 +156,62 @@ final class FormationQuizController extends AbstractController
             'filePath'  => $filePath ?? null,
         ]);
     }
+
+    #[Route('/frontoffice/mes-formations/{id}/quiz/{q}/correction', name: 'app_formation_quiz_correction')]
+    public function correctionQuiz(QuizRepository $quizRepository, QuizReponseRepository $quizReponseRepository, FormationRepository $formationRepository, Request $request, \Doctrine\ORM\EntityManagerInterface $entityManager, $id, $q = 1): Response
+    {
+        $formation = $formationRepository->find($id);
+        if (! $formation) {
+            throw $this->createNotFoundException('Formation not found');
+        }
+
+        $questions = $quizRepository->findBy(['formation' => $formation], ['id' => 'ASC']);
+
+        if (! $questions) {
+            throw $this->createNotFoundException('Quiz not found for this formation');
+        }
+
+        $questionsSize = count($questions);
+
+        if ($request->isMethod('POST')) {
+            // $reponse = $request->request->get('reponse');
+            // if ($reponse != null) {
+
+            //     $quizReponse = new QuizReponse();
+            //     $quizReponse->setQuiz($questions[$q - 1]);
+            //     $quizReponse->setEmploye($this->getUser());
+            //     $quizReponse->setNumReponse($reponse);
+
+            //     $em = $entityManager;
+            //     $em->persist($quizReponse);
+            //     $em->flush();
+
+            return $this->redirectToRoute('app_formation_quiz_correction', [
+                'id' => $id,
+                'q'  => $q + 1,
+            ]);
+            // } else {
+            //     $this->addFlash('error', 'Choisissez une réponse');
+            // }
+        }
+
+        $userReponse = $quizReponseRepository->findOneBy([
+            'employe' => $this->getUser(),
+            'quiz'    => $questions[$q - 1],
+        ]);
+
+        if ($q > $questionsSize) {
+
+            return $this->redirectToRoute('app_formation_quiz_correction', [
+                'id' => $id,
+            ]);
+        }
+
+        return $this->render('formations/quiz/correction.html.twig', [
+            'formation'      => $formation,
+            'questions_size' => $questionsSize,
+            'question'       => $questions[$q - 1],
+            'userReponse'    => $userReponse,
+        ]);
+    }
 }

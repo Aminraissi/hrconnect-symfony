@@ -1,0 +1,80 @@
+{% extends 'front_office.html.twig' %}
+
+{% block title %}
+	Correction de quiz
+{% endblock %}
+
+{% block body %}
+	<main>
+
+
+		<section class="pt-5">
+			<div class="container">
+
+				<div
+					class="row g-4 g-sm-5">
+					<!-- Main content START -->
+					<div
+						class="col-xl-12 mb-4 mb-sm-0">
+
+
+						<!-- Personal info START -->
+						<div class="card card-body shadow p-4">
+
+							{% if app.session.flashBag.has('error') %}
+								<div class="alert alert-danger" role="alert">
+									{{ app.session.flashBag.get('error')|first }}
+								</div>
+							{% endif %}
+
+							{% if question.getNum_reponse_correct() == userReponse.getNumReponse() %}
+								<div class="alert alert-success" role="alert">
+									Bonne réponse !
+								</div>
+							{% else %}
+								<div class="alert alert-danger" role="alert">
+									Mauvaise réponse !
+								</div>
+							{% endif %}
+
+							<h5 class="mb-3">{{ question.question }}</h5>
+
+							<form method="post">
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="radio" value="1" name="reponse" {% if userReponse.getNumReponse() == 1 %} checked {% endif %}>
+									<label class="form-check-label {% if question.getNum_reponse_correct() == 1 %}bg-success text-white{% endif %}">{{ question.reponse1 }}</label>
+								</div>
+
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="radio" value="2" name="reponse" {% if userReponse.getNumReponse() == 2 %} checked {% endif %}>
+									<label class="form-check-label {% if question.getNum_reponse_correct() == 2 %}bg-success text-white{% endif %}">{{ question.reponse2 }}</label>
+								</div>
+
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="radio" value="3" name="reponse" {% if userReponse.getNumReponse() == 3 %} checked {% endif %}>
+									<label class="form-check-label {% if question.getNum_reponse_correct() == 3 %}bg-success text-white{% endif %}">{{ question.reponse3 }}</label>
+								</div>
+
+								<button type="submit" class="btn btn-primary">
+									Suivant
+								</button>
+
+							</form>
+
+						</div>
+						<!-- Personal info END -->
+					</div>
+					<!-- Main content END -->
+
+
+				</div>
+				<!-- Right sidebar END -->
+
+			</div>
+			<!-- Row END -->
+		</div>
+	</section>
+	<!-- =======================
+																																																																																																						Page content END -->
+
+</main>{% endblock %}
