@@ -12,6 +12,7 @@ parameters:
     justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
     mailjet.api_key: 'MAILJET_API_KEY_REMOVED'
     mailjet.api_secret: 'MAILJET_API_SECRET_REMOVED'
+    weather_api_key: 'WEATHER_API_KEY_REMOVED'
     
 
 
@@ -74,6 +75,9 @@ services:
         arguments:
             $mailjetApiKey: '%mailjet.api_key%'
             $mailjetApiSecret: '%mailjet.api_secret%'
+    App\Service\WeatherService:
+        arguments:
+            $apiKey: '%weather_api_key%'
 
     App\Service\FileContentChecker:
         arguments:
