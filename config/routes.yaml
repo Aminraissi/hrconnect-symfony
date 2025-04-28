@@ -4,8 +4,8 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-redirect_to_login:
-    path: /
-    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
-    defaults:
-        route: login
+# redirect_to_login:
+#     path: /
+#     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+#     defaults:
+#         route: login

@@ -13,6 +13,7 @@
 			border-radius: 5px;
 			padding: 5px 10px;
 			margin-right: 5px;
+			display: inline-block;
 		}
 		.btn-success:hover {
 			background-color: #218838;
@@ -23,9 +24,28 @@
 			border-radius: 5px;
 			padding: 5px 10px;
 			margin-right: 5px;
+			display: inline-block;
 		}
 		.btn-info:hover {
 			background-color: #138496;
+		}
+		.btn-edit, .btn-delete {
+			display: inline-block;
+			padding: 5px 10px;
+			margin-right: 5px;
+			border-radius: 5px;
+			color: white;
+		}
+		.btn-edit {
+			background-color: #ffc107;
+		}
+		.btn-delete {
+			background-color: #dc3545;
+		}
+		.action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 	</style>
 {% endblock %}
@@ -45,7 +65,7 @@
 									<option value="">Toutes les offres</option>
 									{% for offre in offres %}
 										<option value="{{ offre.id }}" {% if offreId == offre.id %}selected{% endif %}>
-											{{ offre.titre }}
+											{{ offre.title }}
 										</option>
 									{% endfor %}
 								</select>
@@ -77,9 +97,6 @@
 							<a class="active" href="{{ path('back.candidatures.index') }}">Toutes les candidatures</a>
 						</li>
 						<li>
-							<a href="{{ path('back.candidatures.index', {'statut': 'en_attente'}) }}">En attente</a>
-						</li>
-						<li>
 							<a href="{{ path('back.candidatures.index', {'statut': 'en_cours'}) }}">En cours</a>
 						</li>
 						<li>
@@ -93,8 +110,13 @@
 			</div>
 			<div class="col-xl-12 col-sm-12 col-12 mb-4">
 				<div class="row">
-					<div class="col-xl-10 col-sm-8 col-12">
+					<div class="col-xl-8 col-sm-6 col-12">
 						<label class="employee_count">{{ candidatures|length }} Candidatures</label>
+					</div>
+					<div class="col-xl-4 col-sm-6 col-12 text-right">
+						<a href="{{ path('back.candidatures.statistics') }}" class="btn btn-primary">
+							<i data-feather="bar-chart-2"></i> Statistiques
+						</a>
 					</div>
 				</div>
 			</div>
@@ -102,48 +124,40 @@
 				<div class="card">
 					<div class="card-header">
 						<h3 class="card-title">Liste des candidatures</h3>
-						<div class="card-tools">
-							<a href="{{ path('back.offres_emploi.index') }}" class="btn btn-primary">
-								<i class="fas fa-plus"></i> Nouvelle candidature
-							</a>
-						</div>
+
 					</div>
 					<div class="table-responsive">
 						<table class="table custom-table no-footer">
 							<thead>
 								<tr>
-									<th>Nom</th>
-									<th>Email</th>
-									<th>Téléphone</th>
+									<th>Candidat</th>
 									<th>Offre</th>
-									<th>Date</th>
 									<th>CV</th>
 									<th>Statut</th>
+									<th>Score</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
 							<tbody>
-								{% for candidature in candidatures %}
+								{% if candidatures is empty %}
 									<tr>
-										<td>
-											<div class="table-img">
-												<a href="#">
-													<label>{{ candidature.nom }} {{ candidature.prenom }}</label>
-												</a>
-											</div>
+										<td colspan="6" class="text-center">
+											<p>Aucune candidature trouvée.</p>
 										</td>
-										<td>
-											<label>{{ candidature.email }}</label>
-										</td>
-										<td>
-											<label>{{ candidature.telephone }}</label>
-										</td>
-										<td>
-											<label>{{ candidature.offre.titre }}</label>
-										</td>
-										<td>
-											<label>{{ candidature.dateCandidature|date('d/m/Y') }}</label>
-										</td>
+									</tr>
+								{% else %}
+									{% for candidature in candidatures %}
+										<tr>
+											<td>
+												<div class="table-img">
+													<a href="#">
+														<label>{{ candidature.candidat.firstName }} {{ candidature.candidat.lastName }}</label>
+													</a>
+												</div>
+											</td>
+											<td>
+												<label>{{ candidature.offreEmploi.title }}</label>
+											</td>
 										<td>
 											{% if candidature.cv %}
 											<a href="{{ path('back.candidatures.view_cv', {'id': candidature.id}) }}" class="btn btn-sm btn-info" title="Voir le CV">
@@ -154,28 +168,35 @@
 											{% endif %}
 										</td>
 										<td>
-											<label class="badge {{ candidature.statut == 'en_attente' ? 'badge-warning' : (candidature.statut == 'en_cours' ? 'badge-info' : (candidature.statut == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
-												{{ candidature.statut|replace({'_': ' '})|title }}
+											<label class="badge {{ candidature.status|lower == 'en attente' ? 'badge-warning' : (candidature.status|lower == 'en cours' ? 'badge-info' : (candidature.status|lower == 'acceptee' ? 'badge-success' : 'badge-danger')) }}">
+												{{ candidature.status }}
 											</label>
 										</td>
 										<td>
+											{% if candidature.status|lower == 'refusee' %}
+												<span class="badge badge-danger">< 50%</span>
+											{% else %}
+												<span class="badge badge-success">≥ 50%</span>
+											{% endif %}
+										</td>
+										<td>
 											<div class="action">
-												{% if candidature.statut != 'acceptee' and candidature.statut != 'refusee' %}
-												<a href="{{ path('back.candidatures.accept', {'id': candidature.id}) }}" class="btn-success" onclick="return confirm('Êtes-vous sûr de vouloir accepter cette candidature ? Cela clôturera l\'offre et refusera toutes les autres candidatures.')">
-													<i data-feather="check"></i>
+												{% if candidature.status != 'acceptee' and candidature.status != 'refusee' %}
+												<a href="{{ path('back.candidatures.accept', {'id': candidature.id}) }}" class="btn btn-success" title="Accepter">
+													<i data-feather="check"></i> Accepter
 												</a>
 												{% endif %}
-												<a href="{{ path('back.candidatures.edit', {'id': candidature.id}) }}" class="btn-edit">
-													<i data-feather="edit"></i>
+												<a href="{{ path('back.candidatures.edit', {'id': candidature.id}) }}" class="btn btn-warning" title="Modifier">
+													<i data-feather="edit"></i> Modifier
 												</a>
-												<a href="{{ path('back.candidatures.delete', {'id': candidature.id}) }}" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?')">
-													<i data-feather="trash"></i>
+												<a href="{{ path('back.candidatures.reject', {'id': candidature.id}) }}" class="btn btn-danger" title="Refuser" onclick="return confirm('Êtes-vous sûr de vouloir refuser cette candidature ?')">
+													<i data-feather="x-circle"></i> Refuser
 												</a>
-
 											</div>
 										</td>
 									</tr>
 								{% endfor %}
+								{% endif %}
 							</tbody>
 						</table>
 					</div>

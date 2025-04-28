@@ -5,6 +5,16 @@
 {% block body %}
     <h1>Liste des demandes de congé</h1>
 
+    <!-- Ajouter le bouton "Ajouter une demande de congé" -->
+   
+
+    <form method="get" action="{{ path('app_demande_conge_index') }}">
+        <div class="form-group">
+            <input type="text" name="search" value="{{ searchTerm }}" placeholder="Rechercher..." class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary my-2">Rechercher</button>
+    </form>
+
     <table class="table">
         <thead>
             <tr>
@@ -13,14 +23,14 @@
                 <th>Date début</th>
                 <th>Date fin</th>
                 <th>Statut</th>
-                <th>Solde de congés</th>
-                <th>actions</th>
+                <th>Solde Congés</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for demande_conge in demande_conges %}
-            <tr>
-             <td>
+        {% for demande_conge in pagination %}
+            <tr class="{{ demande_conge.employe.soldeConges <= -7 ? 'table-danger' : '' }}">
+                <td>
                     {% if demande_conge.employe %}
                         <strong>{{ demande_conge.employe.nom }} {{ demande_conge.employe.prenom }}</strong><br>
                         Email : {{ demande_conge.employe.email }}
@@ -32,26 +42,28 @@
                 <td>{{ demande_conge.dateDebut ? demande_conge.dateDebut|date('Y-m-d') : '' }}</td>
                 <td>{{ demande_conge.dateFin ? demande_conge.dateFin|date('Y-m-d') : '' }}</td>
                 <td>{{ demande_conge.statut }}</td>
-               
                 <td>
                     {% if demande_conge.employe %}
-                        {{ demande_conge.employe.soldeConges }} jours
+                        {{ demande_conge.employe.soldeConges ?? 'N/A' }}
                     {% else %}
-                        <em>N/A</em>
+                        N/A
                     {% endif %}
                 </td>
                 <td>
-                    <button class="btn btn-warning" onclick="window.location.href='{{ path('app_demande_conge_edit', {'id': demande_conge.id}) }}'">Modifier</button>
-                    <a href="{{ path('app_demande_conge_delete', {'id': demande_conge.id}) }}" class="btn btn-danger">Supprimer</a>
+                    <a href="{{ path('app_demande_conge_edit', { 'id': demande_conge.id }) }}" class="btn btn-warning btn-sm">Modifier</a>
+                    <a href="{{ path('app_demande_conge_delete', { 'id': demande_conge.id }) }}" class="btn btn-danger btn-sm">Supprimer</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">Aucune demande trouvée</td>
+                <td colspan="7">Aucune demande de congé trouvée.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+     <a href="{{ path('app_demande_conge_new') }}" class="btn btn-success my-2">Ajouter une demande de congé</a>
 
-    <a href="{{ path('app_demande_conge_new') }}" class="btn btn-success">Créer nouvelle demande</a>
+    <div class="d-flex justify-content-center">
+        {{ knp_pagination_render(pagination) }}
+    </div>
 {% endblock %}

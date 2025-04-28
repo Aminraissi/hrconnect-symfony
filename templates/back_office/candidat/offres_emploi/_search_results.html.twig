@@ -1,0 +1,38 @@
+{% for offre in offres %}
+    <tr>
+        <td>
+            <div class="table-img">
+                <a href="#">
+                    <label>
+                        {% if searchTerm is defined and searchTerm %}
+                            {{ offre.title|replace({(searchTerm): '<span class="highlight">' ~ searchTerm ~ '</span>'})|raw }}
+                        {% else %}
+                            {{ offre.title }}
+                        {% endif %}
+                    </label>
+                </a>
+            </div>
+        </td>
+        <td>
+            <label class="action_label2">{{ offre.location }}</label>
+        </td>
+        <td>
+            <div class="action">
+                <a href="{{ path('back.candidat.offres_emploi.show', {'id': offre.id}) }}" class="btn btn-info" title="Voir le détail">
+                    <i data-feather="eye"></i> Voir détail
+                </a>
+                <a href="{{ path('app_candidat_candidature_new', {'id': offre.id}) }}" class="btn btn-success" title="Postuler">
+                    <i data-feather="send"></i> Postuler
+                </a>
+            </div>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="3" class="text-center">
+            <div class="alert alert-info mb-0">
+                Aucune offre ne correspond à votre recherche.
+            </div>
+        </td>
+    </tr>
+{% endfor %}

@@ -1,6 +1,7 @@
 {% extends 'back_office.html.twig' %}
 
-{% block title %}Quiz index
+{% block title %}
+	Liste des questions
 {% endblock %}
 
 {% block body %}
@@ -13,29 +14,33 @@
 						<a href="index.html"><img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>Home</a>
 					</li>
 					<li class="breadcrumb-item active">
-						Training List
+						TListe des formations
 					</li>
 					<li class="breadcrumb-item active">
-						Questions List
+						Liste des questions
 					</li>
 				</ul>
-				<h3>Trainings</h3>
+				<h3>Liste des questions</h3>
 			</div>
 		</div>
 		<div class="col-xl-12 col-sm-12 col-12 mb-4">
-			<div class="head-link-set">
+			<div class="head-link-set d-flex justify-content-between align-items-center">
 				<a class="btn-add" href="{{ url('app_quiz_new',{'fid':formation.id}) }}">
 					<i data-feather="plus"></i>
-					Add new question
+					Ajouter une question
 				</a>
+				<form method="get" action="{{ path('app_quiz_index', {'fid': formation.id}) }}" class="form-inline">
+					<input type="text" name="q" class="form-control mr-2" placeholder="Rechercher questions..." value="{{ app.request.get('q') }}">
+					<button type="submit" class="btn btn-primary">Rechercher</button>
+				</form>
 			</div>
 		</div>
 		<div class="col-xl-12 col-sm-12 col-12 mb-4">
 			<div class="card">
 				<div class="table-heading">
-					<h2>Questions List for
+					<h2>Liste des questions pour la formation
 						{{ formation.title }}
-						Training
+
 					</h2>
 				</div>
 				<div class="table-responsive">
@@ -44,10 +49,10 @@
 							<tr>
 								<th>Id</th>
 								<th>Question</th>
-								<th>Answer 1</th>
-								<th>Answer 2</th>
-								<th>Answer 3</th>
-								<th>actions</th>
+								<th>Reponse 1</th>
+								<th>Reponse 2</th>
+								<th>Reponse 3</th>
+								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -78,11 +83,11 @@
 											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}">
 											<a class="btn btn-success btn-sm" href="{{ path('app_quiz_edit', {'fid':formation.id,'id': quiz.id}) }}">
 												<i class="fas fa-edit"></i>
-												edit
+												Modifier
 											</a>
 											<button class="btn btn-danger btn-sm">
 												<i class="fas fa-trash"></i>
-												Delete
+												Supprimer
 											</button>
 										</form>
 
@@ -95,6 +100,12 @@
 							{% endfor %}
 						</tbody>
 					</table>
+
+					<center>
+						<div class="navigation">
+							{{ knp_pagination_render(quizzes) }}
+						</div>
+					</center>
 				</div>
 			</div>
 		</div>

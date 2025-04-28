@@ -1,0 +1,75 @@
+{% extends 'front_office.html.twig' %}
+
+{% block title %}
+	Training List
+{% endblock %}
+
+
+{% block body %}
+	<main>
+
+
+		<section class="pt-5">
+			<div class="container">
+
+				<div
+					class="row g-4 g-sm-5">
+					<!-- Main content START -->
+					<div
+						class="col-xl-12 mb-4 mb-sm-0">
+
+
+						<!-- Personal info START -->
+						<div
+							class="card card-body shadow p-4">
+							<!-- Title -->
+							{% if app.session.flashBag.has('error') %}
+								<div class="alert alert-danger" role="alert">
+									{{ app.session.flashBag.get('error')|first }}
+								</div>
+							{% endif %}
+							{% if app.session.flashBag.has('success') %}
+								<div class="alert alert-success" role="alert">
+									{{ app.session.flashBag.get('success')|first }}
+								</div>
+							{% endif %}
+							<h5 class="mb-1">Envoyer la localisation du la formation
+								{{ formation.title }}
+								:
+							</h5>
+
+							<form class="mt-4" method="post">
+								<div class="mb-3">
+									<label class="form-label">Num Téléphone :</label>
+									<input type="text" class="form-control" name="phone">
+								</div>
+								<div class="mb-3">
+									<label class="form-label">Message :</label>
+									<textarea class="form-control" rows="3" disabled>{{message}}</textarea>
+								</div>
+								<div class="g-recaptcha mb-2" data-sitekey="6LelOyYrAAAAAAph1jHv5rgfbJarPhim41YFICeM"></div>
+
+								<button type="submit" class="btn btn-primary">Envoyer</button>
+							</form>
+
+							<div id="meet"></div>
+
+						</div>
+						<!-- Personal info END -->
+					</div>
+					<!-- Main content END -->
+
+
+				</div>
+				<!-- Right sidebar END -->
+
+			</div>
+			<!-- Row END -->
+		</div>
+	</section>
+	<!-- =======================
+																																																																																																Page content END -->
+
+</main>{% endblock %}{% block js %}
+{{ parent() }}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>{% endblock %}

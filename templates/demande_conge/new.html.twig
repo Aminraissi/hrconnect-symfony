@@ -6,6 +6,41 @@
     <div class="container mt-4">
         <h1>Create new DemandeConge</h1>
 
+        {# Affichage de la météo #}
+        {% if weather is defined and weather|length > 0 %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-cloud-sun me-2"></i>Météo à {{ weather.location.name }}
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Aujourd'hui</h5>
+                            <p>
+                                <img src="{{ weather.current.condition.icon }}" alt="{{ weather.current.condition.text }}">
+                                {{ weather.current.condition.text }}
+                            </p>
+                            <p>Température: {{ weather.current.temp_c }}°C</p>
+                            <p>Humidité: {{ weather.current.humidity }}%</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Prévisions</h5>
+                            <div class="d-flex overflow-auto">
+                                {% for forecast in weather.forecast.forecastday %}
+                                    <div class="me-3 text-center">
+                                        <small>{{ forecast.date|date('D d/m') }}</small><br>
+                                        <img src="{{ forecast.day.condition.icon }}" alt="{{ forecast.day.condition.text }}" width="30"><br>
+                                        {{ forecast.day.maxtemp_c }}° / {{ forecast.day.mintemp_c }}°<br>
+                                        <small>{{ forecast.day.condition.text }}</small>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
         {{ include('demande_conge/_form.html.twig') }}
 
         <a class="btn btn-secondary mt-3" href="{{ path('app_demande_conge_index') }}">

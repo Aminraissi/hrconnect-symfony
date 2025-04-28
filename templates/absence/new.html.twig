@@ -1,11 +1,20 @@
-{% extends 'base.html.twig' %}
+{% extends 'back_office.html.twig' %}
 
 {% block title %}New Absence{% endblock %}
 
 {% block body %}
-    <h1>Create new Absence</h1>
+    <div class="container mt-4">
+        <h1 class="mb-4">Create New Absence</h1>
 
-    {{ include('absence/_form.html.twig') }}
+        {{ include('absence/_form.html.twig') }}
 
-    <a href="{{ path('app_absence_index') }}">back to list</a>
+        <div class="d-flex justify-content-between mt-4">
+            <a class="btn btn-secondary" href="{{ path('app_absence_index') }}">
+                <i class="fas fa-arrow-left me-2"></i>Back to list
+            </a>
+            <button type="submit" form="absence_form" class="btn btn-success">
+                <i class="fas fa-save me-2"></i>Save Absence
+            </button>
+        </div>
+    </div>
 {% endblock %}

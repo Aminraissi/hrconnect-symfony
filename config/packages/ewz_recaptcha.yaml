@@ -1,0 +1,5 @@
+ewz_recaptcha:
+    public_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    private_key: '%env(GOOGLE_RECAPTCHA_SECRET_KEY)%'
+    enabled: true
+    verify_host: true

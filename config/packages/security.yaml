@@ -22,7 +22,7 @@ security:
                 check_path: login
                 username_parameter: email
                 password_parameter: password
-                default_target_path: /back-office
+                success_handler: App\Security\CustomLoginSuccessHandler
                 enable_csrf: true
             logout:
                 path: /logout
@@ -31,8 +31,10 @@ security:
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/signup, roles: PUBLIC_ACCESS }
-        - { path: ^/forgot-password, roles: PUBLIC_ACCESS }  # Forgot password is accessible to everyone
-        - { path: ^/send-otp, roles: PUBLIC_ACCESS }  # Send OTP is accessible to everyone
-        - { path: ^/reset-password, roles: PUBLIC_ACCESS }  # reset password is accessible to everyone
-        - { path: ^/verify-otp, roles: PUBLIC_ACCESS }  # Verify OTP is accessible to everyone
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
+        - { path: ^/send-otp, roles: PUBLIC_ACCESS }
+        - { path: ^/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/verify-otp, roles: PUBLIC_ACCESS }
+        - { path: ^/user/formation, roles: PUBLIC_ACCESS }
+        - { path: ^/frontoffice/formations/\d+/checkout, roles: IS_AUTHENTICATED_FULLY } # Secure this route
+        - { path: ^/, roles: PUBLIC_ACCESS }

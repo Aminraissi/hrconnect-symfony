@@ -3,69 +3,85 @@
 {% block title %}Liste des validations de congé{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <h1>Liste des validations de congé</h1>
+    <h1>Liste des validations de congé</h1>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Employé</th>
-                    <th>Type de congé</th>
-                    <th>Date début</th>
-                    <th>Date fin</th>
-                    <th>Statut</th>
-                    <th>Commentaire</th>
-                    <th>Date de validation</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for valider_conge in valider_conges %}
+    <form method="get" action="{{ path('app_valider_conge_index') }}">
+        <div class="form-group">
+            <input type="text" name="search" value="{{ searchTerm }}" placeholder="Rechercher par nom, prénom ou statut" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employé</th>
+                <th>Type de congé</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Statut</th>
+                <th>Date de validation</th>
+                <th>Solde Congés</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for valider_conge in pagination %}
                 <tr>
                     <td>
                         {% if valider_conge.demandeConge and valider_conge.demandeConge.employe %}
-                            <strong>{{ valider_conge.demandeConge.employe.nom }} {{ valider_conge.demandeConge.employe.prenom }}</strong><br>
-                            Email: {{ valider_conge.demandeConge.employe.email }}
+                            {{ valider_conge.demandeConge.employe.nom }} {{ valider_conge.demandeConge.employe.prenom }}
                         {% else %}
-                            <em>Non défini</em>
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ valider_conge.demandeConge.typeConge ?? 'N/A' }}</td>
+                    <td>
+                        {% if valider_conge.demandeConge and valider_conge.demandeConge.dateDebut %}
+                            {{ valider_conge.demandeConge.dateDebut|date('Y-m-d') }}
+                        {% else %}
+                            N/A
                         {% endif %}
                     </td>
                     <td>
-                        {% if valider_conge.demandeConge %}
-                            {{ valider_conge.demandeConge.typeConge }}
+                        {% if valider_conge.demandeConge and valider_conge.demandeConge.dateFin %}
+                            {{ valider_conge.demandeConge.dateFin|date('Y-m-d') }}
                         {% else %}
-                            <em>Non défini</em>
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ valider_conge.statut ?? 'N/A' }}</td>
+                    <td>
+                        {% if valider_conge.dateValidation %}
+                            {{ valider_conge.dateValidation|date('Y-m-d') }}
+                        {% else %}
+                            N/A
                         {% endif %}
                     </td>
                     <td>
-                        {% if valider_conge.demandeConge %}
-                            {{ valider_conge.demandeConge.dateDebut ? valider_conge.demandeConge.dateDebut|date('Y-m-d') : '' }}
+                        {% if valider_conge.demandeConge and valider_conge.demandeConge.employe %}
+                            {{ valider_conge.demandeConge.employe.soldeConges ?? 'N/A' }}
                         {% else %}
-                            <em>Non défini</em>
+                            N/A
                         {% endif %}
                     </td>
                     <td>
-                        {% if valider_conge.demandeConge %}
-                            {{ valider_conge.demandeConge.dateFin ? valider_conge.demandeConge.dateFin|date('Y-m-d') : '' }}
-                        {% else %}
-                            <em>Non défini</em>
-                        {% endif %}
-                    </td>
-                    <td>{{ valider_conge.statut }}</td>
-                    <td>{{ valider_conge.commentaire }}</td>
-                    <td>{{ valider_conge.dateValidation ? valider_conge.dateValidation|date('Y-m-d') : '' }}</td>
-                    <td>
-                        <button class="btn btn-warning" onclick="window.location.href='{{ path('app_valider_conge_edit', {'id': valider_conge.id}) }}'">Modifier</button>
-                        <a href="{{ path('app_valider_conge_delete', {'id': valider_conge.id}) }}" class="btn btn-danger">Supprimer</a>
+                        <a href="{{ path('app_valider_conge_edit', {'id': valider_conge.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                        <form method="post" action="{{ path('app_valider_conge_delete', {'id': valider_conge.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ valider_conge.id) }}">
+                            <button class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="8">Aucune validation trouvée</td>
+                    <td colspan="8" class="text-center">Aucune validation trouvée</td>
                 </tr>
             {% endfor %}
-            </tbody>
-        </table>
+        </tbody>
+    </table>
 
+    <div class="d-flex justify-content-center">
+        {{ knp_pagination_render(pagination) }}
     </div>
 {% endblock %}

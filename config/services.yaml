@@ -6,12 +6,24 @@
 parameters:
     cv_directory: '%kernel.project_dir%/public/uploads/cv'
     lettre_motivation_directory: '%kernel.project_dir%/public/uploads/lettre_motivation'
+    google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
+    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
+    profile_pictures_directory: '%kernel.project_dir%/public/uploads/profile_pictures'
+    mailjet.api_key: 'MAILJET_API_KEY_REMOVED'
+    mailjet.api_secret: 'MAILJET_API_SECRET_REMOVED'
+    weather_api_key: 'WEATHER_API_KEY_REMOVED'
+    
+
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+ 
+   
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -22,5 +34,67 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\StripeService:
+        arguments:
+            $secretKey: '%stripe.secret_key%'
+            
+    App\Service\PaypalService:
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
+            $apiUrl: '%env(PAYPAL_API_URL)%'
+
+    App\Service\NotificationService:
+        arguments:
+            $appId: '%env(ONESIGNAL_APP_ID)%'
+            $appKey: '%env(ONESIGNAL_API_KEY)%'
+
+    App\Service\TwilioService:
+        arguments:
+            $sid: '%env(HAYTHEM_TWILIO_SID)%'
+            $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
+            $from: '%env(HAYTHEM_TWILIO_FROM)%'
+    App\Service\TwilioServiceAlaa:
+        arguments:
+            $sid: '%env(ALAA_TWILIO_SID)%'
+            $token: '%env(ALAA_TWILIO_TOKEN)%'
+            $from: '%env(ALAA_TWILIO_FROM)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Service d'analyse de CV avec Gemini
+    App\Service\GeminiCvEvaluatorService:
+        arguments:
+            $logger: '@logger'
+            $requestStack: '@request_stack'
+            $cvAnalyzerService: '@App\Service\CvAnalyzerService'
+
+    # Service d'analyse de CV
+    App\Service\CvAnalyzerService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'
+
+    # Service d'email pour les candidatures
+    App\Service\CandidatureEmailService:
+        arguments:
+            $logger: '@logger'
+            $mailer: '@mailer'
+     # Service d'email pour les candidatures
+    App\Service\EmailSenderService:
+        arguments:
+            $mailjetApiKey: '%mailjet.api_key%'
+            $mailjetApiSecret: '%mailjet.api_secret%'
+    App\Service\WeatherService:
+        arguments:
+            $apiKey: '%weather_api_key%'
+
+    App\Service\FileContentChecker:
+        arguments:
+            - '@parameter_bag'
+twig:
+    globals:
+        google_maps_api_key: '%google_maps_api_key%'
+
+

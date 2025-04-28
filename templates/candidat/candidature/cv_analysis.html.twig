@@ -1,0 +1,164 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Analyse du CV{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .analysis-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .analysis-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .analysis-body {
+            padding: 20px;
+        }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            color: white;
+        }
+        .score-high {
+            background-color: #28a745;
+        }
+        .score-medium {
+            background-color: #ffc107;
+        }
+        .score-low {
+            background-color: #dc3545;
+        }
+        .criteria-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .criteria-score {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .criteria-explanation {
+            margin-top: 5px;
+            color: #666;
+        }
+        .progress {
+            height: 10px;
+            margin-top: 5px;
+        }
+        .progress-bar-high {
+            background-color: #28a745;
+        }
+        .progress-bar-medium {
+            background-color: #ffc107;
+        }
+        .progress-bar-low {
+            background-color: #dc3545;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Analyse du CV</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('back.candidat.offres_emploi.index') }}">Offres d'emploi</a></li>
+                            <li class="breadcrumb-item active">Analyse du CV</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card analysis-card">
+                        <div class="analysis-header">
+                            <h4>Résultats de l'analyse</h4>
+                        </div>
+                        <div class="analysis-body">
+                            {% if analysis.success %}
+                                <div class="text-center mb-4">
+                                    <div class="score-circle {% if analysis.score >= 70 %}score-high{% elseif analysis.score >= 50 %}score-medium{% else %}score-low{% endif %}">
+                                        {{ analysis.score }}%
+                                    </div>
+                                    <h4>{{ analysis.passed ? 'CV conforme' : 'CV non conforme' }}</h4>
+                                    <p>{{ analysis.message }}</p>
+                                </div>
+
+                                <h5>Détails par critère</h5>
+                                <div class="criteria-list">
+                                    {% for criterion, data in analysis.details %}
+                                        <div class="criteria-item">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>{{ criterion|capitalize }}</h6>
+                                                <span class="criteria-score">{{ data.score }}/10</span>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar {% if data.score >= 7 %}progress-bar-high{% elseif data.score >= 5 %}progress-bar-medium{% else %}progress-bar-low{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {{ data.score * 10 }}%" 
+                                                     aria-valuenow="{{ data.score }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="10">
+                                                </div>
+                                            </div>
+                                            <div class="criteria-explanation">
+                                                {{ data.explanation }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger">
+                                    <h5>Erreur lors de l'analyse</h5>
+                                    <p>{{ analysis.message }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card analysis-card">
+                        <div class="analysis-header">
+                            <h4>Informations</h4>
+                        </div>
+                        <div class="analysis-body">
+                            <h5>Critères d'évaluation</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item">Le CV peut s'étendre sur 1, 2, 3 ou 4 pages selon le niveau d'expérience.</li>
+                                <li class="list-group-item">Le CV ne doit pas comporter de photo.</li>
+                                <li class="list-group-item">Le design doit être plutôt simple.</li>
+                                <li class="list-group-item">Il est préférable d'utiliser des couleurs sobres.</li>
+                                <li class="list-group-item">Le contenu doit mettre l'accent sur les compétences et les expériences.</li>
+                                <li class="list-group-item">Il doit être facile à lire et aéré.</li>
+                                <li class="list-group-item">Les diplômes non canadiens doivent être expliqués avec des équivalences et des descriptions.</li>
+                                <li class="list-group-item">La pratique de plusieurs langues doit être inscrite sur le CV.</li>
+                                <li class="list-group-item">Le CV doit être délivré au format PDF.</li>
+                            </ul>
+
+                            <div class="mt-4">
+                                <a href="{{ path('back.candidat.offres_emploi.index') }}" class="btn btn-primary btn-block">
+                                    <i class="fa fa-arrow-left"></i> Retour aux offres
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

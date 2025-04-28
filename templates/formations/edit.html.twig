@@ -1,12 +1,25 @@
 {% extends 'back_office.html.twig' %}
 
-{% block title %}Edit Formation
+{% block title %}Modifier Une Formation
 {% endblock %}
 
-{% block body %}
-	<h1>Edit Formation</h1>
+{% block css %}
+	{{ parent() }}
 
-	{{ include('formations/_form.html.twig', {'button_label': 'Update'}) }}
+	<style>
+		#map {
+			height: 500px;
+			width: 100%;
+			margin-top: 10px;
+		}
+	</style>
+{% endblock %}
+
+
+{% block body %}
+	<h1>Modifier Une Formation</h1>
+
+	{{ include('formations/_form.html.twig', {'button_label': 'Modifier'}) }}
 
 {% endblock %}
 
@@ -32,4 +45,66 @@ $('#f_lat_lng').show();
 
 });
 	</script>
+
+	<script></script>
+
+	<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
+
+
+	<script>
+		let map,
+marker,
+autocomplete;
+
+function initMap() { // Initial map center
+const initialPosition = {
+lat: {{ formation.lat }},
+lng: {{ formation.lng }}
+};
+
+// Initialize the map
+map = new google.maps.Map(document.getElementById("map"), {
+center: initialPosition,
+zoom: 13
+});
+
+// Add initial marker
+marker = new google.maps.Marker({position: initialPosition, map: map, draggable: false});
+
+// Initialize autocomplete
+const input = document.getElementById("formation_place");
+autocomplete = new google.maps.places.Autocomplete(input);
+autocomplete.bindTo("bounds", map);
+
+// Listen for place changes in autocomplete
+autocomplete.addListener("place_changed", () => {
+const place = autocomplete.getPlace();
+if (! place.geometry) {
+alert("No details available for the selected place.");
+return;
+}
+
+// Remove the previous marker
+marker.setMap(null);
+
+// Update map center and zoom
+map.setCenter(place.geometry.location);
+map.setZoom(15);
+
+// Add a new marker at the selected place
+marker = new google.maps.Marker({position: place.geometry.location, map: map, draggable: false});
+
+// Get and set the latitude and longitude
+const lat = place.geometry.location.lat();
+const lng = place.geometry.location.lng();
+console.log("Selected coordinates:", lat, lng);
+
+document.getElementById("formation_lat").value = lat;
+document.getElementById("formation_lng").value = lng;
+});
+}
+
+window.onload = initMap;
+	</script>
+
 {% endblock %}

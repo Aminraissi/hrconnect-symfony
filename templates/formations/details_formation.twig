@@ -1,0 +1,257 @@
+{% extends 'front_office.html.twig' %}
+
+{% block title %}
+	{{ formation.title}}
+{% endblock %}
+
+{% block css %}
+	{{ parent() }}
+
+	<style>
+		#map {
+			height: 500px;
+			width: 100%;
+			margin-top: 10px;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<main>
+
+		<!-- =======================
+																																																																																																																																																																																																																														Page intro START -->
+		<section class="bg-light py-0 ">
+			<div class="container">
+				<div class="row py-3">
+					<div class="col-lg-8">
+						<!-- Badge -->
+						{# <h6 class="mb-3 font-base bg-primary text-white py-2 px-4 rounded-2 d-inline-block">Digital Marketing</h6> #}
+						<!-- Title -->
+							<h1>
+						{{ formation.title }}
+						</h1>
+							<p>
+						{{ formation.description }}
+					</p>
+						<!-- Content -->
+
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- =======================
+																																																																																																																																																																																																																														Page intro END -->
+
+		<!-- =======================
+																																																																																																																																																																																																																														Page content START -->
+		<section class="pb-0 py-lg-5">
+			<div class="container">
+				<div
+					class="row">
+					<!-- Main content START -->
+					<div class="col-lg-8">
+						<div
+							class="bg-body shadow rounded-2 p-4">
+							<!-- Tabs START -->
+
+							<hr>
+							<!-- Tabs END -->
+
+							<!-- Tab contents START -->
+								<div
+								class="tab-content pt-2" id="course-pills-tabContent"> <!-- Content START -->
+								<div
+									class="tab-pane fade show active" id="course-pills-1" role="tabpanel" aria-labelledby="course-pills-tab-1">
+									<!-- Course detail START -->
+									<h5 class="mb-3">Description</h5>
+									{{ formation.description|raw }}
+
+									{% if not formation.is_online %}
+										<hr class="my-4">
+										<h5 class="mb-3">Emplacement</h5>
+
+										<div id="map"></div>
+
+										<button class="btn btn-sm btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#locationModal">
+											Partager la localisation de la formation
+										</button>
+
+										<!-- Bootstrap Modal -->
+										<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="locationModalLabel">Partager la localisation</h5>
+														<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+													</div>
+													<div class="modal-body">
+														<center>
+															<p>Voici la localisation de la formation :</p>
+
+															<p>
+																<strong>Lieu:</strong>
+																{{ formation.place }}
+															</p>
+
+
+															<img src="{{ qr }}" alt="QR Code">
+
+
+															<a class="btn btn-sm btn-primary mt-1" href="{{ path('app_user_formation_share_localisation', { id: formation.id }) }}">
+																Envoyer la localisation a mon téléphone
+															</a>
+														</center>
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+													</div>
+												</div>
+											</div>
+										</div>
+
+									{% endif %}
+
+								</div>
+								<!-- Content END -->
+
+							</div>
+							<!-- Tab contents END -->
+						</div>
+					</div>
+					<!-- Main content END -->
+
+					<!-- Right sidebar START -->
+					<div class="col-lg-4 pt-5 pt-lg-0">
+						<div class="row mb-5 mb-lg-0">
+							<div
+								class="col-md-6 col-lg-12">
+								<!-- Video START -->
+								<div class="card shadow p-2 mb-4 z-index-9">
+									<div class="overflow-hidden rounded-3">
+										<img src="{{ formation.image }}" class="card-img" alt="course image">
+									</div>
+
+									<!-- Card body -->
+									<div
+										class="card-body px-3">
+										<!-- Info -->
+										<div
+											class="d-flex justify-content-between align-items-center">
+											<!-- Price and time -->
+											<div>
+												<div class="d-flex align-items-center">
+													<h3 class="fw-bold mb-0 me-2">{{ formation.price }}
+														TND</h3>
+												</div>
+											</div>
+
+											<!-- Share button with dropdown -->
+											<div
+												class="dropdown">
+
+												<!-- dropdown button -->
+												<ul class="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded" aria-labelledby="dropdownShare">
+													<li>
+														<a class="dropdown-item" href="#">
+															<i class="fab fa-twitter-square me-2"></i>Twitter</a>
+													</li>
+													<li>
+														<a class="dropdown-item" href="#">
+															<i class="fab fa-facebook-square me-2"></i>Facebook</a>
+													</li>
+													<li>
+														<a class="dropdown-item" href="#">
+															<i class="fab fa-linkedin me-2"></i>LinkedIn</a>
+													</li>
+													<li>
+														<a class="dropdown-item" href="#">
+															<i class="fas fa-copy me-2"></i>Copy link</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+
+										<!-- Buttons -->
+										<div class="mt-3">
+											<a href="{{ path('app_user_formation_checkout', { id: formation.id }) }}" class="btn btn-success mb-0 w-100">
+												Acheter la formation
+											</a>
+										</div>
+									</div>
+								</div>
+								<!-- Video END -->
+
+								<!-- Course info START -->
+								<div
+									class="card card-body shadow p-4 mb-4">
+									<!-- Title -->
+									<h4 class="mb-3">Ce cours comprend</h4>
+									<ul class="list-group list-group-borderless">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="h6 fw-light mb-0">
+												<i class="fas fa-fw fa-user-clock text-primary"></i>Date limite</span>
+											<span>{{ formation.end_date|date('d/m/Y') }}</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="h6 fw-light mb-0">
+												<i class="fas fa-fw fa-medal text-primary"></i>Certificat</span>
+											<span>Oui</span>
+										</li>
+									</ul>
+								</div>
+								<!-- Course info END -->
+							</div>
+
+
+						</div>
+						<!-- Row End -->
+					</div>
+					<!-- Right sidebar END -->
+
+				</div>
+				<!-- Row END -->
+			</div>
+		</section>
+		<!-- =======================
+																																																																																																																																																																																																																														Page content END -->
+
+
+	</main>
+
+{% endblock %}
+
+
+{% block js %}
+	{{ parent() }}
+	{% if not formation.is_online %}
+
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
+
+
+		<script>
+			let map,
+marker,
+autocomplete;
+
+function initMap() {
+const initialPosition = {
+lat: {{ formation.lat }},
+lng: {{ formation.lng }}
+};
+
+map = new google.maps.Map(document.getElementById("map"), {
+center: initialPosition,
+zoom: 15
+});
+
+marker = new google.maps.Marker({map: map, draggable: false, position: initialPosition});
+
+marker.setVisible(true);
+}
+
+window.onload = initMap;
+		</script>
+
+	{% endif %}
+{% endblock %}

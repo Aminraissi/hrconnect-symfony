@@ -1,10 +1,10 @@
 <div class="">
-	{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+	{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
 
 	{% if not form.vars.valid %}
 		<div class="alert alert-danger p-4">
 			<i class="fas fa-times-circle"></i>
-			There were errors in the form. Please correct them before submitting.
+			Le formulaire comporte des erreurs. Veuillez les corriger avant de soumettre.
 		</div>
 	{% endif %}
 
@@ -12,22 +12,26 @@
 	<div class="col-xl-12 col-sm-12 col-12">
 		<div class="card">
 			<div class="card-header">
-				<h2 class="card-titles">Basic Information
-					<span>General details of the formation.</span>
+				<h2 class="card-titles">Informations de base
+					<span>Détails généraux de la formation.</span>
 				</h2>
 			</div>
 			<div class="card-body">
 				<div class="row">
 					<div class="col-xl-6 col-sm-12 col-12">
 						<div class="form-group">
-							{{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Title'}}) }}
+							{{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Titre'}}) }}
 							<div class="text-danger error-text error-text">{{ form_errors(form.title) }}</div>
 						</div>
 					</div>
 					<div class="col-xl-6 col-sm-12 col-12">
-						<div class="form-group">
-							{{ form_widget(form.image, {'attr': {'class': 'form-control', 'placeholder': 'Image'}}) }}
-							<div class="text-danger error-text">{{ form_errors(form.image) }}</div>
+						<div
+							class="form-group">
+							{# {{ form_widget(form.image, {'attr': {'class': 'form-control', 'placeholder': 'Image'}}) }} #}
+							<input
+							type="file" name="image" accept="image/*" class="form-control"/>
+
+						{# <div class="text-danger error-text">{{ form_errors(form.image) }}</div> #}
 						</div>
 					</div>
 				</div>
@@ -43,24 +47,26 @@
 	<div class="col-xl-12 col-sm-12 col-12 mt-4">
 		<div class="card">
 			<div class="card-header">
-				<h2 class="card-titles">Availability & Location
-					<span>Where and to whom the formation is available.</span>
+				<h2 class="card-titles">Disponibilité et localisation
+					<span>Où et à qui la formation est disponible.</span>
 				</h2>
 			</div>
 			<div class="card-body">
 				<div class="row mb-3">
 					<div class="col-xl-6 col-sm-12 col-12">
 						<div class="form-check form-switch">
-							Online Training :
+							Formation en ligne :
 
-							{{ form_widget(form.is_online, {'attr': {'class': 'form-check-input', 'id': 'isonline', 'data-toggle': 'toggle', 'data-on': 'YES', 'data-off': 'NO'}}) }}
+							{{ form_widget(form.is_online, {'attr': {'class': 'form-check-input', 'id': 'isonline', 'data-toggle': 'toggle', 'data-on': 'OUI', 'data-off': 'NON'}}) }}
 
 							<div class="text-danger error-text">{{ form_errors(form.is_online) }}</div>
 						</div>
 					</div>
-					<div class="col-xl-6 col-sm-12 col-12">
+					<div class="col-xl-12 col-sm-12 col-12">
 						<div class="form-group" id="f_place">
-							{{ form_widget(form.place, {'attr': {'class': 'form-control', 'placeholder': 'Place'}}) }}
+							{{ form_widget(form.place, {'attr': {'class': 'form-control', 'placeholder': 'Lieu'}}) }}
+							<div id="map"></div>
+
 							<div class="text-danger error-text">{{ form_errors(form.place) }}</div>
 						</div>
 					</div>
@@ -82,14 +88,14 @@
 				<div class="row mb-3">
 					<div class="col-xl-12 col-sm-12 col-12">
 						<div class="form-check">
-							{{ form_label(form.available_for_employee, null, {'label_attr': {'class': 'form-check-label ms-2'}}) }} :
+							{{ form_label(form.available_for_employee, 'Disponible pour les employés :', {'label_attr': {'class': 'form-check-label ms-2'}}) }}
 							{{ form_widget(form.available_for_employee, {'attr': {'class': 'form-check-input', 'data-toggle': 'toggle', 'data-on': 'YES', 'data-off': 'NO'}}) }}
 							<div class="text-danger error-text">{{ form_errors(form.available_for_employee) }}</div>
 						</div>
 					</div>
 					<div class="col-xl-12 col-sm-12 col-12 mt-3">
 						<div class="form-check">
-							{{ form_label(form.available_for_intern, null, {'label_attr': {'class': 'form-check-label ms-2'}}) }} :
+							{{ form_label(form.available_for_intern, 'Disponible pour stagiaires', {'label_attr': {'class': 'form-check-label ms-2'}}) }} :
 							{{ form_widget(form.available_for_intern, {'attr': {'class': 'form-check-input', 'data-toggle': 'toggle', 'data-on': 'YES', 'data-off': 'NO'}}) }}
 							<div class="text-danger error-text">{{ form_errors(form.available_for_intern) }}</div>
 						</div>
@@ -103,8 +109,8 @@
 	<div class="col-xl-12 col-sm-12 col-12 mt-4">
 		<div class="card">
 			<div class="card-header">
-				<h2 class="card-titles">Schedule & Assignment
-					<span>Manage the timeline, trainer, and participants.</span>
+				<h2 class="card-titles">Horaire et affectation
+					<span>Gérer le calendrier, le formateur et les participants.</span>
 				</h2>
 			</div>
 			<div class="card-body">
@@ -125,7 +131,7 @@
 				<div class="row mb-3">
 					<div class="col-xl-6 col-sm-12 col-12">
 						<div class="form-group">
-							{{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': 'Price'}}) }}
+							{{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': 'Prix'}}) }}
 							<div class="text-danger error-text">{{ form_errors(form.price) }}</div>
 						</div>
 					</div>
@@ -142,8 +148,8 @@
 		<div class="row mt-4">
 			<div class="col-xl-12 col-sm-12 col-12">
 				<div class="form-btn">
-					<button type="submit" class="btn btn-apply w-auto">{{ button_label|default('Save') }}</button>
-					<a href="{{ path('app_formations_index') }}" class="btn btn-secondary">Cancel</a>
+					<button type="submit" class="btn btn-apply w-auto">{{ button_label|default('Enregister') }}</button>
+					<a href="{{ path('app_formations_index') }}" class="btn btn-secondary">Annuler</a>
 				</div>
 			</div>
 		</div>

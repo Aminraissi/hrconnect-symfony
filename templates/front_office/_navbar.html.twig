@@ -1,0 +1,75 @@
+<header
+	class="navbar-light navbar-sticky header-static">
+	<!-- Logo Nav START -->
+	<nav class="navbar navbar-expand-xl">
+		<div
+			class="container-fluid px-3 px-xl-5">
+			<!-- Logo START -->
+			<a class="navbar-brand" href="{{ path('app_front_office') }}">
+				<img class="light-mode-item navbar-brand-item" src="{{ asset('assets/img/logo.png') }}" alt="logo" style="width: 100px; height: 65px; margin-top: -13px;">
+				<img class="dark-mode-item navbar-brand-item" src="{{ asset('assets/img/logo.png') }}" alt="logo">
+			</a>
+			<!-- Logo END -->
+
+			<!-- Responsive navbar toggler -->
+			<button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-animation">
+					<span></span>
+					<span></span>
+					<span></span>
+				</span>
+			</button>
+
+			<!-- Main navbar START -->
+			<div
+				class="navbar-collapse w-100 collapse" id="navbarCollapse">
+
+
+				<!-- Nav Main menu START -->
+				<ul class="navbar-nav navbar-nav-scroll me-auto">
+
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_user_formation') }}">Formations</a>
+					</li>
+
+					{% if app.user %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('app_mes_formations') }}">Mes Formations</a>
+						</li>
+					{% endif %}
+				</ul>
+
+				<ul class="navbar-nav navbar-nav-scroll ms-auto">
+					<li class="nav-item dropdown has-arrow main-drop">
+						{% if app.user %}
+							<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+								<span>{{ app.user.nom }}
+									{{ app.user.prenom }}</span>
+
+							</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" href="{{ path('app_user_profile') }}">
+									<i data-feather="user" class="mr-1"></i>
+									Profile</a>
+								<a class="dropdown-item" href="{{ path('app_back_office') }}">
+									<i data-feather="settings" class="mr-1"></i>
+									Settings</a>
+								<a class="dropdown-item" href="{{ path('logout') }}">
+									<i data-feather="log-out" class="mr-1"></i>
+									Logout</a>
+							</div>
+						</li>
+					{% else %}
+						<a href="{{ path('login') }}" class="btn btn-primary">Login</a>
+					{% endif %}
+
+				</ul>
+
+
+			</div>
+			<!-- Main navbar END -->
+
+		</div>
+	</nav>
+	<!-- Logo Nav END -->
+</header>

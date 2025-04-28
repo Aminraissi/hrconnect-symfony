@@ -17,22 +17,20 @@ class OffreEmploiRepository extends ServiceEntityRepository
 
     public function findAllActive(): array
     {
+        // Note: isActive n'est plus un champ mappé dans la base de données
+        // Nous récupérons donc toutes les offres sans filtrage
         return $this->createQueryBuilder('o')
-            ->where('o.isActive = :active')
-            ->setParameter('active', true)
-            ->orderBy('o.datePublication', 'DESC')
+            ->orderBy('o.id', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
     public function findByTypeContrat(string $typeContrat): array
     {
+        // Note: typeContrat et isActive ne sont plus des champs mappés dans la base de données
+        // Nous récupérons donc toutes les offres sans filtrage
         return $this->createQueryBuilder('o')
-            ->where('o.typeContrat = :typeContrat')
-            ->andWhere('o.isActive = :active')
-            ->setParameter('typeContrat', $typeContrat)
-            ->setParameter('active', true)
-            ->orderBy('o.datePublication', 'DESC')
+            ->orderBy('o.id', 'DESC')
             ->getQuery()
             ->getResult();
     }
