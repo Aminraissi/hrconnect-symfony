@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\WeatherService;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/demande/conge')]
 final class DemandeCongeController extends AbstractController
@@ -53,61 +55,98 @@ final class DemandeCongeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_demande_conge_new', methods: ['GET', 'POST'])]
-    public function new(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        MailerInterface $mailer
-    ): Response {
-        $demandeConge = new DemandeConge();
-        $form = $this->createForm(DemandeCongeType::class, $demandeConge);
-        $form->handleRequest($request);
+public function new(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    MailerInterface $mailer,
+    HttpClientInterface $httpClient
+): Response {
+    $demandeConge = new DemandeConge();
+    $form = $this->createForm(DemandeCongeType::class, $demandeConge);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $employe = $demandeConge->getEmploye();
-            $dateDebut = $demandeConge->getDateDebut();
-            $dateFin = $demandeConge->getDateFin();
+    // Récupération des données météo pour Paris (7 jours)
+    $weatherData = [];
+    try {
+        $response = $httpClient->request(
+            'GET',
+            'http://api.weatherapi.com/v1/forecast.json',
+            [
+                'query' => [
+                    'key' => 'd2a837751725420a982135319252804',
+                    'q' => 'Tunis',
+                    'days' => 7,
+                    'lang' => 'fr'
+                ]
+            ]
+        );
 
-            if ($employe && $dateDebut && $dateFin) {
-                $daysRequested = $dateDebut->diff($dateFin)->days + 1; // Include both start and end dates
-                $newBalance = $employe->getSoldeConges() - $daysRequested;
-
-                // Prevent creation if the balance will go below -7
-                if ($newBalance < -7) {
-                    $this->addFlash('error', 'Le solde des congés ne peut pas descendre en dessous de -7. Demande refusée.');
-                    return $this->render('demande_conge/new.html.twig', [
-                        'demande_conge' => $demandeConge,
-                        'form' => $form,
-                    ]);
-                }
-
-                // Update leave balance
-                $employe->setSoldeConges($newBalance);
-                $entityManager->persist($employe);
-
-                // Persist the leave request
-                $entityManager->persist($demandeConge);
-
-                // Automatically create an entry in ValiderConge
-                $validerConge = new ValiderConge();
-                $validerConge->setDemandeConge($demandeConge);
-                $validerConge->setStatut('EN_ATTENTE');
-                $validerConge->setDateValidation(new \DateTime());
-                $entityManager->persist($validerConge);
-
-                $entityManager->flush();
-
-                $this->sendConfirmationEmail($demandeConge, $mailer);
-
-                return $this->redirectToRoute('app_demande_conge_index', [], Response::HTTP_SEE_OTHER);
-            }
+        if ($response->getStatusCode() === 200) {
+            $weatherData = $response->toArray();
+        } else {
+            $this->addFlash('warning', 'Service météo temporairement indisponible');
         }
-
-        return $this->render('demande_conge/new.html.twig', [
-            'demande_conge' => $demandeConge,
-            'form' => $form,
-        ]);
+    } catch (\Exception $e) {
+        $this->addFlash('warning', 'Impossible de charger les données météo: '.$e->getMessage());
     }
-  
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $employe = $demandeConge->getEmploye();
+        $dateDebut = $demandeConge->getDateDebut();
+        $dateFin = $demandeConge->getDateFin();
+
+        if ($employe && $dateDebut && $dateFin) {
+            $daysRequested = $dateDebut->diff($dateFin)->days + 1;
+            $newBalance = $employe->getSoldeConges() - $daysRequested;
+
+            if ($newBalance < -7) {
+                $this->addFlash('error', 'Le solde des congés ne peut pas descendre en dessous de -7. Demande refusée.');
+                return $this->render('demande_conge/new.html.twig', [
+                    'demande_conge' => $demandeConge,
+                    'form' => $form,
+                    'weather' => $weatherData,
+                ]);
+            }
+
+            $employe->setSoldeConges($newBalance);
+            $entityManager->persist($employe);
+            $entityManager->persist($demandeConge);
+
+            $validerConge = new ValiderConge();
+            $validerConge->setDemandeConge($demandeConge);
+            $validerConge->setStatut('EN_ATTENTE');
+            $validerConge->setDateValidation(new \DateTime());
+            $entityManager->persist($validerConge);
+
+            $entityManager->flush();
+
+            // Envoi d'email
+            try {
+                $email = (new Email())
+                    ->from('chikenbrain26@gmail.com')
+                    ->to('chikenbrain26@gmail.com')
+                    ->subject('Nouvelle demande de congé - ' . $demandeConge->getTypeConge())
+                    ->html($this->renderView(
+                        'emails/nouvelle_demande_conge.html.twig',
+                        ['demande' => $demandeConge]
+                    ));
+
+                $mailer->send($email);
+                $this->addFlash('success', 'Email envoyé avec succès !');
+            } catch (\Exception $e) {
+                $this->addFlash('error', "Échec de l'envoi de l'email : " . $e->getMessage());
+            }
+
+            return $this->redirectToRoute('app_demande_conge_index', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    return $this->render('demande_conge/new.html.twig', [
+        'demande_conge' => $demandeConge,
+        'form' => $form,
+        'weather' => $weatherData,
+    ]);
+}
 
     #[Route('/{id}/edit', name: 'app_demande_conge_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, DemandeConge $demandeConge, EntityManagerInterface $entityManager): Response
