@@ -16,6 +16,6 @@ return [
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class             => ['all' => true],
     EWZ\Bundle\RecaptchaBundle\EWZRecaptchaBundle::class             => ['all' => true],
     Vich\UploaderBundle\VichUploaderBundle::class                    => ['all' => true],
-
     Symfony\UX\TwigComponent\TwigComponentBundle::class              => ['all' => true],
+    CMEN\GoogleChartsBundle\CMENGoogleChartsBundle::class            => ['all' => true],
 ];
