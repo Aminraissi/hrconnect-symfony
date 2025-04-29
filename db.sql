@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le : lun. 14 avr. 2025 à 21:17
--- Version du serveur : 10.4.32-MariaDB
--- Version de PHP : 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Apr 29, 2025 at 12:40 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `hrconnect`
+-- Database: `hrconnect`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `absence`
+-- Table structure for table `absence`
 --
 
 CREATE TABLE `absence` (
@@ -37,7 +37,7 @@ CREATE TABLE `absence` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `absence`
+-- Dumping data for table `absence`
 --
 
 INSERT INTO `absence` (`id`, `employe_id`, `motif`, `justificatif`, `remarque`, `date_enregistrement`) VALUES
@@ -46,7 +46,7 @@ INSERT INTO `absence` (`id`, `employe_id`, `motif`, `justificatif`, `remarque`, 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `admin`
+-- Table structure for table `admin`
 --
 
 CREATE TABLE `admin` (
@@ -60,7 +60,7 @@ CREATE TABLE `admin` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `candidat`
+-- Table structure for table `candidat`
 --
 
 CREATE TABLE `candidat` (
@@ -72,7 +72,7 @@ CREATE TABLE `candidat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `candidat`
+-- Dumping data for table `candidat`
 --
 
 INSERT INTO `candidat` (`id`, `last_name`, `first_name`, `email`, `phone`) VALUES
@@ -89,7 +89,7 @@ INSERT INTO `candidat` (`id`, `last_name`, `first_name`, `email`, `phone`) VALUE
 -- --------------------------------------------------------
 
 --
--- Structure de la table `candidature`
+-- Table structure for table `candidature`
 --
 
 CREATE TABLE `candidature` (
@@ -104,7 +104,7 @@ CREATE TABLE `candidature` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `demande_conge`
+-- Table structure for table `demande_conge`
 --
 
 CREATE TABLE `demande_conge` (
@@ -117,7 +117,7 @@ CREATE TABLE `demande_conge` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `demande_conge`
+-- Dumping data for table `demande_conge`
 --
 
 INSERT INTO `demande_conge` (`id`, `employe_id`, `typeConge`, `dateDebut`, `dateFin`, `statut`) VALUES
@@ -131,7 +131,7 @@ INSERT INTO `demande_conge` (`id`, `employe_id`, `typeConge`, `dateDebut`, `date
 -- --------------------------------------------------------
 
 --
--- Structure de la table `employe`
+-- Table structure for table `employe`
 --
 
 CREATE TABLE `employe` (
@@ -147,7 +147,7 @@ CREATE TABLE `employe` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `employe`
+-- Dumping data for table `employe`
 --
 
 INSERT INTO `employe` (`id`, `cin`, `nom`, `prenom`, `email`, `password`, `hiring_date`, `soldeConges`, `solde_conges`) VALUES
@@ -161,7 +161,7 @@ INSERT INTO `employe` (`id`, `cin`, `nom`, `prenom`, `email`, `password`, `hirin
 -- --------------------------------------------------------
 
 --
--- Structure de la table `formateurs`
+-- Table structure for table `formateurs`
 --
 
 CREATE TABLE `formateurs` (
@@ -173,7 +173,7 @@ CREATE TABLE `formateurs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `formateurs`
+-- Dumping data for table `formateurs`
 --
 
 INSERT INTO `formateurs` (`id`, `first_name`, `last_name`, `email`, `password`) VALUES
@@ -184,7 +184,7 @@ INSERT INTO `formateurs` (`id`, `first_name`, `last_name`, `email`, `password`) 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `formations`
+-- Table structure for table `formations`
 --
 
 CREATE TABLE `formations` (
@@ -205,7 +205,7 @@ CREATE TABLE `formations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `formations`
+-- Dumping data for table `formations`
 --
 
 INSERT INTO `formations` (`id`, `formateur_id`, `title`, `image`, `description`, `is_online`, `place`, `lat`, `lng`, `available_for_employee`, `available_for_intern`, `start_date`, `end_date`, `price`) VALUES
@@ -213,12 +213,13 @@ INSERT INTO `formations` (`id`, `formateur_id`, `title`, `image`, `description`,
 (41, 2, 'Test formation payante', 'https://i.ibb.co/Zzqw2Dk3/59d345242af9.png', 'Test formation payante', 0, 'Esprit bloc I,J,K, Cebalat, Tunisia', 36.9010594, 10.190243, 1, 1, '2025-03-05 07:53:48', '2025-03-06 06:53:48', 9.99),
 (47, 2, 'formation php', 'https://i.ibb.co/wFCSSvrh/d150e2216999.png', 'php', 0, 'Esprit School of Business, Cebalat, Tunisia', 36.89923520000001, 10.189445, 1, 1, '2025-03-06 09:02:49', '2025-03-06 09:02:49', 12),
 (48, 2, 'tesssst', 'https://i.ibb.co/wFCSSvrh/d150e2216999.png', 'jdj', 0, 'Esprit School of Business, Cebalat, Tunisia', 36.89923520000001, 10.189445, 1, 1, '2025-03-06 09:17:19', NULL, 10),
-(49, 2, 'eyyey&yz', 'https://i.ibb.co/DfZDzwss/9ad51a8f934a.png', 'zyzyzy', 0, 'Bardo, Tunisia', 36.80840260000001, 10.1283163, 1, 1, '2025-03-06 09:21:19', NULL, 0);
+(49, 2, 'eyyey&yz', 'https://i.ibb.co/DfZDzwss/9ad51a8f934a.png', 'zyzyzy', 0, 'Bardo, Tunisia', 36.80840260000001, 10.1283163, 1, 1, '2025-03-06 09:21:19', NULL, 0),
+(51, 2, 'aa', 'aa', 'aaa', 1, '1', 1, 1, 0, 0, '2025-04-07 00:00:00', '2025-04-07 00:00:00', 5);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `formation_participation`
+-- Table structure for table `formation_participation`
 --
 
 CREATE TABLE `formation_participation` (
@@ -227,16 +228,17 @@ CREATE TABLE `formation_participation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `formation_participation`
+-- Dumping data for table `formation_participation`
 --
 
 INSERT INTO `formation_participation` (`formation_id`, `employe_id`) VALUES
-(31, 18);
+(31, 18),
+(51, 3);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `historique_candidatures`
+-- Table structure for table `historique_candidatures`
 --
 
 CREATE TABLE `historique_candidatures` (
@@ -246,7 +248,7 @@ CREATE TABLE `historique_candidatures` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `historique_candidatures`
+-- Dumping data for table `historique_candidatures`
 --
 
 INSERT INTO `historique_candidatures` (`reference`, `status`, `date_modification`) VALUES
@@ -260,7 +262,7 @@ INSERT INTO `historique_candidatures` (`reference`, `status`, `date_modification
 -- --------------------------------------------------------
 
 --
--- Structure de la table `hr`
+-- Table structure for table `hr`
 --
 
 CREATE TABLE `hr` (
@@ -274,7 +276,7 @@ CREATE TABLE `hr` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `offre_emploi`
+-- Table structure for table `offre_emploi`
 --
 
 CREATE TABLE `offre_emploi` (
@@ -285,7 +287,7 @@ CREATE TABLE `offre_emploi` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `offre_emploi`
+-- Dumping data for table `offre_emploi`
 --
 
 INSERT INTO `offre_emploi` (`id`, `title`, `description`, `location`) VALUES
@@ -295,7 +297,7 @@ INSERT INTO `offre_emploi` (`id`, `title`, `description`, `location`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `quiz`
+-- Table structure for table `quiz`
 --
 
 CREATE TABLE `quiz` (
@@ -309,21 +311,20 @@ CREATE TABLE `quiz` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `quiz`
+-- Dumping data for table `quiz`
 --
 
 INSERT INTO `quiz` (`id`, `formation_id`, `question`, `reponse1`, `reponse2`, `reponse3`, `num_reponse_correct`) VALUES
-(16, 31, 'Quelle classe est utilisée pour créer une fenêtre en JavaFX !?', 'JFrame', 'Stage', 'Window', 2),
+(16, 31, 'Quelle classe est utilisée pour créer une fenêtre en JavaFX ?', 'JFrame', 'Stage', 'Window', 2),
 (17, 31, 'Quel est le langage utilisé pour styliser une interface JavaFX ?', 'CSS', 'XML', 'JavaScript', 1),
 (18, 31, 'Quelle méthode est utilisée pour lancer une application JavaFX ?', 'launch', 'start', 'run', 1),
-(23, 31, 'aabc', '1', '2', '3', 1),
-(24, 31, 'hello', '5', '5', '5', 1),
-(25, 31, 'question', 'rep', 'rep2', 'rep3', 3);
+(19, 31, 'Quel conteneur est utilisé pour organiser les éléments en colonne dans JavaFX ?', 'VBox ', 'HBox', 'GridPane', 1),
+(20, 31, 'Quel événement est utilisé pour détecter un clic sur un bouton JavaFX ?', 'setOnAction', 'setOnClick', 'setOnPress', 1);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `quiz_reponses`
+-- Table structure for table `quiz_reponses`
 --
 
 CREATE TABLE `quiz_reponses` (
@@ -333,18 +334,20 @@ CREATE TABLE `quiz_reponses` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `quiz_reponses`
+-- Dumping data for table `quiz_reponses`
 --
 
 INSERT INTO `quiz_reponses` (`employe_id`, `quiz_id`, `num_reponse`) VALUES
 (18, 16, 2),
 (18, 17, 1),
-(18, 18, 2);
+(18, 18, 2),
+(18, 19, 2),
+(18, 20, 1);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `reclamation`
+-- Table structure for table `reclamation`
 --
 
 CREATE TABLE `reclamation` (
@@ -360,7 +363,7 @@ CREATE TABLE `reclamation` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `reset_password_request`
+-- Table structure for table `reset_password_request`
 --
 
 CREATE TABLE `reset_password_request` (
@@ -375,7 +378,7 @@ CREATE TABLE `reset_password_request` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `stagaires`
+-- Table structure for table `stagaires`
 --
 
 CREATE TABLE `stagaires` (
@@ -391,7 +394,7 @@ CREATE TABLE `stagaires` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `ticket_reclamation`
+-- Table structure for table `ticket_reclamation`
 --
 
 CREATE TABLE `ticket_reclamation` (
@@ -407,7 +410,7 @@ CREATE TABLE `ticket_reclamation` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -417,22 +420,30 @@ CREATE TABLE `user` (
   `prenom` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `roles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`roles`)),
+  `roles` longtext NOT NULL COMMENT '(DC2Type:json)	',
   `id` int(11) NOT NULL,
-  `otp` int(11) DEFAULT NULL
+  `otp` int(11) DEFAULT NULL,
+  `profile_picture` varchar(255) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `user`
+-- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`cin`, `tel`, `nom`, `prenom`, `email`, `password`, `roles`, `id`, `otp`) VALUES
-(10123124, 29175235, 'haythem', 'dridi', 'haithemdridiweb@gmail.com', '$2y$13$qZprh6m99NjqKPzE.sgbOuQk1O/6YWGSZY14FJX55tRdXmo.AjQU2', '[\"ROLE_ADMIN\"]', 13, NULL);
+INSERT INTO `user` (`cin`, `tel`, `nom`, `prenom`, `email`, `password`, `roles`, `id`, `otp`, `profile_picture`, `updated_at`) VALUES
+(12312312, 12312312, 'arafet', 'ksiksi', 'arafetksiksi7@gmail.com', '123456', '[\"ROLE_CLIENT\"]', 1, NULL, 'golf-680fa67e58092815245628.jpg', '2025-04-28 18:02:06'),
+(12121212, 12121212, 'test', 'test', 'test@gmail.com', '$2y$13$98FSTrUeyYrCWaQ1BhBAOudafY/UjvT.f7XcjB1H5C2eBYlvYON5O', '[]', 2, NULL, NULL, NULL),
+(12312311, 12312311, 'aaa', 'aaaa', 'aaa@gmail.com', '$2y$13$fLB8Wm7GTMujxZ7NKXbpQu58wkDTazb09OrNZos3oCP59xwEr4eqO', '[]', 3, NULL, NULL, NULL),
+(11112222, 11114444, 'test', 'test', 'test@gmail.com', '$2y$13$7z1/MtTOM9W9f.REB3fY/./rcG1TtolObKoh0xpUb2diRa3JW54uK', '[\"ROLE_STAGIAIRE\"]', 4, NULL, NULL, NULL),
+(15151515, 15151515, 'aaaa', 'zzzz', 'aaa@gmail.com', '$2y$13$fFXBrpXCuKEuZMboahpOfOTCexdGcn8gyv45HvoifboHX3nTwj.3G', '[]', 5, NULL, NULL, NULL),
+(18181818, 18181818, 'aze', 'aze', 'aze@gmail.com', '$2y$13$XnhH5kaC5FoykR9.mOxuM.z66m78gcWKJ49tYfmCRjek3TQ9FtpRG', '[\"ROLE_STAGIAIRE\"]', 6, NULL, 'sppp-680fb0bf3ed12.jpg', '2025-04-28 18:45:51'),
+(11335566, 11559977, 'yyy8', 'uuu5', 'ttt@gmail.com', '$2y$13$Swn2XB7eZofO623e3SibaOkvaZA003DuhL5xGgjNa13Xur1Kuj0M.', '[]', 7, NULL, 'sssssssssss-680fb3d011cf4.jpg', '2025-04-28 18:58:56');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `valider_conge`
+-- Table structure for table `valider_conge`
 --
 
 CREATE TABLE `valider_conge` (
@@ -444,7 +455,7 @@ CREATE TABLE `valider_conge` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `valider_conge`
+-- Dumping data for table `valider_conge`
 --
 
 INSERT INTO `valider_conge` (`id`, `demande_id`, `statut`, `commentaire`, `dateValidation`) VALUES
@@ -459,24 +470,24 @@ INSERT INTO `valider_conge` (`id`, `demande_id`, `statut`, `commentaire`, `dateV
 (9, 9, 'REFUSEE', 'hjhjg', '2025-03-05');
 
 --
--- Index pour les tables déchargées
+-- Indexes for dumped tables
 --
 
 --
--- Index pour la table `absence`
+-- Indexes for table `absence`
 --
 ALTER TABLE `absence`
   ADD PRIMARY KEY (`id`),
   ADD KEY `employe_id` (`employe_id`);
 
 --
--- Index pour la table `admin`
+-- Indexes for table `admin`
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `candidat`
+-- Indexes for table `candidat`
 --
 ALTER TABLE `candidat`
   ADD PRIMARY KEY (`id`),
@@ -484,7 +495,7 @@ ALTER TABLE `candidat`
   ADD UNIQUE KEY `phone` (`phone`);
 
 --
--- Index pour la table `candidature`
+-- Indexes for table `candidature`
 --
 ALTER TABLE `candidature`
   ADD PRIMARY KEY (`id`),
@@ -492,228 +503,228 @@ ALTER TABLE `candidature`
   ADD KEY `offre_emploi_id` (`offre_emploi_id`);
 
 --
--- Index pour la table `demande_conge`
+-- Indexes for table `demande_conge`
 --
 ALTER TABLE `demande_conge`
   ADD PRIMARY KEY (`id`),
   ADD KEY `employe_id` (`employe_id`);
 
 --
--- Index pour la table `employe`
+-- Indexes for table `employe`
 --
 ALTER TABLE `employe`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `formateurs`
+-- Indexes for table `formateurs`
 --
 ALTER TABLE `formateurs`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `formations`
+-- Indexes for table `formations`
 --
 ALTER TABLE `formations`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_formateur` (`formateur_id`);
 
 --
--- Index pour la table `formation_participation`
+-- Indexes for table `formation_participation`
 --
 ALTER TABLE `formation_participation`
   ADD KEY `fk_formation` (`formation_id`),
   ADD KEY `fk_employe` (`employe_id`);
 
 --
--- Index pour la table `historique_candidatures`
+-- Indexes for table `historique_candidatures`
 --
 ALTER TABLE `historique_candidatures`
   ADD PRIMARY KEY (`reference`);
 
 --
--- Index pour la table `hr`
+-- Indexes for table `hr`
 --
 ALTER TABLE `hr`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `offre_emploi`
+-- Indexes for table `offre_emploi`
 --
 ALTER TABLE `offre_emploi`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `quiz`
+-- Indexes for table `quiz`
 --
 ALTER TABLE `quiz`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_quiz_formation` (`formation_id`);
 
 --
--- Index pour la table `quiz_reponses`
+-- Indexes for table `quiz_reponses`
 --
 ALTER TABLE `quiz_reponses`
   ADD KEY `fk_quiz_reponses_employe` (`employe_id`),
   ADD KEY `fk_quiz_reponses_quiz` (`quiz_id`);
 
 --
--- Index pour la table `stagaires`
+-- Indexes for table `stagaires`
 --
 ALTER TABLE `stagaires`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `user`
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `valider_conge`
+-- Indexes for table `valider_conge`
 --
 ALTER TABLE `valider_conge`
   ADD PRIMARY KEY (`id`),
   ADD KEY `demande_id` (`demande_id`);
 
 --
--- AUTO_INCREMENT pour les tables déchargées
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT pour la table `absence`
+-- AUTO_INCREMENT for table `absence`
 --
 ALTER TABLE `absence`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT pour la table `admin`
+-- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `candidat`
+-- AUTO_INCREMENT for table `candidat`
 --
 ALTER TABLE `candidat`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT pour la table `candidature`
+-- AUTO_INCREMENT for table `candidature`
 --
 ALTER TABLE `candidature`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT pour la table `demande_conge`
+-- AUTO_INCREMENT for table `demande_conge`
 --
 ALTER TABLE `demande_conge`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT pour la table `employe`
+-- AUTO_INCREMENT for table `employe`
 --
 ALTER TABLE `employe`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
--- AUTO_INCREMENT pour la table `formateurs`
+-- AUTO_INCREMENT for table `formateurs`
 --
 ALTER TABLE `formateurs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT pour la table `formations`
+-- AUTO_INCREMENT for table `formations`
 --
 ALTER TABLE `formations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
--- AUTO_INCREMENT pour la table `hr`
+-- AUTO_INCREMENT for table `hr`
 --
 ALTER TABLE `hr`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `offre_emploi`
+-- AUTO_INCREMENT for table `offre_emploi`
 --
 ALTER TABLE `offre_emploi`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT pour la table `quiz`
+-- AUTO_INCREMENT for table `quiz`
 --
 ALTER TABLE `quiz`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
--- AUTO_INCREMENT pour la table `stagaires`
+-- AUTO_INCREMENT for table `stagaires`
 --
 ALTER TABLE `stagaires`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `user`
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT pour la table `valider_conge`
+-- AUTO_INCREMENT for table `valider_conge`
 --
 ALTER TABLE `valider_conge`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- Contraintes pour les tables déchargées
+-- Constraints for dumped tables
 --
 
 --
--- Contraintes pour la table `absence`
+-- Constraints for table `absence`
 --
 ALTER TABLE `absence`
   ADD CONSTRAINT `absence_ibfk_1` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `candidature`
+-- Constraints for table `candidature`
 --
 ALTER TABLE `candidature`
   ADD CONSTRAINT `candidature_ibfk_1` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `candidature_ibfk_2` FOREIGN KEY (`offre_emploi_id`) REFERENCES `offre_emploi` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `demande_conge`
+-- Constraints for table `demande_conge`
 --
 ALTER TABLE `demande_conge`
   ADD CONSTRAINT `demande_conge_ibfk_1` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`id`);
 
 --
--- Contraintes pour la table `formations`
+-- Constraints for table `formations`
 --
 ALTER TABLE `formations`
   ADD CONSTRAINT `fk_formateur` FOREIGN KEY (`formateur_id`) REFERENCES `formateurs` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `formation_participation`
+-- Constraints for table `formation_participation`
 --
 ALTER TABLE `formation_participation`
   ADD CONSTRAINT `fk_employe` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_formation` FOREIGN KEY (`formation_id`) REFERENCES `formations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `quiz`
+-- Constraints for table `quiz`
 --
 ALTER TABLE `quiz`
   ADD CONSTRAINT `fk_quiz_formation` FOREIGN KEY (`formation_id`) REFERENCES `formations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `quiz_reponses`
+-- Constraints for table `quiz_reponses`
 --
 ALTER TABLE `quiz_reponses`
   ADD CONSTRAINT `fk_quiz_reponses_employe` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_quiz_reponses_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `valider_conge`
+-- Constraints for table `valider_conge`
 --
 ALTER TABLE `valider_conge`
   ADD CONSTRAINT `valider_conge_ibfk_1` FOREIGN KEY (`demande_id`) REFERENCES `demande_conge` (`id`);
