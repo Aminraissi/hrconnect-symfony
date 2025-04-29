@@ -4,8 +4,66 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4da8cd3170264d8c343648e0cf46c6e6",
+    "content-hash": "e7e9b9a92557d4c3a455d4208f10f423",
     "packages": [
+        {
+            "name": "cmen/google-charts-bundle",
+            "version": "7.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cmen/CMENGoogleChartsBundle.git",
+                "reference": "dd086ef65071a7e039e8c2f99a94e3b290cab3e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cmen/CMENGoogleChartsBundle/zipball/dd086ef65071a7e039e8c2f99a94e3b290cab3e5",
+                "reference": "dd086ef65071a7e039e8c2f99a94e3b290cab3e5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=8.1",
+                "symfony/config": "^6.0 || ^7.0",
+                "symfony/dependency-injection": "^6.0 || ^7.0",
+                "symfony/http-kernel": "^6.0 || ^7.0",
+                "twig/twig": "^2.13 | ^3.0.4 | 4.x-dev@dev"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.64",
+                "phpstan/phpstan": "^1.12",
+                "phpunit/phpunit": "^10.5",
+                "rector/rector": "^1.2"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "CMEN\\GoogleChartsBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christophe Meneses"
+                }
+            ],
+            "description": "This Bundle provides a Twig extension and PHP objects to display Google charts in your Symfony application.",
+            "keywords": [
+                "chart",
+                "charts",
+                "google",
+                "graph",
+                "graphs",
+                "map"
+            ],
+            "support": {
+                "issues": "https://github.com/cmen/CMENGoogleChartsBundle/issues",
+                "source": "https://github.com/cmen/CMENGoogleChartsBundle/tree/7.0.0"
+            },
+            "time": "2024-10-25T09:20:33+00:00"
+        },
         {
             "name": "composer/semver",
             "version": "3.4.3",

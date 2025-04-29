@@ -1,4 +1,7 @@
 {
+    "cmen/google-charts-bundle": {
+        "version": "7.0.0"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.14",
         "recipe": {
