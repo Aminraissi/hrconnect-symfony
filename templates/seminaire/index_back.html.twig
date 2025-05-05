@@ -1,0 +1,633 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Liste des Séminaires{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="page-header">
+            <h2 class="fw-bold title-animated">Séminaires</h2>
+            <a href="{{ path('app_seminaire_new') }}" class="btn btn-gradient">
+                <span class="btn-content">
+                    <span class="btn-icon">➕</span>
+                    <span class="btn-text">Nouveau Séminaire</span>
+                </span>
+            </a>
+            <a href="{{ path('app_seminaire_stats') }}" class="btn btn-gradient btn-stats">
+                    <span class="btn-content">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text">Statistiques</span>
+                    </span>
+            </a>
+        </div>
+
+        <!-- Filter and Search Form -->
+        <div class="filter-search-container mb-4">
+            <form id="filterForm" class="d-flex flex-column flex-md-row gap-3 align-items-center">
+                <!-- Search Input -->
+                <div class="search-wrapper flex-grow-1">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchSeminaire" class="form-control search-input" placeholder="Rechercher par nom ou formateur..." autocomplete="off" aria-label="Rechercher par nom du séminaire ou formateur">
+                    <span class="search-focus-bg"></span>
+                </div>
+                <!-- Sort By -->
+                <select id="sortBy" class="form-select" aria-label="Trier par">
+                    <option value="dateDebut">Date de début</option>
+                    <option value="cout">Coût</option>
+                    <option value="nomSeminaire">Nom du séminaire</option>
+                    <option value="formateur">Formateur</option>
+                </select>
+                <!-- Sort Direction -->
+                <select id="sortDirection" class="form-select" aria-label="Direction du tri">
+                    <option value="ASC">Croissant</option>
+                    <option value="DESC">Décroissant</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- Seminar List Container -->
+        <div id="seminaireList" aria-live="polite">
+            {% if seminaires|length > 0 %}
+                <div class="row gy-5 gx-5">
+                    {% for seminaire in seminaires %}
+                        <div class="col-md-6 col-lg-4 seminar-item">
+                            <div class="card h-100 seminar-card px-3 py-3">
+                                <div class="card-color-accent"></div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary">{{ seminaire.nomSeminaire }}</h5>
+                                    <div class="card-text">
+                                        <div class="info-row">
+                                            <strong>Description:</strong>
+                                            <span>{{ seminaire.description|default('Aucune')|length > 80 ? seminaire.description[:80] ~ '...' : seminaire.description }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <strong>📍 Lieu:</strong>
+                                            <span>{{ seminaire.lieu }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <strong>🧑‍🏫 Formateur:</strong>
+                                            <span>{{ seminaire.formateur }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <strong>📅 Dates:</strong>
+                                            <span>{{ seminaire.dateDebut|date('d/m/Y') }} → {{ seminaire.dateFin|date('d/m/Y') }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <strong>💰 Coût:</strong>
+                                            <span>{{ seminaire.cout }} DT</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <strong>📚 Type:</strong>
+                                            <span class="type-badge">{{ seminaire.type|capitalize }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
+                                    <a href="{{ path('app_seminaire_show', {'id': seminaire.id}) }}" class="btn-action btn-view">
+                                        <span class="btn-icon">👁</span>
+                                        <span class="btn-text">Voir</span>
+                                    </a>
+                                    <a href="{{ path('app_seminaire_edit', {'id': seminaire.id}) }}" class="btn-action btn-edit">
+                                        <span class="btn-icon">✏️</span>
+                                        <span class="btn-text">Modifier</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <div class="empty-state-text">Aucun séminaire trouvé.</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        /* Base Styles & Variables */
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3f37c9;
+            --secondary: #4cc9f0;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #02c39a;
+            --warning: #ff9f1c;
+            --danger: #e5383b;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.08);
+            --shadow-lg: 0 15px 30px rgba(0,0,0,0.1);
+            --shadow-xl: 0 25px 50px rgba(0,0,0,0.15);
+            --transition-fast: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-medium: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-slow: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --border-radius-sm: 0.5rem;
+            --border-radius-md: 1rem;
+            --border-radius-lg: 2rem;
+        }
+
+        /* Page Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.1);
+            position: relative;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: gradientShift 3s infinite;
+            background-size: 200% 200%;
+        }
+
+        .title-animated {
+            position: relative;
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            font-weight: 700;
+            animation: slideIn 0.6s ease-out forwards;
+        }
+
+        /* Button Styles */
+        .btn-gradient {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius-lg);
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            transition: all var(--transition-fast);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            z-index: 1;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+            opacity: 0;
+            z-index: -1;
+            transition: opacity var(--transition-fast);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+            color: white;
+        }
+
+        .btn-gradient:hover::before {
+            opacity: 1;
+        }
+
+        .btn-gradient:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform var(--transition-fast);
+        }
+
+        .btn-gradient:hover .btn-icon {
+            transform: scale(1.2);
+        }
+
+        /* Filter and Search Form */
+        .filter-search-container {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+
+        .form-select {
+            border-radius: var(--border-radius-lg);
+            padding: 0.75rem;
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+
+        /* Search Input */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .search-wrapper:focus-within {
+            box-shadow: var(--shadow-lg), 0 0 0 3px rgba(67, 97, 238, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            font-size: 1.2rem;
+            z-index: 2;
+            opacity: 0.6;
+            transition: opacity var(--transition-fast);
+        }
+
+        .search-input {
+            padding: 1rem 1rem 1rem 3rem;
+            border: none;
+            border-radius: var(--border-radius-lg);
+            font-size: 1rem;
+            width: 100%;
+            transition: all var(--transition-fast);
+            background-color: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .search-wrapper:focus-within .search-icon {
+            opacity: 1;
+            animation: pulse 1s infinite;
+        }
+
+        .search-focus-bg {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width var(--transition-medium), left var(--transition-medium);
+        }
+
+        .search-wrapper:focus-within .search-focus-bg {
+            width: 100%;
+            left: 0;
+        }
+
+        /* Seminar Cards */
+        .seminar-item {
+            opacity: 0;
+            animation: fadeIn var(--transition-medium) forwards;
+            margin-bottom: 1.5rem;
+        }
+
+        .row > .seminar-item:nth-child(1) { animation-delay: 0.1s; }
+        .row > .seminar-item:nth-child(2) { animation-delay: 0.2s; }
+        .row > .seminar-item:nth-child(3) { animation-delay: 0.3s; }
+        .row > .seminar-item:nth-child(4) { animation-delay: 0.4s; }
+        .row > .seminar-item:nth-child(5) { animation-delay: 0.5s; }
+        .row > .seminar-item:nth-child(6) { animation-delay: 0.6s; }
+
+        .seminar-card {
+            position: relative;
+            transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+            border-radius: var(--border-radius-md);
+            background: #fff;
+            border: none;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            height: 100%;
+            padding: 1rem;
+        }
+
+        .card-color-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 5px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            transform-origin: left;
+            transform: scaleX(0.3);
+            transition: transform var(--transition-medium);
+        }
+
+        .seminar-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .seminar-card:hover .card-color-accent {
+            transform: scaleX(1);
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--secondary);
+            transition: width var(--transition-medium);
+        }
+
+        .seminar-card:hover .card-title::after {
+            width: 100%;
+        }
+
+        .card-text {
+            margin-bottom: 1rem;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 0.7rem;
+            align-items: baseline;
+        }
+
+        .info-row strong {
+            min-width: 110px;
+            font-weight: 600;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        .info-row span {
+            flex: 1;
+            color: var(--dark);
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-dark);
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .seminar-card:hover .type-badge {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Card Actions */
+        .card-footer {
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-lg);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .btn-view {
+            color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+
+        .btn-edit {
+            color: var(--dark);
+            background-color: rgba(33, 37, 41, 0.08);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-view:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--dark);
+            color: white;
+        }
+
+        .btn-action .btn-icon {
+            transition: transform var(--transition-fast);
+        }
+
+        .btn-action:hover .btn-icon {
+            transform: scale(1.2);
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background-color: rgba(67, 97, 238, 0.03);
+            border-radius: var(--border-radius-md);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            animation: floatUp 3s ease-in-out infinite;
+        }
+
+        .empty-state-text {
+            font-size: 1.25rem;
+            color: var(--dark);
+            opacity: 0.7;
+        }
+
+        /* Grid Spacing */
+        .row {
+            --bs-gutter-x: 2rem;
+            --bs-gutter-y: 2rem;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 767px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .title-animated {
+                font-size: 2rem;
+            }
+
+            .filter-search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-select {
+                width: 100%;
+            }
+
+            .info-row {
+                flex-direction: column;
+            }
+
+            .info-row strong {
+                margin-bottom: 0.25rem;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn-action {
+                width: 100%;
+            }
+
+            .row {
+                --bs-gutter-x: 1.5rem;
+                --bs-gutter-y: 1.5rem;
+            }
+        }
+    </style>
+
+    <!-- Include jQuery (if not already included via Webpack/Encore) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add staggered animation for cards
+            $('.seminar-item').each(function(index) {
+                $(this).css('animation-delay', (index * 0.1) + 's');
+            });
+
+            // Function to trigger search and filter
+            function updateSeminaireList() {
+                let query = $('#searchSeminaire').val();
+                let sortBy = $('#sortBy').val();
+                let sortDirection = $('#sortDirection').val();
+
+                $.ajax({
+                    url: '{{ path('app_seminaire_search') }}',
+                    method: 'GET',
+                    data: {
+                        q: query,
+                        sortBy: sortBy,
+                        sortDirection: sortDirection
+                    },
+                    success: function(response) {
+                        $('#seminaireList').html(response);
+                        // Re-apply animations to new content
+                        $('.seminar-item').each(function(index) {
+                            $(this).css('animation-delay', (index * 0.1) + 's');
+                        });
+                    },
+                    error: function() {
+                        $('#seminaireList').html(
+                            '<div class="empty-state">' +
+                            '<div class="empty-state-icon">❌</div>' +
+                            '<div class="empty-state-text">Erreur lors de la recherche.</div>' +
+                            '</div>'
+                        );
+                    }
+                });
+            }
+
+            // Debounced search and filter
+            let timeout;
+            $('#searchSeminaire, #sortBy, #sortDirection').on('input change', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(updateSeminaireList, 300);
+            });
+
+            // Add hover effect for cards
+            $(document).on('mouseenter', '.seminar-card', function() {
+                $(this).siblings().css('transform', 'scale(0.98)');
+            }).on('mouseleave', '.seminar-card', function() {
+                $(this).siblings().css('transform', 'scale(1)');
+            });
+        });
+    </script>
+{% endblock %}

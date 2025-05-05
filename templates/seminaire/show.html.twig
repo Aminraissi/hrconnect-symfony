@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Séminaire{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-header bg-gradient text-white text-center fs-4 fw-bold rounded-top-4">
+                    📚 Séminaire #{{ seminaire.id }}
+                </div>
+
+                <div class="card-body p-4">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📘 Nom :</strong>
+                            <span>{{ seminaire.nomSeminaire }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📝 Description :</strong>
+                            <span>{{ seminaire.description|default('—') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📅 Début :</strong>
+                            <span>{{ seminaire.dateDebut ? seminaire.dateDebut|date('d/m/Y') : '—' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📅 Fin :</strong>
+                            <span>{{ seminaire.dateFin ? seminaire.dateFin|date('d/m/Y') : '—' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📍 Lieu :</strong>
+                            <span>{{ seminaire.lieu }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>🧑‍🏫 Formateur :</strong>
+                            <span>{{ seminaire.formateur }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>💰 Coût :</strong>
+                            <span>{{ seminaire.cout }} DT</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📂 Type :</strong>
+                            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">{{ seminaire.type|capitalize }}</span>
+                        </li>
+                    </ul>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <a href="{{ path('app_seminaire_index') }}" class="btn btn-secondary rounded-pill">⬅ Retour</a>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_seminaire_edit', {'id': seminaire.id}) }}" class="btn btn-outline-primary rounded-pill">✏️ Modifier</a>
+                            {{ include('seminaire/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+        }
+
+        .list-group-item {
+            font-size: 0.95rem;
+        }
+
+        .list-group-item strong {
+            width: 40%;
+        }
+
+        .badge.bg-primary-subtle {
+            background-color: #e9f2ff;
+            color: #0d6efd;
+            font-weight: 500;
+        }
+
+        .btn {
+            font-weight: 500;
+        }
+    </style>
+{% endblock %}
