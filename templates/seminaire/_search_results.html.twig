@@ -1,0 +1,55 @@
+{% if seminaires|length > 0 %}
+    <div class="row gy-5 gx-5">
+        {% for seminaire in seminaires %}
+            <div class="col-md-6 col-lg-4 seminar-item">
+                <div class="card h-100 seminar-card px-3 py-3">
+                    <div class="card-color-accent"></div>
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ seminaire.nomSeminaire }}</h5>
+                        <div class="card-text">
+                            <div class="info-row">
+                                <strong>Description:</strong>
+                                <span>{{ seminaire.description|default('Aucune')|length > 80 ? seminaire.description[:80] ~ '...' : seminaire.description }}</span>
+                            </div>
+                            <div class="info-row">
+                                <strong>📍 Lieu:</strong>
+                                <span>{{ seminaire.lieu }}</span>
+                            </div>
+                            <div class="info-row">
+                                <strong>🧑‍🏫 Formateur:</strong>
+                                <span>{{ seminaire.formateur }}</span>
+                            </div>
+                            <div class="info-row">
+                                <strong>📅 Dates:</strong>
+                                <span>{{ seminaire.dateDebut|date('d/m/Y') }} → {{ seminaire.dateFin|date('d/m/Y') }}</span>
+                            </div>
+                            <div class="info-row">
+                                <strong>💰 Coût:</strong>
+                                <span>{{ seminaire.cout }} DT</span>
+                            </div>
+                            <div class="info-row">
+                                <strong>📚 Type:</strong>
+                                <span class="type-badge">{{ seminaire.type|capitalize }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
+                        <a href="{{ path('app_seminaire_show', {'id': seminaire.id}) }}" class="btn-action btn-view">
+                            <span class="btn-icon">👁</span>
+                            <span class="btn-text">Voir</span>
+                        </a>
+                        <a href="{{ path('app_seminaire_edit', {'id': seminaire.id}) }}" class="btn-action btn-edit">
+                            <span class="btn-icon">✏️</span>
+                            <span class="btn-text">Modifier</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <div class="empty-state-text">Aucun séminaire trouvé.</div>
+    </div>
+{% endif %}

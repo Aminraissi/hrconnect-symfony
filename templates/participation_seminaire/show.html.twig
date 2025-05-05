@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Participation{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-header bg-gradient text-white text-center fs-4 fw-bold rounded-top-4">
+                    👤 Détails de la Participation #{{ participation_seminaire.id }}
+                </div>
+
+                <div class="card-body p-4">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📌 Statut :</strong>
+                            <span class="badge-outline badge-outline-{{ {
+                                'présent': 'success',
+                                'absent': 'danger',
+                                'Inscrit': 'info',
+                                'en attente': 'secondary'
+                            }[participation_seminaire.statut] ?? 'dark' }}">
+                            {{ participation_seminaire.statut|capitalize }}
+                        </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📅 Date d'inscription :</strong>
+                            <span>{{ participation_seminaire.dateInscription ? participation_seminaire.dateInscription|date('d/m/Y') : '—' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>📝 Évaluation :</strong>
+                            <span>{{ participation_seminaire.evaluation|default('—') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>🎓 Certificat :</strong>
+                            <span>{{ participation_seminaire.certificat|default('—') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>👨‍💼 Employé :</strong>
+                            <span class="fw-semibold">#{{ participation_seminaire.idEmploye }}</span>
+                        </li>
+                    </ul>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <a href="{{ path('app_participation_seminaire_index') }}" class="btn btn-secondary rounded-pill">⬅ Retour</a>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_participation_seminaire_edit', {'id': participation_seminaire.id}) }}" class="btn btn-outline-primary rounded-pill">✏️ Modifier</a>
+                            {{ include('participation_seminaire/_delete_form.html.twig', { 'attr': {'class': 'd-inline'} }) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+        }
+
+        .badge-outline {
+            padding: 0.35rem 1rem;
+            border-radius: 25px;
+            border: 2px solid;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge-outline-success { color: #198754; border-color: #198754; }
+        .badge-outline-danger { color: #dc3545; border-color: #dc3545; }
+        .badge-outline-info { color: #0dcaf0; border-color: #0dcaf0; }
+        .badge-outline-secondary { color: #6c757d; border-color: #6c757d; }
+        .badge-outline-dark { color: #343a40; border-color: #343a40; }
+    </style>
+{% endblock %}

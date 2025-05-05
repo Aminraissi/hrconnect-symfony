@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Participants - {{ seminaire.nomSeminaire }}{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="page-header">
+            <h2 class="fw-bold title-animated">Participants pour {{ seminaire.nomSeminaire }}</h2>
+            <a href="{{ path('app_seminaire_index') }}" class="btn btn-outline-primary">
+                <span class="btn-icon">⬅️</span> Retour aux séminaires
+            </a>
+        </div>
+
+        <div class="participations-list p-3" style="background: rgba(67, 97, 238, 0.03); border-radius: var(--border-radius-sm);">
+            {% if participants|length > 0 %}
+                <ul class="list-unstyled mb-0">
+                    {% for participation in participants %}
+                        <li class="participation-item mb-2 p-2" style="border-left: 3px solid var(--primary); animation: fadeIn 0.5s ease-out {{ loop.index * 0.1 }}s both;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Employé:</strong> {{ participation.idEmploye }}<br>
+                                    <strong>Statut:</strong> {{ participation.statut|capitalize }}<br>
+                                    <strong>Date d'inscription:</strong> {{ participation.dateInscription|date('d/m/Y') }}<br>
+                                    <strong>Évaluation:</strong> {{ participation.evaluation|default('N/A') }}<br>
+                                    <strong>Certificat:</strong> {{ participation.certificat ? 'Oui' : 'Non' }}
+                                </div>
+                                <a href="{{ path('app_participation_seminaire_show', {'id': participation.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <span class="btn-icon">🔍</span> Détails
+                                </a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="text-center text-muted">Aucune participation pour ce séminaire.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3f37c9;
+            --secondary: #4cc9f0;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #02c39a;
+            --warning: #ff9f1c;
+            --danger: #e5383b;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.08);
+            --shadow-lg: 0 15px 30px rgba(0,0,0,0.1);
+            --shadow-xl: 0 25px 50px rgba(0,0,0,0.15);
+            --transition-fast: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-medium: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-slow: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --border-radius-sm: 0.5rem;
+            --border-radius-md: 1rem;
+            --border-radius-lg: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.1);
+            position: relative;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: gradientShift 3s infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .title-animated {
+            position: relative;
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            font-weight: 700;
+            animation: slideIn 0.6s ease-out forwards;
+        }
+
+        .participations-list {
+            transition: all var(--transition-medium);
+        }
+
+        .participation-item {
+            transition: background var(--transition-fast);
+        }
+
+        .participation-item:hover {
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        @media (max-width: 767px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .title-animated {
+                font-size: 2rem;
+            }
+
+            .participations-list {
+                fontව: 0.95rem;
+            }
+        }
+    </style>
+{% endblock %}

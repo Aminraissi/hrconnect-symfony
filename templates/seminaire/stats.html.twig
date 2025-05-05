@@ -1,0 +1,310 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}Statistiques des Séminaires{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="page-header">
+            <h2 class="fw-bold title-animated">Statistiques des Séminaires</h2>
+            <a href="{{ path('app_seminaire_index_back') }}" class="btn btn-gradient">
+                <span class="btn-content">
+                    <span class="btn-icon">←</span>
+                    <span class="btn-text">Retour</span>
+                </span>
+            </a>
+        </div>
+
+        {% if statusStats|length > 0 or costRanges|length > 0 or inscriptionTrend.data|length > 0 %}
+            <div class="row gy-5">
+                <!-- Pie Chart: Participation Status -->
+                <div class="col-lg-6">
+                    <div class="card h-100 stats-card">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Répartition des Statuts</h5>
+                            <canvas id="statusPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bar Chart: Cost Ranges -->
+                <div class="col-lg-6">
+                    <div class="card h-100 stats-card">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Participants par Tranche de Coût</h5>
+                            <canvas id="costBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line Chart: Inscription Trend -->
+                <div class="col-12">
+                    <div class="card stats-card">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Tendance des Inscriptions</h5>
+                            <canvas id="inscriptionLineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📉</div>
+                <div class="empty-state-text">Aucune donnée statistique disponible.</div>
+            </div>
+        {% endif %}
+    </div>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3f37c9;
+            --secondary: #4cc9f0;
+            --success: #02c39a;
+            --warning: #ff9f1c;
+            --danger: #e5383b;
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.08);
+            --shadow-lg: 0 15px 30px rgba(0,0,0,0.1);
+            --transition-medium: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --border-radius-md: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.1);
+            position: relative;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background-size: 200% 200%;
+            animation: gradientShift 3s infinite;
+        }
+
+        .title-animated {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            font-weight: 700;
+            animation: slideIn 0.6s ease-out forwards;
+        }
+
+        .btn-gradient {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            transition: all var(--transition-medium);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-card {
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-medium);
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background-color: rgba(67, 97, 238, 0.03);
+            border-radius: var(--border-radius-md);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            animation: floatUp 3s ease-in-out infinite;
+        }
+
+        .empty-state-text {
+            font-size: 1.25rem;
+            color: var(--dark);
+            opacity: 0.7;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        @media (max-width: 767px) {
+            .title-animated {
+                font-size: 2rem;
+            }
+
+            canvas {
+                max-height: 250px;
+            }
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        {% if statusStats|length > 0 or costRanges|length > 0 or inscriptionTrend.data|length > 0 %}
+        // Pie Chart: Participation Status
+        const statusCtx = document.getElementById('statusPieChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Inscrit', 'Présent', 'Absent', 'En attente'],
+                datasets: [{
+                    data: [
+                        {{ statusStats.Inscrit|default(0) }},
+                        {{ statusStats.present|default(0) }},
+        {{ statusStats.absent|default(0) }},
+        {{ statusStats['en attente']|default(0) }}
+        ],
+        backgroundColor: [
+            'rgba(67, 97, 238, 0.8)',
+            'rgba(2, 195, 154, 0.8)',
+            'rgba(229, 56, 59, 0.8)',
+            'rgba(255, 159, 28, 0.8)'
+        ],
+            borderColor: ['#fff'],
+            borderWidth: 2
+        }]
+        },
+        options: {
+            responsive: true,
+                plugins: {
+                legend: {
+                    position: 'top',
+                        labels: { font: { size: 14 } }
+                }
+            }
+        }
+        });
+
+        // Bar Chart: Cost Ranges
+        const costCtx = document.getElementById('costBarChart').getContext('2d');
+        new Chart(costCtx, {
+            type: 'bar',
+            data: {
+                labels: ['0-100 DT', '100-200 DT', '200-300 DT', '300+ DT'],
+                datasets: [{
+                    label: 'Nombre de Participants',
+                    data: [
+                        {{ costRanges['0-100 DT']|default(0) }},
+                        {{ costRanges['100-200 DT']|default(0) }},
+                        {{ costRanges['200-300 DT']|default(0) }},
+                        {{ costRanges['300+ DT']|default(0) }}
+                    ],
+                    backgroundColor: 'rgba(67, 97, 238, 0.8)',
+                    borderColor: 'rgba(67, 97, 238, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Nombre de Participants' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Tranche de Coût' }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Line Chart: Inscription Trend
+        const inscriptionCtx = document.getElementById('inscriptionLineChart').getContext('2d');
+        new Chart(inscriptionCtx, {
+            type: 'line',
+            data: {
+                labels: {{ inscriptionTrend.labels|json_encode|raw }},
+                datasets: [{
+                    label: 'Inscriptions',
+                    data: {{ inscriptionTrend.data|json_encode|raw }},
+                    borderColor: 'rgba(67, 97, 238, 1)',
+                    backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Nombre d\'Inscriptions' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Date d\'Inscription' }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' }
+                }
+            }
+        });
+        {% endif %}
+    </script>
+{% endblock %}
