@@ -1,15 +1,76 @@
 {% extends 'back_office.html.twig' %}
 
 {% block title %}
-    Hello BackOfficeController!
+    Tableau de bord - Back Office
 {% endblock %}
 
 {% block body %}
-<div class="card" style="max-width: 400px; margin: 20px auto; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); border-radius: 10px;">
-    <h2 class="text-center">Météo actuelle 🌤️</h2>
-    <hr>
-    <p><strong>Ville:</strong> {{ city }}</p>
-    <p><strong>Température:</strong> {{ temp }}°C</p>
-    <p><strong>Description:</strong> {{ description }}</p>
+<div class="container mt-4">
+
+    <h1 class="mb-4 text-center">Bienvenue dans le Back Office 👋</h1>
+
+    <!-- Summary Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>Utilisateurs</h5>
+                <p class="display-6">{{ totalUsers }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>Admins</h5>
+                <p class="display-6">{{ adminUsers }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>Inactifs</h5>
+                <p class="display-6">{{ inactiveUsers }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>Aujourd’hui</h5>
+                <p class="display-6">{{ "now"|date("d/m/Y") }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Card -->
+    <div class="card mb-4" style="max-width: 400px; margin: 0 auto; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); border-radius: 10px;">
+        <h2 class="text-center">Météo actuelle 🌤️</h2>
+        <hr>
+        <p><strong>Ville:</strong> {{ city }}</p>
+        <p><strong>Température:</strong> {{ temp }}°C</p>
+        <p><strong>Description:</strong> {{ description }}</p>
+    </div>
+
+    <!-- Live Clock -->
+    <div class="text-center mt-4">
+        <h4>Heure actuelle 🕑</h4>
+        <div id="clock" style="font-size: 2rem; font-weight: bold;"></div>
+    </div>
+
+    <!-- Quick Navigation Links -->
+    <div class="mt-5">
+        <h4>Navigation rapide</h4>
+        <ul class="list-group">
+            <li class="list-group-item"><a href="{{ path('app_user_index') }}">👥 Gérer les utilisateurs</a></li>
+            <li class="list-group-item"><a href="#">📊 Voir les rapports</a></li>
+            <li class="list-group-item"><a href="#">⚙️ Paramètres du système</a></li>
+        </ul>
+    </div>
+
 </div>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const time = now.toLocaleTimeString();
+        document.getElementById('clock').textContent = time;
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // initial call
+</script>
 {% endblock %}

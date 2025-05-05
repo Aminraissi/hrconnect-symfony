@@ -22,20 +22,58 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 final class UserController extends AbstractController
 {
     #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository, Request $request, PaginatorInterface $paginator): Response
-    {
-        $query = $userRepository->createQueryBuilder('u')->getQuery();
+    public function index(
+        UserRepository $userRepository,
+        Request $request,
+        PaginatorInterface $paginator,
+        EntityManagerInterface $em
+    ): Response {
+        // Toggle logic (already present)
+        $toggleUserId = $request->query->get('toggleUser');
+        if ($toggleUserId) {
+            $userToToggle = $userRepository->find($toggleUserId);
+            if ($userToToggle) {
+                $roles = $userToToggle->getRoles();
+                if (in_array('ROLE_INACTIVE', $roles)) {
+                    $roles = array_filter($roles, fn($r) => $r !== 'ROLE_INACTIVE');
+                } else {
+                    $roles[] = 'ROLE_INACTIVE';
+                }
+                $userToToggle->setRoles(array_values($roles));
+                $em->flush();
+            }
+            return $this->redirectToRoute('app_user_index');
+        }
+    
+        // Search & Sort
+        $search = $request->query->get('search');
+        $sortField = $request->query->get('sort', 'u.nom');
+        $sortDirection = $request->query->get('direction', 'asc');
+    
+        $qb = $userRepository->createQueryBuilder('u');
+    
+        if ($search) {
+            $qb->andWhere('u.nom LIKE :search OR u.prenom LIKE :search OR u.email LIKE :search OR u.cin LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+    
+        $qb->orderBy($sortField, $sortDirection);
     
         $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1), // Page number
-            10 
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            10
         );
     
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
+            'search' => $search,
+            'sort' => $sortField,
+            'direction' => $sortDirection,
         ]);
     }
+    
+    
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
