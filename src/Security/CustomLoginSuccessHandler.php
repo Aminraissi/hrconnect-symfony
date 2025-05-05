@@ -20,11 +20,17 @@ class CustomLoginSuccessHandler implements AuthenticationSuccessHandlerInterface
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): RedirectResponse
     {
         $user = $token->getUser();
-
+    
+        if (in_array('ROLE_INACTIVE', $user->getRoles(), true)) {
+            // Redirect to a route that will handle the alert + logout
+            return new RedirectResponse($this->router->generate('inactive_redirect'));
+        }
+    
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return new RedirectResponse($this->router->generate('app_back_office'));
         }
-
+    
         return new RedirectResponse($this->router->generate('app_home'));
     }
+    
 }

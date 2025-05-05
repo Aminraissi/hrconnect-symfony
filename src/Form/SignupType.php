@@ -22,19 +22,7 @@ class SignupType extends AbstractType
             ->add('email', TextType::class)
             ->add('password', PasswordType::class)
 
-            ->add('roles', ChoiceType::class, [
-                'choices' => [
-                    'RH' => 'ROLE_RH',
-                    'Stagiaire' => 'ROLE_STAGIAIRE',
-                    'Employé' => 'ROLE_EMPLOYE',
-                    'Utilisateur' => 'ROLE_USER',
-                    'Admin' => 'ROLE_ADMIN',
-                ],
-                'multiple' => true,   
-                'expanded' => false,  
-                'label' => 'Roles',
-                'required' => true,
-            ])
+
             
         ;
     }

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Account Inactive</title>
+    <script>
+        alert("This account is inactive.");
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "{{ path('login') }}";
+    </script>
+</head>
+<body>
+</body>
+</html>

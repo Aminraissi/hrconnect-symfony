@@ -17,17 +17,43 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <a href="{{ path('app_user_download_pdf') }}" class="btn btn-primary">{{ 'user.index.download_pdf'|trans }}</a>
 </div>
+<form method="get" action="{{ path('app_user_index') }}" class="mb-3 d-flex justify-content-between align-items-center">
+    <input type="text" name="search" value="{{ search }}" placeholder="🔍 Search..." class="form-control w-25" />
+
+    <input type="submit" class="btn btn-secondary ms-2" value="Search">
+</form>
 
 <table class="table table-striped table-hover">
     <thead>
         <tr>
-            <th>{{ 'user.index.cin'|trans }}</th>
-            <th>{{ 'user.index.tel'|trans }}</th>
-            <th>{{ 'user.index.nom'|trans }}</th>
-            <th>{{ 'user.index.prenom'|trans }}</th>
-            <th>{{ 'user.index.email'|trans }}</th>
+<th>
+    <a href="{{ path('app_user_index', app.request.query.all|merge({'sort': 'u.cin', 'direction': direction == 'asc' and sort == 'u.cin' ? 'desc' : 'asc'})) }}">
+        {{ 'user.index.cin'|trans }}
+    </a>
+</th>
+<th>
+    <a href="{{ path('app_user_index', app.request.query.all|merge({'sort': 'u.tel', 'direction': direction == 'asc' and sort == 'u.tel' ? 'desc' : 'asc'})) }}">
+        {{ 'user.index.tel'|trans }}
+    </a>
+</th>
+<th>
+    <a href="{{ path('app_user_index', app.request.query.all|merge({'sort': 'u.nom', 'direction': direction == 'asc' and sort == 'u.nom' ? 'desc' : 'asc'})) }}">
+        {{ 'user.index.nom'|trans }}
+    </a>
+</th>
+<th>
+    <a href="{{ path('app_user_index', app.request.query.all|merge({'sort': 'u.prenom', 'direction': direction == 'asc' and sort == 'u.prenom' ? 'desc' : 'asc'})) }}">
+        {{ 'user.index.prenom'|trans }}
+    </a>
+</th>
+<th>
+    <a href="{{ path('app_user_index', app.request.query.all|merge({'sort': 'u.email', 'direction': direction == 'asc' and sort == 'u.email' ? 'desc' : 'asc'})) }}">
+        {{ 'user.index.email'|trans }}
+    </a>
+</th>
+
             <th>{{ 'user.index.roles'|trans }}</th>
-            <th>{{ 'user.index.id'|trans }}</th>
+<th>Active</th>
             <th>{{ 'user.index.actions'|trans }}</th>
         </tr>
     </thead>
@@ -40,7 +66,17 @@
             <td>{{ user.prenom }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.roles|join(', ') }}</td>
-            <td>{{ user.id }}</td>
+<td>
+    {% if 'ROLE_INACTIVE' in user.roles %}
+        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'toggleUser': user.id})) }}">
+            <img src="{{ asset('images/switch_red.png') }}" alt="Inactive" width="40">
+        </a>
+    {% else %}
+        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'toggleUser': user.id})) }}">
+            <img src="{{ asset('images/switch_green.png') }}" alt="Active" width="40">
+        </a>
+    {% endif %}
+</td>
             <td>
                 <a class="btn btn-info" href="{{ path('app_user_show', {'cin': user.cin}) }}">{{ 'user.index.show'|trans }}</a>
                 <a class="btn btn-warning" href="{{ path('app_user_edit', {'cin': user.cin}) }}">{{ 'user.index.edit'|trans }}</a>

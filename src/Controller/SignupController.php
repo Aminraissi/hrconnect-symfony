@@ -36,6 +36,8 @@ class SignupController extends AbstractController
                 return $this->redirectToRoute('signup');
             }
 
+
+            $user->setRoles(['ROLE_STAGIAIRE']);
             // Hash password
             $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
