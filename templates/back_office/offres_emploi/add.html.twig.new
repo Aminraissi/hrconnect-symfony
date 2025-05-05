@@ -1,0 +1,84 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+	Ajouter une offre d'emploi
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{ path('app_back_office') }}">
+							<img src="{{ asset('assets/img/dash.png')}}" class="mr-2" alt="breadcrumb"/>
+							Home
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ path('back.offres_emploi.index') }}">Offres d'emploi</a>
+					</li>
+					<li class="breadcrumb-item active">Ajouter une offre</li>
+				</ul>
+				<h3>Ajouter une offre d'emploi</h3>
+			</div>
+		</div>
+
+        {# Affichage des messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="col-xl-12 col-sm-12 col-12">
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }}">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+		<div class="col-xl-12 col-sm-12 col-12 mb-4">
+			<div class="card">
+				<div class="card-header">
+					<h2>Informations de l'offre</h2>
+				</div>
+				<div class="card-body">
+					{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12">
+								<div class="form-group">
+									{{ form_label(form.title) }}
+									{{ form_widget(form.title) }}
+									{{ form_errors(form.title) }}
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12">
+								<div class="form-group">
+									{{ form_label(form.location) }}
+									{{ form_widget(form.location) }}
+									{{ form_errors(form.location) }}
+								</div>
+							</div>
+							<div class="col-xl-12 col-sm-12 col-12">
+								<div class="form-group">
+									{{ form_label(form.description) }}
+									{{ form_widget(form.description) }}
+									{{ form_errors(form.description) }}
+								</div>
+							</div>
+							<div class="col-xl-12 col-sm-12 col-12">
+								<div class="form-group text-right">
+									<button type="submit" class="btn btn-primary">Enregistrer</button>
+									<a href="{{ path('back.offres_emploi.index') }}" class="btn btn-secondary">Annuler</a>
+								</div>
+							</div>
+						</div>
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('assets/js/simple-correction.js') }}"></script>
+{% endblock %}

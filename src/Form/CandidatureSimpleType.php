@@ -129,6 +129,7 @@ class CandidatureSimpleType extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'candidature_item',
             'validation_groups' => ['Default'],
+            'attr' => ['novalidate' => 'novalidate'] // Désactive la validation HTML5 pour utiliser uniquement la validation Symfony
         ]);
     }
 }

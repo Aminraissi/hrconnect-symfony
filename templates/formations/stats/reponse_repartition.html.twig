@@ -1,0 +1,56 @@
+{% extends 'back_office.html.twig' %}
+
+{% block title %}
+	Répartition des Réponses
+{% endblock %}
+
+{% block css %}
+	{{ parent() }}
+
+	<style>
+		#map {
+			height: 500px;
+			width: 100%;
+			margin-top: 10px;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+
+
+	<div class="row">
+		<div class="col-xl-12 col-sm-12 col-12">
+			<div class="breadcrumb-path mb-4">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_back_office') }}">Home</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ url('app_formations_index') }}">Répartition des Réponses
+						</a>
+					</li>
+				</ul>
+				<h3>Répartition des Réponses
+				</h3>
+			</div>
+		</div>
+		<div class="col-xl-12 col-sm-12 col-12">
+
+			<h4>{{ quiz.getQuestion() }}</h1>
+
+			<div class="alert alert-success">
+				la Bonne reponse est :
+				<strong>{{ bonneReponse}}</strong>
+			</div>
+			<div id="piechart_div"></div>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block cjs %}
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script>
+		{{ gc_draw(pieChart, 'piechart_div')|raw }}</script>
+{% endblock %}

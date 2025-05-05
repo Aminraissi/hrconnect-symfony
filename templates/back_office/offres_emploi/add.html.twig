@@ -41,63 +41,62 @@
 					<h2>Informations de l'offre</h2>
 				</div>
 				<div class="card-body">
-					<form method="post" action="{{ path('back.offres_emploi.add') }}">
+					{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 						<div class="row">
 							<div class="col-xl-6 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_titre">Titre de l'offre</label>
-									<input type="text" id="offre_emploi_titre" name="offre_emploi[titre]" class="form-control" placeholder="Ex: Développeur Symfony" required>
+									{{ form_label(form.title) }}
+									{{ form_widget(form.title) }}
+									{{ form_errors(form.title) }}
 								</div>
 							</div>
 							<div class="col-xl-6 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_typeContrat">Type de contrat</label>
-									<select id="offre_emploi_typeContrat" name="offre_emploi[typeContrat]" class="form-control" required>
-										<option value="CDI">CDI</option>
-										<option value="CDD">CDD</option>
-										<option value="Stage">Stage</option>
-										<option value="Alternance">Alternance</option>
-										<option value="Freelance">Freelance</option>
-									</select>
+									{{ form_label(form.typeContrat) }}
+									{{ form_widget(form.typeContrat) }}
+									{{ form_errors(form.typeContrat) }}
 								</div>
 							</div>
 							<div class="col-xl-6 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_localisation">Localisation</label>
-									<input type="text" id="offre_emploi_localisation" name="offre_emploi[localisation]" class="form-control" placeholder="Ex: Paris" required>
+									{{ form_label(form.location) }}
+									{{ form_widget(form.location) }}
+									{{ form_errors(form.location) }}
 								</div>
 							</div>
 							<div class="col-xl-6 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_salaire">Salaire</label>
-									<input type="text" id="offre_emploi_salaire" name="offre_emploi[salaire]" class="form-control" placeholder="Ex: 45-55K€" required>
+									{{ form_label(form.salaire) }}
+									{{ form_widget(form.salaire) }}
+									{{ form_errors(form.salaire) }}
 								</div>
 							</div>
 							<div class="col-xl-12 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_description">Description</label>
-									<textarea id="offre_emploi_description" name="offre_emploi[description]" class="form-control" rows="5" placeholder="Description détaillée de l'offre" required></textarea>
+									{{ form_label(form.description) }}
+									{{ form_widget(form.description) }}
+									{{ form_errors(form.description) }}
 								</div>
 							</div>
 							<div class="col-xl-12 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_profilRecherche">Profil recherché</label>
-									<textarea id="offre_emploi_profilRecherche" name="offre_emploi[profilRecherche]" class="form-control" rows="5" placeholder="Profil et compétences recherchés" required></textarea>
+									{{ form_label(form.profilRecherche) }}
+									{{ form_widget(form.profilRecherche) }}
+									{{ form_errors(form.profilRecherche) }}
 								</div>
 							</div>
 							<div class="col-xl-12 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_avantages">Avantages</label>
-									<textarea id="offre_emploi_avantages" name="offre_emploi[avantages]" class="form-control" rows="3" placeholder="Avantages proposés"></textarea>
+									{{ form_label(form.avantages) }}
+									{{ form_widget(form.avantages) }}
+									{{ form_errors(form.avantages) }}
 								</div>
 							</div>
 							<div class="col-xl-12 col-sm-12 col-12">
 								<div class="form-group">
-									<label for="offre_emploi_isActive">Statut</label>
-									<select id="offre_emploi_isActive" name="offre_emploi[isActive]" class="form-control">
-										<option value="1">Active</option>
-										<option value="0">Inactive</option>
-									</select>
+									{{ form_label(form.isActive) }}
+									{{ form_widget(form.isActive) }}
+									{{ form_errors(form.isActive) }}
 								</div>
 							</div>
 							<div class="col-xl-12 col-sm-12 col-12">
@@ -107,7 +106,7 @@
 								</div>
 							</div>
 						</div>
-					</form>
+					{{ form_end(form) }}
 				</div>
 			</div>
 		</div>

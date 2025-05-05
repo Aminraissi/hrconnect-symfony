@@ -24,7 +24,6 @@ class OffreEmploiController extends AbstractController
     public function index(OffreEmploiRepository $repository): Response
     {
         try {
-            // Utiliser l'ID au lieu de datePublication pour le tri
             $offres = $repository->findBy([], ['id' => 'DESC']);
             $this->logger->info('Nombre d\'offres récupérées : ' . count($offres));
 
@@ -45,34 +44,26 @@ class OffreEmploiController extends AbstractController
     {
         $offre = new OffreEmploi();
         $form = $this->createForm(OffreEmploiType::class, $offre);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('POST')) {
-            $this->logger->info('Requête POST reçue pour ajouter une offre');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->logger->info('Formulaire soumis et valide pour ajouter une offre');
 
-            $data = $request->request->all('offre_emploi');
-
-            if (isset($data)) {
-                $offre->setTitre($data['titre'] ?? '');
-                $offre->setTypeContrat($data['typeContrat'] ?? '');
-                $offre->setLocalisation($data['localisation'] ?? '');
-                $offre->setSalaire($data['salaire'] ?? '');
-                $offre->setDescription($data['description'] ?? '');
-                $offre->setProfilRecherche($data['profilRecherche'] ?? '');
-                $offre->setAvantages($data['avantages'] ?? null);
-                $offre->setIsActive(isset($data['isActive']) && $data['isActive'] === '1');
+            try {
                 $offre->setDatePublication(new \DateTime());
 
-                try {
-                    $this->em->persist($offre);
-                    $this->em->flush();
+                $this->em->persist($offre);
+                $this->em->flush();
 
-                    $this->addFlash('success', 'L\'offre d\'emploi a été créée avec succès');
-                    return $this->redirectToRoute('back.offres_emploi.index');
-                } catch (\Exception $e) {
-                    $this->logger->error('Erreur lors de la création : ' . $e->getMessage());
-                    $this->addFlash('error', 'Une erreur est survenue lors de la création de l\'offre');
-                }
+                $this->addFlash('success', 'L\'offre d\'emploi a été créée avec succès');
+                return $this->redirectToRoute('back.offres_emploi.index');
+            } catch (\Exception $e) {
+                $this->logger->error('Erreur lors de la création : ' . $e->getMessage());
+                $this->addFlash('error', 'Une erreur est survenue lors de la création de l\'offre');
             }
+        } else if ($form->isSubmitted()) {
+            $this->logger->warning('Formulaire soumis mais invalide pour ajouter une offre');
+            $this->addFlash('error', 'Le formulaire contient des erreurs. Veuillez les corriger.');
         }
 
         return $this->render('back_office/offres_emploi/add.html.twig', [

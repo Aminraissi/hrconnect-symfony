@@ -1,4 +1,7 @@
 {
+    "cmen/google-charts-bundle": {
+        "version": "7.0.0"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.14",
         "recipe": {
@@ -327,5 +330,14 @@
     },
     "twig/extra-bundle": {
         "version": "v3.20.0"
+    },
+    "vich/uploader-bundle": {
+        "version": "2.6",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.13",
+            "ref": "1b3064c2f6b255c2bc2f56461aaeb76b11e07e36"
+        }
     }
 }

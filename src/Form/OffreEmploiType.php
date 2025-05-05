@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\OffreEmploi;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -70,6 +71,64 @@ class OffreEmploiType extends AbstractType
                         'min' => 20,
                         'minMessage' => 'La description doit contenir au moins {{ limit }} caractères'
                     ])
+                ]
+            ])
+            ->add('typeContrat', ChoiceType::class, [
+                'label' => 'Type de contrat',
+                'choices' => [
+                    'CDI' => 'CDI',
+                    'CDD' => 'CDD',
+                    'Stage' => 'Stage',
+                    'Alternance' => 'Alternance',
+                    'Freelance' => 'Freelance'
+                ],
+                'attr' => [
+                    'class' => 'form-control'
+                ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Le type de contrat est obligatoire'])
+                ]
+            ])
+            ->add('salaire', TextType::class, [
+                'label' => 'Salaire',
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ex: 45000€ - 55000€ annuel'
+                ],
+                'required' => false,
+                'constraints' => [
+                    new Regex([
+                        'pattern' => '/^[0-9\s\-\€\$\,\.]+$/',
+                        'message' => 'Le salaire doit contenir uniquement des chiffres, des espaces, des tirets et des symboles monétaires'
+                    ])
+                ]
+            ])
+            ->add('profilRecherche', TextareaType::class, [
+                'label' => 'Profil recherché',
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => 3,
+                    'placeholder' => 'Profil et compétences recherchés'
+                ],
+                'required' => false
+            ])
+            ->add('avantages', TextareaType::class, [
+                'label' => 'Avantages',
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => 3,
+                    'placeholder' => 'Avantages proposés'
+                ],
+                'required' => false
+            ])
+            ->add('isActive', ChoiceType::class, [
+                'label' => 'Statut',
+                'choices' => [
+                    'Active' => true,
+                    'Inactive' => false
+                ],
+                'attr' => [
+                    'class' => 'form-control'
                 ]
             ])
         ;
