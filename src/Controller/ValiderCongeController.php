@@ -63,35 +63,40 @@ final class ValiderCongeController extends AbstractController
         EntityManagerInterface $entityManager,
         #[Autowire(service: 'App\Service\TwilioServiceAlaa')] TwilioServiceAlaa $twilioService
     ): Response {
-        $form = $this->createForm(ValiderCongeType::class, $validerConge);
+        $demande = $validerConge->getDemandeConge();
+        $form    = $this->createForm(ValiderCongeType::class, $validerConge, [
+            'demande_info' => sprintf(
+                'Demande #%d - %s (%s au %s)',
+                $demande->getId(),
+                $demande->getTypeConge(),
+                $demande->getDateDebut()->format('d/m/Y'),
+                $demande->getDateFin()->format('d/m/Y')
+            ),
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $demandeConge = $validerConge->getDemandeConge();
-            if ($demandeConge) {
-                $demandeConge->setStatut($validerConge->getStatut());
-                $entityManager->persist($demandeConge);
+            if ($demande) {
+                $demande->setStatut($validerConge->getStatut());
+                $entityManager->persist($demande);
             }
 
             $entityManager->flush();
 
-            //try {
-            $employe = $demandeConge?->getEmploye();
+            $employe = $demande?->getEmploye();
             $message = sprintf(
                 'Mise à jour congé: %s %s - Type: %s - Période: %s au %s - Statut: %s',
                 $employe?->getPrenom() ?? 'Employé',
                 $employe?->getNom() ?? 'Inconnu',
-                $demandeConge?->getTypeConge() ?? 'N/A',
-                $demandeConge?->getDateDebut()?->format('d/m/Y') ?? 'N/A',
-                $demandeConge?->getDateFin()?->format('d/m/Y') ?? 'N/A',
+                $demande?->getTypeConge() ?? 'N/A',
+                $demande?->getDateDebut()?->format('d/m/Y') ?? 'N/A',
+                $demande?->getDateFin()?->format('d/m/Y') ?? 'N/A',
                 $validerConge->getStatut()
             );
 
             $twilioService->sendSms(self::FIXED_PHONE_NUMBER, $message);
             $this->addFlash('success', 'Notification SMS envoyée au +21652979407');
-            /*catch (\Exception $e) {
-                $this->logger->error('Twilio SMS Error: ' . $e->getMessage());
-                $this->addFlash('error', 'Échec d\'envoi SMS. Contactez l\'administrateur.');*/
 
             return $this->redirectToRoute('app_valider_conge_index', [], Response::HTTP_SEE_OTHER);
         }

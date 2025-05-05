@@ -2,14 +2,13 @@
 
 namespace App\Form;
 
-use App\Entity\DemandeConge;
 use App\Entity\ValiderConge;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ValiderCongeType extends AbstractType
@@ -37,17 +36,12 @@ class ValiderCongeType extends AbstractType
                     'placeholder' => 'Ajoutez un commentaire si nécessaire',
                 ],
             ])
-            ->add('demandeConge', EntityType::class, [
-                'class' => DemandeConge::class,
-                'choice_label' => function (DemandeConge $demandeConge) {
-                    return 'Demande #' . $demandeConge->getId() . ' - ' . $demandeConge->getTypeConge();
-                },
+            ->add('demandeInfo', TextType::class, [
+                'mapped' => false,
+                'data' => $options['demande_info'] ?? '',
                 'label' => 'Demande de congé associée',
-                'placeholder' => 'Sélectionner une demande de congé',
-                'attr' => ['class' => 'form-select form-control-lg'],
-                'constraints' => [
-                    new NotBlank(['message' => 'Veuillez sélectionner une demande de congé']),
-                ],
+                'disabled' => true,
+                'attr' => ['class' => 'form-control form-control-lg'],
             ]);
     }
 
@@ -55,6 +49,7 @@ class ValiderCongeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ValiderConge::class,
+            'demande_info' => null,
         ]);
     }
 }
