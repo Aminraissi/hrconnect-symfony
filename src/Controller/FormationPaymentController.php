@@ -58,7 +58,7 @@ final class FormationPaymentController extends AbstractController
         $successUrl = $this->generateUrl('app_formation_payment_success', ['id' => $id], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL);
         $cancelUrl  = $this->generateUrl('app_formation_payment_cancel', ['id' => $id], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $redirectUrl = $paypal->createOrder((int) ($formation->getPrice() * 100 * 0.34), $successUrl, $cancelUrl);
+        $redirectUrl = $paypal->createOrder((int) ($formation->getPrice() * 0.34), $successUrl, $cancelUrl);
 
         return new RedirectResponse($redirectUrl);
     }

@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\ValiderConge;
 use App\Form\ValiderCongeType;
 use App\Repository\ValiderCongeRepository;
-use App\Service\TwilioServiceAlaa ;
+use App\Service\TwilioServiceAlaa;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
@@ -18,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/valider/conge')]
 final class ValiderCongeController extends AbstractController
 {
-    private const FIXED_PHONE_NUMBER = '+21695343410';
+    private const FIXED_PHONE_NUMBER = '+21652979407';
 
     public function __construct(
         private readonly LoggerInterface $logger
@@ -39,7 +38,7 @@ final class ValiderCongeController extends AbstractController
                 ->setParameter('search', '%' . $searchTerm . '%');
         }
 
-        $sortField = $request->query->get('sort', 'v.dateValidation');
+        $sortField     = $request->query->get('sort', 'v.dateValidation');
         $sortDirection = $request->query->get('direction', 'DESC');
         $query->orderBy($sortField, $sortDirection);
 
@@ -52,12 +51,10 @@ final class ValiderCongeController extends AbstractController
         return $this->render('valider_conge/index.html.twig', [
             'pagination' => $pagination,
             'searchTerm' => $searchTerm,
-            'sortField' => $sortField,
-            'direction' => $sortDirection,
+            'sortField'  => $sortField,
+            'direction'  => $sortDirection,
         ]);
     }
-
-   
 
     #[Route('/{id}/edit', name: 'app_valider_conge_edit', methods: ['GET', 'POST'])]
     public function edit(
@@ -79,30 +76,29 @@ final class ValiderCongeController extends AbstractController
             $entityManager->flush();
 
             //try {
-                $employe = $demandeConge?->getEmploye();
-                $message = sprintf(
-                    'Mise à jour congé: %s %s - Type: %s - Période: %s au %s - Statut: %s',
-                    $employe?->getPrenom() ?? 'Employé',
-                    $employe?->getNom() ?? 'Inconnu',
-                    $demandeConge?->getTypeConge() ?? 'N/A',
-                    $demandeConge?->getDateDebut()?->format('d/m/Y') ?? 'N/A',
-                    $demandeConge?->getDateFin()?->format('d/m/Y') ?? 'N/A',
-                    $validerConge->getStatut()
-                );
+            $employe = $demandeConge?->getEmploye();
+            $message = sprintf(
+                'Mise à jour congé: %s %s - Type: %s - Période: %s au %s - Statut: %s',
+                $employe?->getPrenom() ?? 'Employé',
+                $employe?->getNom() ?? 'Inconnu',
+                $demandeConge?->getTypeConge() ?? 'N/A',
+                $demandeConge?->getDateDebut()?->format('d/m/Y') ?? 'N/A',
+                $demandeConge?->getDateFin()?->format('d/m/Y') ?? 'N/A',
+                $validerConge->getStatut()
+            );
 
-                $twilioService->sendSms(self::FIXED_PHONE_NUMBER, $message);
-                $this->addFlash('success', 'Notification SMS envoyée au +21652979407');
-             /*catch (\Exception $e) {
+            $twilioService->sendSms(self::FIXED_PHONE_NUMBER, $message);
+            $this->addFlash('success', 'Notification SMS envoyée au +21652979407');
+            /*catch (\Exception $e) {
                 $this->logger->error('Twilio SMS Error: ' . $e->getMessage());
                 $this->addFlash('error', 'Échec d\'envoi SMS. Contactez l\'administrateur.');*/
-            
 
             return $this->redirectToRoute('app_valider_conge_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('valider_conge/edit.html.twig', [
             'valider_conge' => $validerConge,
-            'form' => $form,
+            'form'          => $form,
         ]);
     }
 
