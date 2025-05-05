@@ -38,12 +38,12 @@ services:
     App\Service\TwilioSmsServiceAmine:
         arguments:
             $sid: 'TWILIO_SID_REMOVED'
-            $token: '2e17a427bbc6b36463b4529116f45cef'
+            $token: 'a3e27963c38482da9835cd4ff645fb28'
             $from: '+12294754264'
             $logger: '@logger'
 
     App\Service\TwilioServiceAlaa:
-        class: App\Service\TwilioService
+        class: App\Service\TwilioServiceAlaa
         arguments:
             $sid: '%env(ALAA_TWILIO_SID)%'
             $token: '%env(ALAA_TWILIO_TOKEN)%'
