@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\ValiderConge;
 use App\Form\ValiderCongeType;
 use App\Repository\ValiderCongeRepository;
-use App\Service\TwilioServiceAlaa ;
+use App\Service\TwilioServiceAlaa;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
@@ -39,7 +38,7 @@ final class ValiderCongeController extends AbstractController
                 ->setParameter('search', '%' . $searchTerm . '%');
         }
 
-        $sortField = $request->query->get('sort', 'v.dateValidation');
+        $sortField     = $request->query->get('sort', 'v.dateValidation');
         $sortDirection = $request->query->get('direction', 'DESC');
         $query->orderBy($sortField, $sortDirection);
 
@@ -52,12 +51,10 @@ final class ValiderCongeController extends AbstractController
         return $this->render('valider_conge/index.html.twig', [
             'pagination' => $pagination,
             'searchTerm' => $searchTerm,
-            'sortField' => $sortField,
-            'direction' => $sortDirection,
+            'sortField'  => $sortField,
+            'direction'  => $sortDirection,
         ]);
     }
-
-   
 
     #[Route('/{id}/edit', name: 'app_valider_conge_edit', methods: ['GET', 'POST'])]
     public function edit(
@@ -67,26 +64,26 @@ final class ValiderCongeController extends AbstractController
         #[Autowire(service: 'App\Service\TwilioServiceAlaa')] TwilioServiceAlaa $twilioService
     ): Response {
         $demande = $validerConge->getDemandeConge();
-        $form = $this->createForm(ValiderCongeType::class, $validerConge, [
+        $form    = $this->createForm(ValiderCongeType::class, $validerConge, [
             'demande_info' => sprintf(
                 'Demande #%d - %s (%s au %s)',
                 $demande->getId(),
                 $demande->getTypeConge(),
                 $demande->getDateDebut()->format('d/m/Y'),
                 $demande->getDateFin()->format('d/m/Y')
-            )
+            ),
         ]);
-    
+
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
             if ($demande) {
                 $demande->setStatut($validerConge->getStatut());
                 $entityManager->persist($demande);
             }
-    
+
             $entityManager->flush();
-    
+
             $employe = $demande?->getEmploye();
             $message = sprintf(
                 'Mise à jour congé: %s %s - Type: %s - Période: %s au %s - Statut: %s',
@@ -97,19 +94,19 @@ final class ValiderCongeController extends AbstractController
                 $demande?->getDateFin()?->format('d/m/Y') ?? 'N/A',
                 $validerConge->getStatut()
             );
-    
+
             $twilioService->sendSms(self::FIXED_PHONE_NUMBER, $message);
             $this->addFlash('success', 'Notification SMS envoyée au +21652979407');
-    
+
             return $this->redirectToRoute('app_valider_conge_index', [], Response::HTTP_SEE_OTHER);
         }
-    
+
         return $this->render('valider_conge/edit.html.twig', [
             'valider_conge' => $validerConge,
-            'form' => $form,
+            'form'          => $form,
         ]);
     }
-    
+
     #[Route('/{id}', name: 'app_valider_conge_delete', methods: ['POST'])]
     public function delete(Request $request, ValiderConge $validerConge, EntityManagerInterface $entityManager): Response
     {
