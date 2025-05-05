@@ -1,9 +1,7 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\ParticipationSeminaire;
-use App\Entity\Seminaire;
 use App\Form\ParticipationSeminaireType;
 use App\Repository\ParticipationSeminaireRepository;
 use App\Repository\SeminaireRepository;
@@ -25,16 +23,16 @@ final class ParticipationSeminaireController extends AbstractController
     }
 
     #[Route('/new', name: 'app_participation_seminaire_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SeminaireRepository $seminaireRepository): Response
+    public function new (Request $request, EntityManagerInterface $entityManager, SeminaireRepository $seminaireRepository): Response
     {
         $participationSeminaire = new ParticipationSeminaire();
 
         // Check for seminaire_id in query parameters
         $seminaireId = $request->query->getInt('seminaire_id');
-        $seminaire = null;
+        $seminaire   = null;
         if ($seminaireId) {
             $seminaire = $seminaireRepository->find($seminaireId);
-            if (!$seminaire) {
+            if (! $seminaire) {
                 throw $this->createNotFoundException('Séminaire non trouvé.');
             }
             $participationSeminaire->setSeminaire($seminaire);
@@ -58,8 +56,8 @@ final class ParticipationSeminaireController extends AbstractController
 
         return $this->render('participation_seminaire/new.html.twig', [
             'participation_seminaire' => $participationSeminaire,
-            'form' => $form,
-            'seminaire' => $seminaireId ? $seminaire : null,
+            'form'                    => $form,
+            'seminaire'               => $seminaireId ? $seminaire : null,
         ]);
     }
 
@@ -85,14 +83,14 @@ final class ParticipationSeminaireController extends AbstractController
 
         return $this->render('participation_seminaire/edit.html.twig', [
             'participation_seminaire' => $participationSeminaire,
-            'form' => $form,
+            'form'                    => $form,
         ]);
     }
 
     #[Route('/{id}', name: 'app_participation_seminaire_delete', methods: ['POST'])]
     public function delete(Request $request, ParticipationSeminaire $participationSeminaire, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$participationSeminaire->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $participationSeminaire->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($participationSeminaire);
             $entityManager->flush();
         }
