@@ -11,9 +11,9 @@ parameters:
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     justificatifs_directory: '%kernel.project_dir%/public/uploads/justificatifs'
     profile_pictures_directory: '%kernel.project_dir%/public/uploads/profile_pictures'
-    mailjet.api_key: 'MAILJET_API_KEY_REMOVED'
-    mailjet.api_secret: 'MAILJET_API_SECRET_REMOVED'
-    weather_api_key: 'WEATHER_API_KEY_REMOVED'
+    mailjet.api_key: '%env(MAILJET_API_KEY)%'
+    mailjet.api_secret: '%env(MAILJET_API_SECRET)%'
+    weather_api_key: '%env(WEATHER_API_KEY)%'
     
 
 services:
@@ -69,6 +69,9 @@ services:
         arguments:
             $httpClient: '@http_client'
             $logger: '@logger'
+            $affindaApiKey: '%env(AFFINDA_API_KEY)%'
+            $affindaWorkspaceId: '%env(AFFINDA_WORKSPACE_ID)%'
+            $affindaCollectionId: '%env(AFFINDA_COLLECTION_ID)%'
 
     # Service d'email pour les candidatures
     App\Service\CandidatureEmailService:
@@ -87,6 +90,10 @@ services:
     App\Service\FileContentChecker:
         arguments:
             - '@parameter_bag'
+
+    App\Service\OcrSpaceService:
+        arguments:
+            $apiKey: '%env(OCR_SPACE_API_KEY)%'
 
 
     App\Service\StripeService:

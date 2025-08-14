@@ -9,9 +9,9 @@ class OcrSpaceService
     private $apiKey;
     private $client;
 
-    public function __construct()
+    public function __construct(string $apiKey = '')
     {
-        $this->apiKey = 'OCR_API_KEY_REMOVED'; // Remplacez par la clé reçue
+        $this->apiKey = $apiKey;
         $this->client = new Client(['base_uri' => 'https://api.ocr.space/parse/']);
     }
 

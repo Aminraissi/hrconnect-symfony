@@ -8,18 +8,26 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class CvAnalyzerService
 {
-    private const AFFINDA_API_KEY = 'AFFINDA_API_KEY_REMOVED';
+    private string $affindaApiKey;
     private const AFFINDA_API_URL = 'https://api.affinda.com/v3/documents';
-    private const AFFINDA_WORKSPACE_ID = 'WORKSPACE_ID_REMOVED';
-    private const AFFINDA_COLLECTION_ID = 'COLLECTION_ID_REMOVED';
+    private string $affindaWorkspaceId;
+    private string $affindaCollectionId;
 
     private HttpClientInterface $httpClient;
     private LoggerInterface $logger;
 
-    public function __construct(HttpClientInterface $httpClient, LoggerInterface $logger)
-    {
+    public function __construct(
+        HttpClientInterface $httpClient,
+        LoggerInterface $logger,
+        string $affindaApiKey = '',
+        string $affindaWorkspaceId = '',
+        string $affindaCollectionId = ''
+    ) {
         $this->httpClient = $httpClient;
         $this->logger = $logger;
+        $this->affindaApiKey = $affindaApiKey;
+        $this->affindaWorkspaceId = $affindaWorkspaceId;
+        $this->affindaCollectionId = $affindaCollectionId;
     }
 
     public function analyzeCv(string $cvPath): array
@@ -104,16 +112,16 @@ class CvAnalyzerService
             $formData = [
                 'file' => curl_file_create($tempFile, 'application/pdf', $cvFile->getFilename()),
                 'wait' => 'true',
-                'workspace' => self::AFFINDA_WORKSPACE_ID,
-                'collection' => self::AFFINDA_COLLECTION_ID
+                'workspace' => $this->affindaWorkspaceId,
+                'collection' => $this->affindaCollectionId
             ];
 
             $this->logger->info('Fichier temporaire créé : ' . $tempFile);
 
             $this->logger->info('Envoi de la requête à Affinda...');
             $this->logger->info('URL: ' . self::AFFINDA_API_URL);
-            $this->logger->info('Collection ID: ' . self::AFFINDA_COLLECTION_ID);
-            $this->logger->info('Workspace ID: ' . self::AFFINDA_WORKSPACE_ID);
+            $this->logger->info('Collection ID: ' . $this->affindaCollectionId);
+            $this->logger->info('Workspace ID: ' . $this->affindaWorkspaceId);
 
             // Utiliser cURL directement pour un meilleur contrôle
             $curl = curl_init();
@@ -130,7 +138,7 @@ class CvAnalyzerService
                 CURLOPT_POSTFIELDS => $formData,
                 CURLOPT_HTTPHEADER => [
                     'Accept: application/json',
-                    'Authorization: Bearer ' . self::AFFINDA_API_KEY
+                    'Authorization: Bearer ' . $this->affindaApiKey
                 ],
             ]);
 
