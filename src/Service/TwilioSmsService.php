@@ -8,24 +8,27 @@ use Twilio\Rest\Client;
 
 class TwilioSmsService
 {
-    // Informations Twilio
-    private const TWILIO_ACCOUNT_SID = 'TWILIO_SID_REMOVED'; // Account SID
-    private const TWILIO_AUTH_TOKEN = '5d947f47d3f77d1860af64c2f80ce1a1'; // Auth Token
-    private const TWILIO_PHONE_NUMBER = '+12294754264'; // Votre numéro Twilio actif
+    // Informations Twilio - Utilise les variables d'environnement
+    private string $twilioAccountSid;
+    private string $twilioAuthToken;
+    private string $twilioPhoneNumber;
 
     private LoggerInterface $logger;
     private Client $twilioClient;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, string $sid, string $token, string $from)
     {
         $this->logger = $logger;
+        $this->twilioAccountSid = $sid;
+        $this->twilioAuthToken = $token;
+        $this->twilioPhoneNumber = $from;
 
         try {
-            // Utiliser l'Auth Token standard
-            $this->twilioClient = new Client(self::TWILIO_ACCOUNT_SID, self::TWILIO_AUTH_TOKEN);
+            // Utiliser l'Auth Token depuis les variables d'environnement
+            $this->twilioClient = new Client($this->twilioAccountSid, $this->twilioAuthToken);
 
             $this->logger->info('Service TwilioSmsService initialisé avec l\'Auth Token');
-            $this->logger->info('Numéro de téléphone Twilio utilisé: ' . self::TWILIO_PHONE_NUMBER);
+            $this->logger->info('Numéro de téléphone Twilio utilisé: ' . $this->twilioPhoneNumber);
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de l\'initialisation du service TwilioSmsService: ' . $e->getMessage());
             $this->logger->error('Trace: ' . $e->getTraceAsString());
@@ -76,7 +79,7 @@ class TwilioSmsService
 
             // Envoyer le SMS via Twilio
             $this->logger->info('Tentative d\'envoi de SMS avec Twilio:');
-            $this->logger->info('- De: ' . self::TWILIO_PHONE_NUMBER);
+            $this->logger->info('- De: ' . $this->twilioPhoneNumber);
             $this->logger->info('- À: ' . $phoneNumber);
             $this->logger->info('- Message: ' . $message);
 
@@ -86,7 +89,7 @@ class TwilioSmsService
                 $response = $this->twilioClient->messages->create(
                     $phoneNumber, // Le numéro formaté (qui est un numéro américain valide)
                     [
-                        'from' => self::TWILIO_PHONE_NUMBER,
+                        'from' => $this->twilioPhoneNumber,
                         'body' => $message
                     ]
                 );

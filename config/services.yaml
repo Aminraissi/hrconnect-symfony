@@ -37,9 +37,9 @@ services:
     # Service Twilio pour l'envoi de SMS (Amine)
     App\Service\TwilioSmsServiceAmine:
         arguments:
-            $sid: 'TWILIO_SID_REMOVED'
-            $token: 'a3e27963c38482da9835cd4ff645fb28'
-            $from: '+12294754264'
+            $sid: '%env(HAYTHEM_TWILIO_SID)%'
+            $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
+            $from: '%env(HAYTHEM_TWILIO_FROM)%'
             $logger: '@logger'
 
     App\Service\TwilioServiceAlaa:
@@ -48,6 +48,14 @@ services:
             $sid: '%env(ALAA_TWILIO_SID)%'
             $token: '%env(ALAA_TWILIO_TOKEN)%'
             $from: '%env(ALAA_TWILIO_FROM)%'
+
+    # Service Twilio principal
+    App\Service\TwilioSmsService:
+        arguments:
+            $sid: '%env(HAYTHEM_TWILIO_SID)%'
+            $token: '%env(HAYTHEM_TWILIO_TOKEN)%'
+            $from: '%env(HAYTHEM_TWILIO_FROM)%'
+            $logger: '@logger'
 
     # Service d'analyse de CV avec Gemini
     App\Service\GeminiCvEvaluatorService:
